@@ -53,15 +53,15 @@ export default function About({}: Props) {
           <span className="underline decoration-[green]/50">about me</span>
         </h4>
         <p className="text-base">
-          My name's Jordi (
+          My name&apos;s Jordi (
           <a className="underline" href="https://github.com/JordiSRodriguez">
             jordi-dev
           </a>{" "}
           on GitHub), a Software Development Student, I really love coding,
-          haven't stopped doing it since I fell in love with it, right now I'm
+          haven&apos;t stopped doing it since I fell in love with it, right now I&apos;m
           looking for a company to do my practicum on it. I love to be
           constantly learning things and improving my skills, while writing this
-          I'm learning{" "}
+          I&apos;m learning{" "}
           <span className="font-bold">
             React.js, Next.js, TailwindCSS and Python
           </span>

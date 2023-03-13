@@ -26,7 +26,7 @@ function Project({}: Props) {
             <div className="space-y-10 px-0 md:px-10 max-w-6xl">
                 <a href="https://github.com/JordiSRodriguez/Sword-N-Goat">
               <h4 className="text-5xl font-semibold text-center underline decoration-[green]/50">
-                  Project 4: Sword N' Goat
+                  Project 4: Sword N&apos; Goat
               </h4>
               </a>
 
