@@ -39,7 +39,7 @@ export default function About({}: Props) {
         }}
       >
         <Image
-          className="-mb-20 md:mb-0 flex-shrink-0 w-[200px] h-[200px] rounded-full object-fit md:rounded- md:w-[900px] md:h-[240px] xl:w-[4000px] xl:h-[600px]"
+          className="-mb-20 md:mb-0 flex-shrink-0 w-[200px] h-[200px] rounded-full object-fit md:rounded-full md:w-[900px] md:h-[240px] xl:w-[4000px] xl:h-[600px]"
           src={programmer}
           alt="programmer"
           width={500}
