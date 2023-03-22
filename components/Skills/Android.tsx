@@ -20,7 +20,7 @@ function Skill({}: Props) {
             opacity: 1,
             scale: 1,
         }}
-        className="rounded-full  object-cover w-24 h-24 md:w-28 md:h-28 xl:w-32 xl:h-32 filter group-hover:grayscale transition duration-300 ease-in-out"
+        className="rounded-full  object-cover w-24 h-24 md:w-28 md:h-28 l:w-30 l:h-30 xl:w-32 xl:h-32 filter group-hover:grayscale transition duration-300 ease-in-out"
       >
         <Image src={android} alt="Android Development" />
       </motion.div>
