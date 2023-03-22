@@ -32,7 +32,7 @@ function Skills({}: Props) {
 
     <h3 className="absolute top-36 uppercase tracking-[2px] text-gray-500">These are the technologies I know when you&apos;re watching this</h3>
 
-    <div className="grid grid-cols-4 gap-5">
+    <div className="grid grid-cols-4 gap-5 md:grid-cols-5">
         <Java />
         <JavaScript />
         <Reactjs />
