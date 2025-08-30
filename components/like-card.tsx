@@ -4,14 +4,12 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { createBrowserClient } from "@supabase/ssr";
-import { Heart, Trophy } from "lucide-react";
+import { Heart } from "lucide-react";
 
 export function LikeCard() {
   const [totalLikes, setTotalLikes] = useState(0);
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [easterEggMessage, setEasterEggMessage] = useState(
-    "¡Easter Egg encontrado! +50 puntos"
-  );
+  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState("¡Gracias por tu like! ❤️");
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,7 +28,7 @@ export function LikeCard() {
 
     // Configurar suscripción en tiempo real para likes
     const likesChannel = supabase
-      .channel("portfolio_likes_changes")
+      .channel("portfolio_likes_realtime")
       .on(
         "postgres_changes",
         {
@@ -43,9 +41,11 @@ export function LikeCard() {
 
           if (payload.eventType === "INSERT") {
             // Nuevo like agregado
+            console.log("Like agregado");
             setTotalLikes((prev) => prev + 1);
           } else if (payload.eventType === "DELETE") {
-            // Like eliminado (si implementas esta funcionalidad)
+            // Like eliminado
+            console.log("Like eliminado");
             setTotalLikes((prev) => Math.max(0, prev - 1));
           }
         }
@@ -72,29 +72,6 @@ export function LikeCard() {
     }
   };
 
-  const triggerEasterEgg = async (eggType: string) => {
-    setShowEasterEgg(true);
-
-    try {
-      const visitorId = localStorage.getItem("visitor_id");
-      if (visitorId) {
-        await supabase.from("user_achievements").insert([
-          {
-            user_id: visitorId,
-            easter_egg_id: eggType,
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error recording achievement:", error);
-    }
-
-    setTimeout(() => {
-      setShowEasterEgg(false);
-      setEasterEggMessage("¡Easter Egg encontrado! +50 puntos"); // Reset to default
-    }, 3000);
-  };
-
   const handleLike = async () => {
     try {
       const visitorId =
@@ -110,14 +87,13 @@ export function LikeCard() {
 
       if (existingLike) {
         // User already liked, show message
-        setEasterEggMessage("¡Ya has dado like! Gracias por tu apoyo ❤️");
-        setShowEasterEgg(true);
-        setTimeout(() => setShowEasterEgg(false), 2000);
+        setMessage("¡Ya has dado like! Gracias por tu apoyo ❤️");
+        setShowMessage(true);
+        setTimeout(() => setShowMessage(false), 2000);
         return;
       }
 
-      // Add new like - NO actualizar el estado local aquí
-      // porque la suscripción en tiempo real lo hará automáticamente
+      // Add new like
       const { error } = await supabase.from("portfolio_likes").insert([
         {
           visitor_id: visitorId,
@@ -128,25 +104,27 @@ export function LikeCard() {
       if (error) throw error;
 
       // Show success message
-      setEasterEggMessage("¡Gracias por tu like! ❤️ +50 puntos");
-
-      // Trigger easter egg for liking
-      triggerEasterEgg("portfolio_like");
+      setMessage("¡Gracias por tu like! ❤️");
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
     } catch (error) {
       console.error("Error adding like:", error);
+      setMessage("Error al enviar el like. Inténtalo de nuevo.");
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
     }
   };
 
   return (
     <>
-      {/* Easter Egg Notification */}
-      {showEasterEgg && (
+      {/* Message Notification */}
+      {showMessage && (
         <div className="fixed top-4 right-4 z-50 animate-bounce">
-          <Card className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+          <Card className="bg-gradient-to-r from-green-400 to-blue-500 text-white border-0">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
-                <span className="font-semibold">{easterEggMessage}</span>
+                <Heart className="h-5 w-5" />
+                <span className="font-semibold">{message}</span>
               </div>
             </CardContent>
           </Card>
@@ -156,7 +134,7 @@ export function LikeCard() {
       {/* Like Card */}
       <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white w-full">
         <CardContent className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Sección izquierda - Estadística */}
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">
@@ -166,7 +144,7 @@ export function LikeCard() {
               <p className="text-sm opacity-75 mt-1">¡Únete a la comunidad!</p>
             </div>
 
-            {/* Sección central - Acción principal */}
+            {/* Sección derecha - Acción principal */}
             <div className="text-center">
               <Heart className="h-16 w-16 mx-auto mb-4 animate-pulse" />
               <h3 className="text-2xl font-bold mb-3">¡Gracias por visitar!</h3>
@@ -182,31 +160,22 @@ export function LikeCard() {
                 ❤️ Dejar un like
               </Button>
             </div>
-
-            {/* Sección derecha - Motivación */}
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">+50</div>
-              <p className="text-lg opacity-90">Puntos de logro</p>
-              <p className="text-sm opacity-75 mt-1">
-                Por interactuar con el portfolio
-              </p>
-            </div>
           </div>
 
           {/* Barra inferior con información adicional */}
           <div className="mt-8 pt-6 border-t border-white/20">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center text-sm opacity-80">
               <div>
-                <span className="font-semibold">💼 Interactive portfolio</span>
-                <p>Discover hidden easter eggs</p>
+                <span className="font-semibold">💼 Portfolio interactivo</span>
+                <p>Explora mi trabajo y proyectos</p>
               </div>
               <div>
-                <span className="font-semibold">🎯 Achievement system</span>
-                <p>Earn points by exploring</p>
+                <span className="font-semibold">🚀 Tecnología moderna</span>
+                <p>Desarrollado con Next.js y React</p>
               </div>
               <div>
-                <span className="font-semibold">⭐ Unique experience</span>
-                <p>Modern technology and UX</p>
+                <span className="font-semibold">⭐ Experiencia única</span>
+                <p>Diseño responsivo y UX optimizada</p>
               </div>
             </div>
           </div>
