@@ -1,0 +1,394 @@
+"use client";
+
+import type React from "react";
+
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { createClient } from "@/lib/supabase/client";
+import { EmbeddedMeetingScheduler } from "@/components/embedded-meeting-scheduler";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle,
+  Github,
+  Linkedin,
+  Twitter,
+  FileText,
+  MessageSquare,
+  Calendar,
+} from "lucide-react";
+
+interface Profile {
+  id: string;
+  full_name: string;
+  bio: string;
+  avatar_url?: string;
+  github_username?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  website_url?: string;
+  location?: string;
+  roles?: string[];
+  initials?: string;
+}
+
+export function ContactSection() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<"contact" | "meeting">("contact");
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  const supabase = createClient();
+
+  // Get profile data from Supabase
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .limit(1);
+
+        if (error) throw error;
+        setProfile(data && data.length > 0 ? data[0] : null);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setProfile(null);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [supabase]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const { error } = await supabase.from("contacts").insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          status: "new",
+        },
+      ]);
+
+      if (error) throw error;
+
+      setSuccess(true);
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setError("Error sending message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const contactInfo = [
+    {
+      icon: Mail,
+      label: "Email",
+      value: "jordisumba@gmail.com",
+      href: "mailto:jordisumba@gmail.com",
+      color: "text-blue-500",
+    },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: "+34 640 853 140",
+      href: "tel:+34640853140",
+      color: "text-green-500",
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: profile?.location || "Madrid, Spain",
+      href: `https://maps.google.com/?q=${encodeURIComponent(
+        profile?.location || "Madrid,Spain"
+      )}`,
+      color: "text-red-500",
+    },
+    {
+      icon: Calendar,
+      label: "Availability",
+      value: "Mon - Fri, 9:00 - 18:00",
+      href: "https://calendly.com/tu-usuario",
+      color: "text-purple-500",
+    },
+  ];
+
+  const socialLinks = [
+    {
+      icon: Github,
+      label: "GitHub",
+      href: profile?.github_username
+        ? `https://github.com/${profile.github_username}`
+        : "https://github.com/JordiSRodriguez",
+      color: "hover:text-gray-900 dark:hover:text-white",
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      href: profile?.linkedin_url || "https://linkedin.com/in/jordi-sumba/",
+      color: "hover:text-blue-600",
+    },
+    {
+      icon: Twitter,
+      label: "Twitter",
+      href: profile?.twitter_url || "https://x.com/iamnotjordi",
+      color: "hover:text-blue-400",
+    },
+    {
+      icon: FileText,
+      label: "CV/Resume",
+      href: "/cv-jordi-sumba.pdf",
+      color: "hover:text-green-500",
+    },
+  ];
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-red-500 text-white">
+          <MessageSquare className="h-8 w-8" />
+        </div>
+        <div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
+            Contact
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Have a project in mind? Let's talk and make it happen!
+          </p>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex justify-center">
+        <div className="bg-muted p-1 rounded-lg">
+          <Button
+            variant={activeTab === "contact" ? "default" : "ghost"}
+            onClick={() => setActiveTab("contact")}
+            className="rounded-md"
+          >
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Direct Message
+          </Button>
+          <Button
+            variant={activeTab === "meeting" ? "default" : "ghost"}
+            onClick={() => setActiveTab("meeting")}
+            className="rounded-md"
+          >
+            <Calendar className="h-4 w-4 mr-2" />
+            Schedule Meeting
+          </Button>
+        </div>
+      </div>
+
+      {/* Content based on active tab */}
+      {activeTab === "contact" ? (
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Contact Form */}
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-semibold mb-6">Send me a message</h2>
+
+              {success ? (
+                <div className="text-center py-8">
+                  <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-green-600 mb-2">
+                    Message sent!
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Thank you for contacting me. I'll respond as soon as
+                    possible.
+                  </p>
+                  <Button onClick={() => setSuccess(false)} variant="outline">
+                    Send another message
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name *</Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject *</Label>
+                    <Input
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      required
+                      placeholder="What would you like to talk about?"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message *</Label>
+                    <Textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      placeholder="Tell me about your project or idea..."
+                      rows={6}
+                    />
+                  </div>
+
+                  {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                  <Button type="submit" disabled={loading} className="w-full">
+                    {loading ? (
+                      "Sending..."
+                    ) : (
+                      <>
+                        Send message
+                        <Send className="h-4 w-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Contact Info */}
+          <div className="space-y-6">
+            {/* Contact Details */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-6">
+                  Contact Information
+                </h2>
+                <div className="space-y-4">
+                  {contactInfo.map((info) => {
+                    const Icon = info.icon;
+                    return (
+                      <a
+                        key={info.label}
+                        href={info.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors group"
+                      >
+                        <Icon
+                          className={`h-5 w-5 ${info.color} group-hover:scale-110 transition-transform`}
+                        />
+                        <div>
+                          <p className="font-medium">{info.label}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {info.value}
+                          </p>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Social Links */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-6">Follow me on</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {socialLinks.map((social) => {
+                    const Icon = social.icon;
+                    return (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-3 p-3 rounded-lg border hover:shadow-md transition-all duration-200 hover:scale-105 ${social.color}`}
+                      >
+                        <Icon className="h-5 w-5" />
+                        <span className="font-medium">{social.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Availability */}
+            <Card className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-2">
+                  🟢 Available for projects
+                </h3>
+                <p className="opacity-90 mb-4">
+                  Currently accepting new freelance projects and collaborations.
+                  Let's talk about your idea!
+                </p>
+                <div className="flex gap-2 text-sm opacity-75">
+                  <span>• 24h response</span>
+                  <span>• Free consultation</span>
+                  <span>• No-commitment quote</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-6xl mx-auto">
+          <EmbeddedMeetingScheduler />
+        </div>
+      )}
+    </div>
+  );
+}
