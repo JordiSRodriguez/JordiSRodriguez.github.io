@@ -25,12 +25,14 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
 ## 🚀 Instalación
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone [tu-repo-url]
    cd portfolio-jordi
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    npm install
    # o
@@ -38,17 +40,20 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
    ```
 
 3. **Configurar variables de entorno**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Edita `.env.local` con tus credenciales de Supabase:
+
    ```env
    NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
    NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
    ```
 
 4. **Configurar la base de datos**
+
    - Ve a [Supabase Dashboard](https://supabase.com/dashboard)
    - Crea un nuevo proyecto
    - Ejecuta el script SQL en `scripts/001_clean_portfolio_schema.sql`
@@ -61,11 +66,13 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
 ## 📱 Características Móvil vs Desktop
 
 ### Desktop
+
 - Sidebar de navegación fijo
 - Widgets flotantes (GitHub, Clima)
 - Chat AI integrado
 
 ### Móvil
+
 - Dock flotante en la parte inferior
 - Modales para widgets
 - Navegación optimizada para touch
@@ -110,11 +117,13 @@ En modo desarrollo, tendrás acceso a:
 ### Vercel (Recomendado)
 
 1. **Conectar con GitHub**
+
    - Sube tu código a GitHub
    - Ve a [Vercel Dashboard](https://vercel.com)
    - Importa tu repositorio
 
 2. **Configurar variables de entorno**
+
    - En Vercel Dashboard > Settings > Environment Variables
    - Agrega las mismas variables de tu `.env.local`
 
@@ -124,6 +133,7 @@ En modo desarrollo, tendrás acceso a:
 ### Otras plataformas
 
 El proyecto es compatible con cualquier plataforma que soporte Next.js:
+
 - Netlify
 - Railway
 - Heroku
