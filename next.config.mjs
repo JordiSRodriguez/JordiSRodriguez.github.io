@@ -11,10 +11,10 @@ const nextConfig = {
   },
   // Configuración para GitHub Pages
   ...(process.env.GITHUB_ACTIONS && {
-    output: 'export',
+    output: "export",
     trailingSlash: true,
-    distDir: 'out',
+    distDir: "out",
   }),
-}
+};
 
-export default nextConfig
+export default nextConfig;
