@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WorkExperience {
   id: string;
@@ -44,6 +45,7 @@ export function WorkExperienceSection() {
   const [viewMode, setViewMode] = useState<
     "timeline" | "comparison" | "metrics"
   >("timeline");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchExperiences = async () => {
@@ -173,15 +175,25 @@ export function WorkExperienceSection() {
       {/* Timeline View */}
       {viewMode === "timeline" && (
         <div className="relative">
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border"></div>
+          <div
+            className={`absolute ${
+              isMobile ? "left-6" : "left-8"
+            } top-0 bottom-0 w-0.5 bg-border`}
+          ></div>
 
           <div className="space-y-8">
             {experiences.map((experience, index) => (
               <div
                 key={experience.id}
-                className="relative flex items-start gap-6"
+                className={`relative flex items-start ${
+                  isMobile ? "gap-4" : "gap-6"
+                }`}
               >
-                <div className="relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground shadow-lg overflow-hidden">
+                <div
+                  className={`relative z-10 flex items-center justify-center ${
+                    isMobile ? "w-12 h-12" : "w-16 h-16"
+                  } aspect-square flex-shrink-0 rounded-full bg-primary text-primary-foreground shadow-lg overflow-hidden`}
+                >
                   {experience.company_logo ? (
                     <img
                       src={experience.company_logo}
@@ -189,14 +201,20 @@ export function WorkExperienceSection() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <Building className="w-6 h-6" />
+                    <Building
+                      className={`${isMobile ? "w-5 h-5" : "w-6 h-6"}`}
+                    />
                   )}
                 </div>
 
                 <Card className="flex-1 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
                   <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2">
+                    <div
+                      className={`flex items-start ${
+                        isMobile ? "flex-col gap-4" : "justify-between"
+                      }`}
+                    >
+                      <div className="space-y-2 flex-1">
                         <CardTitle className="text-xl">
                           {experience.title}
                         </CardTitle>
@@ -216,7 +234,11 @@ export function WorkExperienceSection() {
                             </a>
                           )}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div
+                          className={`flex items-center gap-4 text-sm text-muted-foreground ${
+                            isMobile ? "flex-wrap" : ""
+                          }`}
+                        >
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             <span>
@@ -239,7 +261,11 @@ export function WorkExperienceSection() {
                         </div>
                       </div>
                       {experience.salary_growth && (
-                        <div className="text-right">
+                        <div
+                          className={`${
+                            isMobile ? "self-start" : "text-right"
+                          } flex-shrink-0`}
+                        >
                           <div className="text-sm text-muted-foreground">
                             Salary Growth
                           </div>
@@ -274,7 +300,13 @@ export function WorkExperienceSection() {
                         </div>
                       )}
 
-                    <div className="flex items-center justify-between">
+                    <div
+                      className={`flex items-center ${
+                        isMobile
+                          ? "flex-col items-start gap-3"
+                          : "justify-between"
+                      }`}
+                    >
                       <div className="space-y-2">
                         {experience.technologies &&
                           experience.technologies.length > 0 && (
@@ -292,7 +324,7 @@ export function WorkExperienceSection() {
                           )}
                       </div>
                       {experience.team_size && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground flex-shrink-0">
                           <Users className="w-4 h-4" />
                           <span>Team of {experience.team_size}</span>
                         </div>
@@ -321,7 +353,11 @@ export function WorkExperienceSection() {
 
       {/* Comparison View */}
       {viewMode === "comparison" && (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          className={`grid gap-6 ${
+            isMobile ? "grid-cols-1" : "md:grid-cols-2 lg:grid-cols-3"
+          }`}
+        >
           {experiences.map((experience) => (
             <Card
               key={experience.id}
@@ -329,7 +365,7 @@ export function WorkExperienceSection() {
             >
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center overflow-hidden">
+                  <div className="w-10 h-10 aspect-square flex-shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center overflow-hidden">
                     {experience.company_logo ? (
                       <img
                         src={experience.company_logo}
@@ -340,11 +376,11 @@ export function WorkExperienceSection() {
                       <Building className="w-4 h-4" />
                     )}
                   </div>
-                  <div>
-                    <CardTitle className="text-lg">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg truncate">
                       {experience.company}
                     </CardTitle>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground truncate">
                       {experience.title}
                     </p>
                   </div>
@@ -416,7 +452,13 @@ export function WorkExperienceSection() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+              <div
+                className={`grid ${
+                  isMobile
+                    ? "grid-cols-2 gap-4"
+                    : "grid-cols-2 md:grid-cols-4 gap-4"
+                } mt-6`}
+              >
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
                     {experiences.length}
