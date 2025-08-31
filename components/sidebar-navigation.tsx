@@ -29,6 +29,7 @@ import {
   Mic,
   Palette,
   Database,
+  Settings,
   X,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -71,10 +72,10 @@ const devNavigationItems = [
     color: "bg-teal-500",
   },
   {
-    id: "data-management",
-    label: "Data Management",
-    icon: Database,
-    color: "bg-yellow-500",
+    id: "dev",
+    label: "Dev Tools",
+    icon: Settings,
+    color: "bg-slate-500",
   },
 ];
 

@@ -27,7 +27,7 @@ import { MobileFloatingDock } from "@/components/mobile-floating-dock";
 import { MobileModals } from "@/components/mobile-modals";
 import { PortfolioMusicPlayer } from "@/components/portfolio-music-player";
 import { AnalyticsSection } from "@/components/sections/analytics-section";
-import { DataManagementSection } from "@/components/sections/data-management-section";
+import { DevSection } from "@/components/sections/dev-section";
 import { LikeCard } from "@/components/like-card";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -102,9 +102,9 @@ function HomePageContent() {
         ) : (
           <HeroSection />
         );
-      case "data-management":
+      case "dev":
         return process.env.NODE_ENV === "development" ? (
-          <DataManagementSection />
+          <DevSection />
         ) : (
           <HeroSection />
         );

@@ -137,6 +137,11 @@ CREATE POLICY "public_insert_contacts" ON public.contacts FOR INSERT WITH CHECK 
 CREATE POLICY "public_insert_visitor_feedback" ON public.visitor_feedback FOR INSERT WITH CHECK (true);
 CREATE POLICY "public_insert_visit_stats" ON public.visit_stats FOR INSERT WITH CHECK (true);
 
+-- Additional read policies for tables that might be missing them
+CREATE POLICY "public_read_visitor_feedback" ON public.visitor_feedback FOR SELECT USING (true);
+CREATE POLICY "public_read_visit_stats" ON public.visit_stats FOR SELECT USING (true);
+CREATE POLICY "public_read_contacts" ON public.contacts FOR SELECT USING (true);
+
 -- Enable realtime for portfolio likes
 ALTER PUBLICATION supabase_realtime ADD TABLE public.portfolio_likes;
 
