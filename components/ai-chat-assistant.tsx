@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFloatingComponents } from "@/contexts/floating-components-context";
-import { Send, User, Brain, Zap, X, AlertCircle } from "lucide-react";
+import { Send, User, Brain, Zap, X } from "lucide-react";
 
 interface Message {
   id: string;
@@ -17,56 +17,47 @@ interface Message {
 
 // Función para detectar el entorno de despliegue
 const getDeploymentEnvironment = () => {
-  if (typeof window === 'undefined') return 'server';
-  
+  if (typeof window === "undefined") return "server";
+
   // Detectar GitHub Pages de manera más robusta
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
   const pathname = window.location.pathname;
-  
+
   // Detectar GitHub Pages por dominio o path
   if (
-    hostname.includes('github.io') ||
-    hostname.includes('github.com') ||
+    hostname.includes("github.io") ||
+    hostname.includes("github.com") ||
     // Para archivos servidos localmente desde export estático
-    protocol === 'file:' ||
+    protocol === "file:" ||
     // Detectar si no hay API routes disponibles (característica de export estático)
-    pathname.includes('out/') ||
+    pathname.includes("out/") ||
     // Si el puerto es típico de un servidor estático simple
-    (hostname === 'localhost' && (window.location.port === '8080' || window.location.port === '8000'))
+    (hostname === "localhost" &&
+      (window.location.port === "8080" || window.location.port === "8000"))
   ) {
-    return 'github-pages';
+    return "github-pages";
   }
-  
+
   // Detectar Vercel
-  if (
-    hostname.includes('vercel.app') ||
-    hostname.includes('vercel.com')
-  ) {
-    return 'vercel';
+  if (hostname.includes("vercel.app") || hostname.includes("vercel.com")) {
+    return "vercel";
   }
-  
+
   // Desarrollo local (puerto 3000, 3001, etc.)
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
     const port = window.location.port;
-    if (port === '3000' || port === '3001' || port === '5000') {
-      return 'development';
+    if (port === "3000" || port === "3001" || port === "5000") {
+      return "development";
     }
   }
-  
+
   // Por defecto, asumir que es GitHub Pages si no se puede determinar
-  return 'github-pages';
+  return "github-pages";
 };
 
 // Función para obtener respuesta de la API de IA
 const getAIResponseFromAPI = async (userMessage: string): Promise<string> => {
-  const environment = getDeploymentEnvironment();
-  
-  // Si estamos en GitHub Pages, no usar la API
-  if (environment === 'github-pages') {
-    return "Lo siento, el chat con IA no está disponible en esta versión del sitio debido a limitaciones de hosting estático. Puedes contactarme directamente a través del formulario de contacto o visitar la versión completa en Vercel.";
-  }
-  
   try {
     const response = await fetch("/api/ai-chat", {
       method: "POST",
@@ -91,7 +82,7 @@ const getAIResponseFromAPI = async (userMessage: string): Promise<string> => {
 
 export function AIChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [environment, setEnvironment] = useState<string>('server');
+  const [environment, setEnvironment] = useState<string>("server");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -106,19 +97,25 @@ export function AIChatAssistant() {
   useEffect(() => {
     const env = getDeploymentEnvironment();
     setEnvironment(env);
-    
-    // Configurar mensaje inicial según el entorno
-    const initialMessage: Message = {
-      id: "1",
-      sender: "ai",
-      timestamp: new Date(),
-      content: env === 'github-pages' 
-        ? "¡Hola! 👋 Actualmente estás viendo la versión estática del portfolio en GitHub Pages. El chat con IA está limitado aquí debido a restricciones de hosting estático. Para una experiencia completa con IA, visita la versión en Vercel o usa el formulario de contacto."
-        : "¡Hola! Soy tu asistente de IA. Puedo responder preguntas sobre el portfolio, proyectos, habilidades y experiencia. ¿En qué puedo ayudarte?"
-    };
-    
-    setMessages([initialMessage]);
+
+    // Solo configurar mensajes si NO estamos en GitHub Pages
+    if (env !== "github-pages") {
+      const initialMessage: Message = {
+        id: "1",
+        sender: "ai",
+        timestamp: new Date(),
+        content:
+          "¡Hola! Soy tu asistente de IA. Puedo responder preguntas sobre el portfolio, proyectos, habilidades y experiencia. ¿En qué puedo ayudarte?",
+      };
+
+      setMessages([initialMessage]);
+    }
   }, []);
+
+  // Si estamos en GitHub Pages, no renderizar el componente
+  if (environment === "github-pages") {
+    return null;
+  }
 
   // Límites de redimensionamiento
   const minSize = { width: 320, height: 400 };
@@ -185,27 +182,6 @@ export function AIChatAssistant() {
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    // Si estamos en GitHub Pages, mostrar mensaje de limitación
-    if (environment === 'github-pages') {
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        content: inputValue,
-        sender: "user",
-        timestamp: new Date(),
-      };
-
-      const limitedResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: "Lo siento, el chat con IA no está disponible en GitHub Pages debido a limitaciones de hosting estático. Para una experiencia completa, visita la versión en Vercel o contáctame directamente mediante el formulario de contacto. 📧",
-        sender: "ai",
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, userMessage, limitedResponse]);
-      setInputValue("");
-      return;
-    }
-
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
@@ -267,52 +243,26 @@ export function AIChatAssistant() {
             <div className="absolute bottom-2 left-2 w-0.5 h-0.5 bg-blue-300 rounded-full animate-ping"></div>
           </Button>
 
-          {/* Indicador de estado superpuesto - Cambia según el entorno */}
+          {/* Indicador de estado superpuesto */}
           <div
             className="absolute -top-1 -right-1 pointer-events-none"
             style={{ zIndex: 10002 }}
           >
             <div className="relative">
-              {environment === 'github-pages' ? (
-                // Indicador naranja para GitHub Pages (limitado)
-                <>
-                  <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-white shadow-lg"></div>
-                  <div className="absolute inset-0 w-4 h-4 bg-orange-400 rounded-full animate-ping opacity-75"></div>
-                  <div className="absolute inset-1 w-2 h-2 bg-orange-300 rounded-full animate-pulse"></div>
-                </>
-              ) : (
-                // Indicador verde para otros entornos (completo)
-                <>
-                  <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-lg"></div>
-                  <div className="absolute inset-0 w-4 h-4 bg-emerald-400 rounded-full animate-ping opacity-75"></div>
-                  <div className="absolute inset-1 w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></div>
-                </>
-              )}
+              <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-lg"></div>
+              <div className="absolute inset-0 w-4 h-4 bg-emerald-400 rounded-full animate-ping opacity-75"></div>
+              <div className="absolute inset-1 w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></div>
             </div>
           </div>
 
-          {/* Tooltip - Cambia según el entorno */}
+          {/* Tooltip */}
           <div className="absolute -top-16 right-0 bg-gray-900/95 backdrop-blur-sm text-white text-xs px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pointer-events-none border border-gray-700/50">
             <div className="flex items-center gap-2">
-              {environment === 'github-pages' ? (
-                <>
-                  <AlertCircle className="w-3 h-3 text-orange-400" />
-                  <span className="font-medium">Asistente IA (Limitado)</span>
-                </>
-              ) : (
-                <>
-                  <Zap className="w-3 h-3 text-yellow-400" />
-                  <span className="font-medium">Asistente IA</span>
-                </>
-              )}
+              <Zap className="w-3 h-3 text-yellow-400" />
+              <span className="font-medium">Asistente IA</span>
               <span className="text-gray-400">•</span>
               <span className="text-gray-300">Ctrl+I</span>
             </div>
-            {environment === 'github-pages' && (
-              <div className="text-orange-300 text-xs mt-1">
-                GitHub Pages - Funcionalidad limitada
-              </div>
-            )}
             <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900/95"></div>
           </div>
 
@@ -528,15 +478,8 @@ export function AIChatAssistant() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={environment === 'github-pages' 
-                      ? "Chat limitado en GitHub Pages..."
-                      : "Escribe tu pregunta aquí..."
-                    }
-                    className={`text-sm border-0 backdrop-blur-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 rounded-2xl py-4 px-5 pr-16 transition-all duration-300 shadow-sm hover:shadow-md resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                      environment === 'github-pages' 
-                        ? "bg-orange-50/80 dark:bg-orange-900/20 focus:bg-orange-100 dark:focus:bg-orange-800/30" 
-                        : "bg-gray-100/80 dark:bg-gray-800/80 focus:bg-white dark:focus:bg-gray-700"
-                    }`}
+                    placeholder="Escribe tu pregunta aquí..."
+                    className="text-sm border-0 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm focus:bg-white dark:focus:bg-gray-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 rounded-2xl py-4 px-5 pr-16 transition-all duration-300 shadow-sm hover:shadow-md resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     disabled={isTyping}
                     maxLength={500}
                   />
