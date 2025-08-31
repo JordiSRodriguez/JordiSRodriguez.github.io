@@ -21,7 +21,7 @@ This is a **Next.js 14+ portfolio application** with React Server Components (RS
 - **Supabase**: PostgreSQL database for portfolio data (mostly public read access)
 - **Client creation**: Always use `createBrowserClient()` from `@supabase/ssr` in components
 - **Realtime**: Portfolio likes use Supabase realtime subscriptions (see `StatsSection`)
-- **Schema**: Single clean migration file `clean_portfolio_schema.sql` replaces all numbered migrations
+- **Schema**: Single migration file `001_clean_portfolio_schema.sql` in `/scripts/` directory
 - **Security**: Simple RLS policies - public read access, restricted writes for essential data protection
 
 ### Styling Conventions
@@ -50,11 +50,22 @@ This is a **Next.js 14+ portfolio application** with React Server Components (RS
 
 ### Build & Deploy
 
-- **Development**: `npm run dev` (uses Turbopack)
+- **Development**: `npm run dev` (uses Turbopack for faster builds)
 - **Build**: ESLint and TypeScript errors are ignored in build (`next.config.mjs`)
 - **Images**: Unoptimized for static export compatibility
+- **GitHub Pages**: Special build script `npm run build:github` for static export with GitHub Actions
+- **Development Mode**: Dev-only components in `/components/dev/` only render when `NODE_ENV === "development"`
 
 ## Critical Patterns
+
+### Development Tools
+
+The project includes a comprehensive dev panel (`DevSection`) only visible in development:
+
+- **Data Management**: CRUD operations for all database tables via `/components/dev/data-management.tsx`
+- **Database Viewer**: Live Supabase table inspection via `/components/dev/supabase-table-viewer.tsx`
+- **Performance Monitor**: Real-time performance metrics via `/components/dev/performance-monitor.tsx`
+- **System Info**: Environment and build information via `/components/dev/system-info.tsx`
 
 ### Mobile Navigation
 
@@ -88,9 +99,10 @@ const supabase = createBrowserClient(
 ## File Organization
 
 - `/components/sections/`: Main page sections (about, work experience, education)
+- `/components/dev/`: Development-only tools and admin panels (data management, debugging)
 - `/components/ui/`: shadcn/ui components (auto-generated, don't modify manually)
 - `/contexts/`: React contexts for global state
-- `/scripts/clean_portfolio_schema.sql`: Single migration file for clean database setup
+- `/scripts/001_clean_portfolio_schema.sql`: Single migration file for clean database setup
 - `/hooks/`: Custom React hooks (`use-mobile`, `use-toast`)
 
 ## Environment Variables Required
