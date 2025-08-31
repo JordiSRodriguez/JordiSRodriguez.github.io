@@ -125,7 +125,6 @@ export function AIChatAssistant() {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsResizing(true);
-
     const startX = e.clientX;
     const startY = e.clientY;
     const startWidth = chatSize.width;
