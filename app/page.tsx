@@ -158,8 +158,8 @@ function HomePageContent() {
         currentTheme={currentTheme}
         onThemeChange={handleThemeChange}
       />
-      {/* AI Chat Assistant - Solo en desktop */}
-      {!isMobile && <AIChatAssistant />}
+      {/* AI Chat Assistant */}
+      <AIChatAssistant />
       <VoiceNavigation
         isActive={isVoiceActive}
         onSectionChange={navigateToSection}

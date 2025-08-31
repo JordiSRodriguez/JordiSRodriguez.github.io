@@ -97,7 +97,7 @@ export function MobileFloatingDock({
             </div>
 
             {/* AI Chat con icono mejorado */}
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
               onClick={onAiChatToggle}
@@ -108,7 +108,7 @@ export function MobileFloatingDock({
               </div>
               <span className="font-medium">AI Asistente</span>
               <div className="ml-auto w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            </Button>
+            </Button> */}
 
             {/* GitHub con stats preview */}
             <Button

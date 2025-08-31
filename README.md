@@ -10,7 +10,8 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
 - 🔄 **Tiempo Real**: Likes en tiempo real con Supabase Realtime
 - 🛠 **Panel de Admin**: Gestión de datos en desarrollo
 - 📊 **Analytics**: Panel de estadísticas (solo desarrollo)
-- 🎵 **Componentes Interactivos**: Reproductor de música, clima, chat AI
+- 🎵 **Componentes Interactivos**: Reproductor de música, clima
+- 🤖 **Asistente de IA**: Chat inteligente con OpenAI y Hugging Face
 
 ## 🛠 Tecnologías
 
@@ -19,6 +20,7 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
 - **Database**: Supabase (PostgreSQL)
 - **Auth**: Supabase Auth
 - **Real-time**: Supabase Realtime
+- **AI**: OpenAI API via Hugging Face Router
 - **Icons**: Lucide React
 - **Fonts**: Geist Sans/Mono
 
@@ -50,7 +52,10 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
    ```env
    NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
    NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
+   NEXT_PUBLIC_HUGGINGFACE_API_KEY=tu_token_de_hugging_face
    ```
+
+   > **🤖 Para el Asistente de IA**: Obtén tu token gratuito en [Hugging Face Settings](https://huggingface.co/settings/tokens)
 
 4. **Configurar la base de datos**
 
@@ -76,6 +81,38 @@ Un portfolio moderno y dinámico construido con Next.js 14, React Server Compone
 - Dock flotante en la parte inferior
 - Modales para widgets
 - Navegación optimizada para touch
+
+## 🤖 Asistente de IA
+
+El portfolio incluye un asistente de IA avanzado que puede responder preguntas sobre el desarrollador, sus proyectos y habilidades.
+
+### Características del Asistente
+
+- **🧠 IA Inteligente**: Usa OpenAI a través del router de Hugging Face
+- **💬 Contexto Específico**: Entrenado con información del portfolio
+- **⌨️ Atajos**: Usa `Ctrl+I` para abrir/cerrar el chat
+- **📱 Responsive**: Interfaz adaptada para móvil y desktop
+- **⚡ Tiempo Real**: Respuestas rápidas y contextualmente relevantes
+
+### Ejemplo de Uso
+
+Puedes preguntarle cosas como:
+
+- "¿Qué tecnologías domina Jordi?"
+- "Cuéntame sobre sus proyectos más interesantes"
+- "¿Cómo puedo contactar con él?"
+- "¿Qué experiencia tiene en React?"
+
+### Configuración del Asistente
+
+1. Obtén un token gratuito de [Hugging Face](https://huggingface.co/settings/tokens)
+2. Agrega el token a tu `.env.local`:
+   ```env
+   NEXT_PUBLIC_HUGGINGFACE_API_KEY=tu_token_aqui
+   ```
+3. El asistente estará disponible automáticamente en el portfolio
+
+> **📚 Documentación completa**: Ver `docs/AI_ASSISTANT.md` para más detalles técnicos.
 
 ## 🔧 Panel de Administración
 
