@@ -26,7 +26,7 @@ interface StatsData {
   githubRepos?: number;
   totalLikes: number;
   skillsCount: number;
-  educationCount: number;
+  experiencesCount: number;
 }
 
 export function StatsSection() {
@@ -39,7 +39,7 @@ export function StatsSection() {
     githubRepos: 0,
     totalLikes: 0,
     skillsCount: 0,
-    educationCount: 0,
+    experiencesCount: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -229,7 +229,7 @@ export function StatsSection() {
       const totalContacts = statsResults.contactsData?.length || 0;
       const totalLikes = statsResults.likesData?.length || 0;
       const skillsCount = statsResults.skillsData?.length || 0;
-      const educationCount = statsResults.experiencesData?.length || 0;
+      const experiencesCount = statsResults.experiencesData?.length || 0;
 
       // Update state with real data
       setVisitCount(totalVisits);
@@ -242,7 +242,7 @@ export function StatsSection() {
         totalContacts,
         totalLikes,
         skillsCount,
-        educationCount,
+        experiencesCount,
       });
 
       // Only show warning in development if some tables failed
@@ -264,7 +264,7 @@ export function StatsSection() {
         totalContacts: 0,
         totalLikes: 0,
         skillsCount: 0,
-        educationCount: 0,
+        experiencesCount: 0,
       });
 
       // Only show error in development
@@ -328,7 +328,7 @@ export function StatsSection() {
     {
       icon: GraduationCap,
       label: "Formación Académica",
-      value: formatStatValue(statsData.educationCount),
+      value: formatStatValue(statsData.experiencesCount),
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
       available: true, // Always show, even if 0
