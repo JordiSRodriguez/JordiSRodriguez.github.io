@@ -29,8 +29,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Analytics />
-          <SpeedInsights />
+          {/* Solo cargar Analytics en Vercel (no en export estático) */}
+          {process.env.VERCEL && (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          )}
         </ThemeProvider>
       </body>
     </html>

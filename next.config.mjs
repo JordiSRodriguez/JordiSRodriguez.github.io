@@ -9,11 +9,17 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Configuración para GitHub Pages
+  // Configuración para GitHub Pages solamente
   ...(process.env.GITHUB_ACTIONS && {
     output: "export",
     trailingSlash: true,
     distDir: "out",
+  }),
+  // Asegurar que Analytics funcione en Vercel
+  ...(process.env.VERCEL && {
+    experimental: {
+      webVitalsAttribution: ["CLS", "LCP"],
+    },
   }),
 };
 
