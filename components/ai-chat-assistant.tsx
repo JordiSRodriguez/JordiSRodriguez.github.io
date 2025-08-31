@@ -154,31 +154,43 @@ REGLAS: Solo temas relacionados con el portfolio. Respuestas concisas sin format
   }
 };
 
-// Función para obtener respuesta a través del proxy
+// Función para obtener respuesta directamente de Hugging Face
 const getAIResponse = async (
   userMessage: string,
   context: string
 ): Promise<string> => {
   try {
-    const response = await fetch("/api/ai-proxy", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: userMessage,
-        context: context,
-      }),
-    });
+    const response = await fetch(
+      "https://router.huggingface.co/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "meta-llama/Llama-3.1-8B-Instruct",
+          messages: [
+            { role: "system", content: context },
+            { role: "user", content: userMessage },
+          ],
+          max_tokens: 200,
+          temperature: 0.2,
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    return data.response || "Lo siento, no pude procesar tu mensaje.";
+    return (
+      data.choices[0]?.message?.content ||
+      "Lo siento, no pude procesar tu mensaje."
+    );
   } catch (error) {
-    console.error("Error calling AI proxy:", error);
+    console.error("Error calling Hugging Face API:", error);
     return "Disculpa, tengo problemas técnicos. Puedes contactar directamente para más información.";
   }
 };
