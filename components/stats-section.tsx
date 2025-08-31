@@ -127,51 +127,109 @@ export function StatsSection() {
     try {
       setError(null);
 
-      // Fetch all stats in parallel
-      const [
-        { data: visitsData, error: visitsError },
-        { data: projectsData, error: projectsError },
-        { data: workExperiencesData, error: workExperiencesError },
-        { data: contactsData, error: contactsError },
-        { data: likesData, error: likesError },
-        { data: skillsData, error: skillsError },
-        { data: educationData, error: educationError },
-      ] = await Promise.all([
-        supabase.from("visit_stats").select("id"),
-        supabase.from("projects").select("id, status"),
-        supabase.from("work_experiences").select("id"),
-        supabase.from("contacts").select("id"),
-        supabase.from("portfolio_likes").select("id"),
-        supabase.from("skills").select("id"),
-        supabase.from("education").select("id"),
-      ]);
+      // Define table queries with safe fallbacks
+      const tableQueries = [
+        {
+          name: "visit_stats",
+          query: supabase.from("visit_stats").select("id"),
+        },
+        {
+          name: "projects",
+          query: supabase.from("projects").select("id, status"),
+        },
+        {
+          name: "work_experiences",
+          query: supabase.from("work_experiences").select("id"),
+        },
+        { name: "contacts", query: supabase.from("contacts").select("id") },
+        {
+          name: "portfolio_likes",
+          query: supabase.from("portfolio_likes").select("id"),
+        },
+        { name: "skills", query: supabase.from("skills").select("id") },
+        {
+          name: "experiences",
+          query: supabase.from("experiences").select("id"),
+        },
+      ];
 
-      // Check for errors
-      const errors = [
-        visitsError,
-        projectsError,
-        workExperiencesError,
-        contactsError,
-        likesError,
-        skillsError,
-        educationError,
-      ].filter(Boolean);
+      // Execute queries with individual error handling
+      const results = await Promise.allSettled(
+        tableQueries.map(({ query }) => query)
+      );
 
-      if (errors.length > 0) {
-        throw new Error(
-          `Database errors: ${errors.map((e) => e?.message).join(", ")}`
-        );
-      }
+      // Process results with graceful degradation
+      const statsResults: {
+        visitsData: any[] | null;
+        projectsData: any[] | null;
+        workExperiencesData: any[] | null;
+        contactsData: any[] | null;
+        likesData: any[] | null;
+        skillsData: any[] | null;
+        experiencesData: any[] | null;
+      } = {
+        visitsData: null,
+        projectsData: null,
+        workExperiencesData: null,
+        contactsData: null,
+        likesData: null,
+        skillsData: null,
+        experiencesData: null,
+      };
 
-      // Calculate real stats with fallbacks
+      const availableTables: string[] = [];
+      const failedTables: string[] = [];
+
+      results.forEach((result, index) => {
+        const tableName = tableQueries[index].name;
+
+        if (result.status === "fulfilled" && !result.value.error) {
+          availableTables.push(tableName);
+
+          switch (tableName) {
+            case "visit_stats":
+              statsResults.visitsData = result.value.data;
+              break;
+            case "projects":
+              statsResults.projectsData = result.value.data;
+              break;
+            case "work_experiences":
+              statsResults.workExperiencesData = result.value.data;
+              break;
+            case "contacts":
+              statsResults.contactsData = result.value.data;
+              break;
+            case "portfolio_likes":
+              statsResults.likesData = result.value.data;
+              break;
+            case "skills":
+              statsResults.skillsData = result.value.data;
+              break;
+            case "experiences":
+              statsResults.experiencesData = result.value.data;
+              break;
+          }
+        } else {
+          failedTables.push(tableName);
+          if (process.env.NODE_ENV === "development") {
+            console.warn(
+              `Table '${tableName}' not available:`,
+              result.status === "fulfilled" ? result.value.error : result.reason
+            );
+          }
+        }
+      });
+
+      // Calculate stats from available data
       const completedProjects =
-        projectsData?.filter((p) => p.status === "completed").length || 0;
-      const totalVisits = visitsData?.length || 0;
-      const workExperiences = workExperiencesData?.length || 0;
-      const totalContacts = contactsData?.length || 0;
-      const totalLikes = likesData?.length || 0;
-      const skillsCount = skillsData?.length || 0;
-      const educationCount = educationData?.length || 0;
+        statsResults.projectsData?.filter((p: any) => p.status === "completed")
+          .length || 0;
+      const totalVisits = statsResults.visitsData?.length || 0;
+      const workExperiences = statsResults.workExperiencesData?.length || 0;
+      const totalContacts = statsResults.contactsData?.length || 0;
+      const totalLikes = statsResults.likesData?.length || 0;
+      const skillsCount = statsResults.skillsData?.length || 0;
+      const educationCount = statsResults.experiencesData?.length || 0;
 
       // Update state with real data
       setVisitCount(totalVisits);
@@ -186,10 +244,19 @@ export function StatsSection() {
         skillsCount,
         educationCount,
       });
+
+      // Only show warning in development if some tables failed
+      if (process.env.NODE_ENV === "development" && failedTables.length > 0) {
+        console.info(
+          `Portfolio stats loaded successfully. Available tables: ${availableTables.join(
+            ", "
+          )}. Unavailable: ${failedTables.join(", ")}`
+        );
+      }
     } catch (error) {
       console.error("Error fetching stats:", error);
 
-      // Set fallback data instead of showing error
+      // Set fallback data - production should be silent
       setStatsData({
         completedProjects: 0,
         totalVisits: 1, // At least one visit (current)
@@ -200,11 +267,12 @@ export function StatsSection() {
         educationCount: 0,
       });
 
-      setError(
-        "Algunas estadísticas no se pudieron cargar. Mostrando datos parciales."
-      );
-
-      // Don't retry automatically to avoid infinite loops
+      // Only show error in development
+      if (process.env.NODE_ENV === "development") {
+        setError(
+          "Algunas estadísticas no se pudieron cargar. Mostrando datos parciales."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -216,7 +284,9 @@ export function StatsSection() {
         localStorage.getItem("visitor_id") || crypto.randomUUID();
       localStorage.setItem("visitor_id", visitorId);
 
-      console.log("Attempting to track visit for visitor:", visitorId);
+      if (process.env.NODE_ENV === "development") {
+        console.log("Attempting to track visit for visitor:", visitorId);
+      }
 
       const { data, error } = await supabase.from("visit_stats").insert([
         {
@@ -227,11 +297,14 @@ export function StatsSection() {
         },
       ]);
 
-      if (error) {
-        console.error("Error inserting visit:", error);
+      if (error && process.env.NODE_ENV === "development") {
+        console.warn("Visit tracking unavailable:", error.message);
       }
     } catch (error) {
-      console.error("Error tracking visit:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Visit tracking failed:", error);
+      }
+      // Silently fail in production - analytics shouldn't break the user experience
     }
   };
 
@@ -242,6 +315,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.completedProjects),
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
+      available: true, // Always show, even if 0
     },
     {
       icon: Briefcase,
@@ -249,6 +323,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.workExperiences),
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
+      available: true, // Always show, even if 0
     },
     {
       icon: GraduationCap,
@@ -256,6 +331,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.educationCount),
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
+      available: true, // Always show, even if 0
     },
     {
       icon: MessageSquare,
@@ -263,6 +339,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.totalContacts),
       color: "text-green-500",
       bgColor: "bg-green-500/10",
+      available: true, // Always show, even if 0
     },
     {
       icon: GitBranch,
@@ -270,6 +347,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.githubRepos || 0),
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
+      available: true, // GitHub stats are fetched separately
     },
     {
       icon: Eye,
@@ -277,6 +355,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.totalVisits),
       color: "text-red-500",
       bgColor: "bg-red-500/10",
+      available: true, // Always show, at least 1 visit
     },
     {
       icon: Heart,
@@ -284,6 +363,7 @@ export function StatsSection() {
       value: formatStatValue(statsData.totalLikes),
       color: "text-pink-500",
       bgColor: "bg-pink-500/10",
+      available: true, // Always show, even if 0
     },
     {
       icon: Star,
@@ -291,8 +371,9 @@ export function StatsSection() {
       value: formatStatValue(statsData.skillsCount),
       color: "text-cyan-500",
       bgColor: "bg-cyan-500/10",
+      available: true, // Always show, even if 0
     },
-  ];
+  ].filter((stat) => stat.available);
 
   if (loading) {
     return (
@@ -304,18 +385,20 @@ export function StatsSection() {
     );
   }
 
-  if (error) {
+  // Only show error UI in development mode
+  if (error && process.env.NODE_ENV === "development") {
     return (
       <div className="text-center p-8">
-        <div className="text-red-500 mb-4">{error}</div>
+        <div className="text-yellow-500 mb-4">{error}</div>
         <div className="text-sm text-muted-foreground mb-4">
-          Verifica la consola del navegador para más detalles
+          Algunas tablas de la base de datos no están disponibles. Mostrando
+          estadísticas con datos parciales.
         </div>
         <button
           onClick={() => window.location.reload()}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Reintentar
+          Recargar
         </button>
       </div>
     );
@@ -323,6 +406,16 @@ export function StatsSection() {
 
   return (
     <div className="w-full">
+      {/* Development Notice */}
+      {process.env.NODE_ENV === "development" && error && (
+        <div className="mb-4 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-center">
+          <p className="text-xs text-yellow-600 dark:text-yellow-400">
+            ⚠️ Desarrollo: Algunas tablas no disponibles, mostrando datos
+            parciales
+          </p>
+        </div>
+      )}
+
       {/* Main Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 justify-items-center max-w-6xl mx-auto">
         {stats.map((stat, index) => (
