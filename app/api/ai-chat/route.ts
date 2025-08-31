@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { createClient } from "@supabase/supabase-js";
 
-// Configuración del cliente OpenAI con router de Hugging Face
-const client = new OpenAI({
-  baseURL: "https://router.huggingface.co/v1",
-  apiKey: process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY,
-});
-
 // Cliente de Supabase para obtener datos dinámicos
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -158,6 +152,12 @@ REGLAS:
 • SOLO responde preguntas sobre portfolio, proyectos, tecnologias y experiencia profesional
 • Si la pregunta no esta relacionada, responde: "Lo siento, estoy aqui para ayudarte con informacion sobre el portfolio, proyectos y experiencia profesional. ¿Hay algo especifico sobre mi trabajo que te gustaria saber?"
 `;
+
+    // Inicializar el cliente OpenAI solo cuando se necesite
+    const client = new OpenAI({
+      baseURL: "https://router.huggingface.co/v1",
+      apiKey: process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY,
+    });
 
     const chatCompletion = await client.chat.completions.create({
       model: "meta-llama/Llama-3.1-8B-Instruct",
