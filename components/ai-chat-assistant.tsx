@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFloatingComponents } from "@/contexts/floating-components-context";
 import { Send, User, Brain, Zap, X } from "lucide-react";
-import { createClient } from "@supabase/supabase-js";
 
 interface Message {
   id: string;
@@ -16,182 +15,27 @@ interface Message {
   timestamp: Date;
 }
 
-interface Profile {
-  full_name?: string;
-  bio?: string;
-  location?: string;
-  roles?: string[];
-  github_username?: string;
-  linkedin_url?: string;
-}
-
-interface Project {
-  title: string;
-  description: string;
-  technologies: string[] | string;
-}
-
-interface WorkExperience {
-  title: string;
-  company: string;
-  position: string;
-  description?: string;
-  current_job: boolean;
-}
-
-interface Skill {
-  name: string;
-  category: string;
-  level: number;
-}
-
-// Función para obtener contexto dinámico desde Supabase
-const getPortfolioContext = async (): Promise<string> => {
+// Función para obtener respuesta de la API de IA
+const getAIResponseFromAPI = async (userMessage: string): Promise<string> => {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
-    const [profileResult, projectsResult, workResult, skillsResult] =
-      await Promise.all([
-        supabase
-          .from("profiles")
-          .select(
-            "full_name, bio, location, roles, github_username, linkedin_url"
-          )
-          .single(),
-        supabase
-          .from("projects")
-          .select("title, description, technologies")
-          .eq("featured", true)
-          .limit(5),
-        supabase
-          .from("work_experiences")
-          .select("title, company, position, description, current_job")
-          .order("start_date", { ascending: false })
-          .limit(3),
-        supabase
-          .from("skills")
-          .select("name, category, level")
-          .gte("level", 4)
-          .limit(20),
-      ]);
-
-    const profile: Profile = profileResult.data || {};
-    const projects: Project[] = projectsResult.data || [];
-    const workExperiences: WorkExperience[] = workResult.data || [];
-    const skills: Skill[] = skillsResult.data || [];
-
-    // Construir contexto dinámico
-    const skillsByCategory = skills.reduce((acc: any, skill: any) => {
-      if (!acc[skill.category]) acc[skill.category] = [];
-      acc[skill.category].push(skill.name);
-      return acc;
-    }, {});
-
-    return `Eres el asistente de IA de ${
-      profile.full_name || "Jordi"
-    }, desarrollador Full Stack.
-
-INFORMACIÓN PERSONAL:
-- Nombre: ${profile.full_name || "Jordi"}
-- Bio: ${
-      profile.bio ||
-      "Desarrollador Full Stack especializado en tecnologías modernas"
-    }
-- Ubicación: ${profile.location || "España"}
-- Roles: ${
-      Array.isArray(profile.roles)
-        ? profile.roles.join(", ")
-        : "Full Stack Developer"
-    }
-
-PROYECTOS DESTACADOS:
-${projects
-  .map(
-    (p) =>
-      `- ${p.title}: ${p.description} (Tecnologías: ${
-        Array.isArray(p.technologies)
-          ? p.technologies.join(", ")
-          : p.technologies
-      })`
-  )
-  .join("\n")}
-
-EXPERIENCIA LABORAL:
-${workExperiences
-  .map(
-    (w) =>
-      `- ${w.position} en ${w.company}${w.current_job ? " (Actual)" : ""}: ${
-        w.description || w.title
-      }`
-  )
-  .join("\n")}
-
-HABILIDADES TÉCNICAS:
-${Object.entries(skillsByCategory)
-  .map(([cat, skills]: [string, any]) => `${cat}: ${skills.join(", ")}`)
-  .join("\n")}
-
-REGLAS:
-- Responde SOLO sobre temas relacionados con el portfolio, tecnologías, proyectos o experiencia profesional
-- Si preguntan algo no relacionado, responde: "Lo siento, estoy aqui para ayudarte con informacion sobre el portfolio, proyectos y experiencia profesional. ¿Hay algo especifico sobre mi trabajo que te gustaria saber?"
-- Sé conciso: máximo 3-4 líneas por respuesta
-- No uses markdown ni caracteres especiales de formato
-- Mantén un tono profesional pero cercano`;
-  } catch (error) {
-    console.error("Error obteniendo contexto:", error);
-    return `Soy el asistente de IA de Jordi, desarrollador Full Stack.
-
-Puedo ayudarte con información sobre:
-- Proyectos y tecnologías
-- Experiencia profesional
-- Habilidades técnicas
-- Contacto profesional
-
-REGLAS: Solo temas relacionados con el portfolio. Respuestas concisas sin formato especial.`;
-  }
-};
-
-// Función para obtener respuesta directamente de Hugging Face
-const getAIResponse = async (
-  userMessage: string,
-  context: string
-): Promise<string> => {
-  try {
-    const response = await fetch(
-      "https://router.huggingface.co/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "meta-llama/Llama-3.1-8B-Instruct",
-          messages: [
-            { role: "system", content: context },
-            { role: "user", content: userMessage },
-          ],
-          max_tokens: 200,
-          temperature: 0.2,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const response = await fetch("/api/ai-chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userMessage }),
+    });
 
     const data = await response.json();
-    return (
-      data.choices[0]?.message?.content ||
-      "Lo siento, no pude procesar tu mensaje."
-    );
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error en la API");
+    }
+
+    return data.response;
   } catch (error) {
-    console.error("Error calling Hugging Face API:", error);
-    return "Disculpa, tengo problemas técnicos. Puedes contactar directamente para más información.";
+    console.error("Error al obtener respuesta de IA:", error);
+    return "Lo siento, estoy experimentando dificultades técnicas. Por favor, intenta de nuevo en unos momentos o usa el formulario de contacto para comunicarte directamente.";
   }
 };
 
@@ -278,26 +122,22 @@ export function AIChatAssistant() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isTyping) return;
+    if (!inputValue.trim()) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: inputValue.trim(),
+      content: inputValue,
       sender: "user",
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    const currentInput = inputValue.trim();
+    const currentInput = inputValue;
     setInputValue("");
     setIsTyping(true);
 
     try {
-      // Obtener contexto dinámico desde Supabase
-      const context = await getPortfolioContext();
-
-      // Obtener respuesta de IA directamente de Hugging Face
-      const aiResponseContent = await getAIResponse(currentInput, context);
+      const aiResponseContent = await getAIResponseFromAPI(currentInput);
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -308,15 +148,7 @@ export function AIChatAssistant() {
 
       setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
-      console.error("Error getting AI response:", error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content:
-          "Disculpa, hay un problema técnico. Puedes contactar directamente a través del formulario de contacto.",
-        sender: "ai",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      console.error("Error al obtener respuesta:", error);
     } finally {
       setIsTyping(false);
     }
