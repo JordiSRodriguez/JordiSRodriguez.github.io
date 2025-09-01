@@ -13,45 +13,15 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFloatingComponents } from "@/contexts/floating-components-context";
-
-interface GitHubActivity {
-  id: string;
-  type: string;
-  repo: string;
-  message: string;
-  timestamp: Date;
-  additions?: number;
-  deletions?: number;
-  url?: string;
-}
-
-interface GitHubStats {
-  totalCommits: number;
-  totalStars: number;
-  totalRepos: number;
-  followers: number;
-  following: number;
-  totalForks: number;
-}
+import { useGitHubData } from "@/hooks/use-github-data";
 
 export function FloatingGitHub() {
-  const [activities, setActivities] = useState<GitHubActivity[]>([]);
-  const [stats, setStats] = useState<GitHubStats>({
-    totalCommits: 0,
-    totalStars: 0,
-    totalRepos: 0,
-    followers: 0,
-    following: 0,
-    totalForks: 0,
-  });
   const [isLive, setIsLive] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [githubUsername, setGithubUsername] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  const { activities, stats, loading, error, githubUsername } = useGitHubData();
 
   const isMobile = useIsMobile();
   const { shouldHideComponent, setGithubExpanded } = useFloatingComponents();
@@ -64,212 +34,81 @@ export function FloatingGitHub() {
   // Ocultar el componente en desktop si otro flotante está activo
   const shouldHide = shouldHideComponent("githubExpanded");
 
-  const supabase = createClient();
-
-  useEffect(() => {
-    // Get user configuration from Supabase
-    const fetchUserProfile = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("github_username")
-          .single();
-
-        if (error) throw error;
-
-        if (data?.github_username) {
-          setGithubUsername(data.github_username);
-        } else {
-          setGithubUsername("octocat"); // Username por defecto para demo
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setGithubUsername("octocat"); // Fallback
-      }
-    };
-
-    fetchUserProfile();
-  }, [supabase]);
-
-  useEffect(() => {
-    if (!githubUsername) return;
-
-    const fetchGitHubData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch basic user stats
-        const userResponse = await fetch(
-          `https://api.github.com/users/${githubUsername}`
-        );
-
-        if (!userResponse.ok) {
-          throw new Error("Error fetching GitHub user data");
-        }
-
-        const userData = await userResponse.json();
-
-        // Fetch repositories
-        const reposResponse = await fetch(
-          `https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=10`
-        );
-
-        if (!reposResponse.ok) {
-          throw new Error("Error fetching GitHub repositories");
-        }
-
-        const reposData = await reposResponse.json();
-
-        // Fetch recent events
-        const eventsResponse = await fetch(
-          `https://api.github.com/users/${githubUsername}/events?per_page=5`
-        );
-
-        if (!eventsResponse.ok) {
-          throw new Error("Error fetching GitHub events");
-        }
-
-        const eventsData = await eventsResponse.json();
-
-        // Calculate total stars and forks
-        const totalStars = reposData.reduce(
-          (sum: number, repo: any) => sum + repo.stargazers_count,
-          0
-        );
-        const totalForks = reposData.reduce(
-          (sum: number, repo: any) => sum + repo.forks_count,
-          0
-        );
-
-        setStats({
-          totalCommits: 0, // GitHub API doesn't provide this easily
-          totalStars,
-          totalRepos: userData.public_repos,
-          followers: userData.followers,
-          following: userData.following,
-          totalForks,
-        });
-
-        // Process recent activities
-        const processedActivities: GitHubActivity[] = eventsData
-          .slice(0, 5)
-          .map((event: any) => ({
-            id: event.id,
-            type: event.type,
-            repo: event.repo.name,
-            message: getEventMessage(event),
-            timestamp: new Date(event.created_at),
-            url: `https://github.com/${event.repo.name}`,
-          }));
-
-        setActivities(processedActivities);
-      } catch (error) {
-        console.error("Error fetching GitHub data:", error);
-        setError(error instanceof Error ? error.message : "Error desconocido");
-        // Set fallback data for demo
-        setFallbackData();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGitHubData();
-  }, [githubUsername]);
-
-  const setFallbackData = () => {
-    setStats({
-      totalCommits: 247,
-      totalStars: 89,
-      totalRepos: 23,
-      followers: 156,
-      following: 89,
-      totalForks: 34,
-    });
-
-    setActivities([
-      {
-        id: "1",
-        type: "PushEvent",
-        repo: "usuario/portfolio-2025",
-        message: "Implementado sistema de navegación flotante",
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 min ago
-        additions: 150,
-        deletions: 23,
-      },
-      {
-        id: "2",
-        type: "CreateEvent",
-        repo: "usuario/weather-app",
-        message: "Creado nuevo repositorio",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-      },
-      {
-        id: "3",
-        type: "IssuesEvent",
-        repo: "usuario/react-components",
-        message: "Cerrado issue: Mejorar responsive design",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4), // 4 hours ago
-      },
-    ]);
-  };
-
-  const getEventMessage = (event: any): string => {
-    switch (event.type) {
+  // Función para determinar el color basado en el tipo de actividad
+  const getActivityColor = (type: string): string => {
+    switch (type) {
       case "PushEvent":
-        const commits = event.payload.commits?.length || 1;
-        return `${commits} nuevo${commits > 1 ? "s" : ""} commit${
-          commits > 1 ? "s" : ""
-        }`;
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
       case "CreateEvent":
-        return `Creado ${event.payload.ref_type}: ${
-          event.payload.ref || "repositorio"
-        }`;
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      case "DeleteEvent":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
       case "IssuesEvent":
-        return `${event.payload.action} issue: ${event.payload.issue?.title}`;
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400";
       case "PullRequestEvent":
-        return `${event.payload.action} pull request`;
-      case "ForkEvent":
-        return "Repositorio forkeado";
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
       case "WatchEvent":
-        return "Repositorio marcado con estrella";
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
       default:
-        return `Actividad: ${event.type}`;
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
     }
   };
 
+  // Función para determinar el icono basado en el tipo de actividad
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "PushEvent":
-        return <GitCommit className="h-4 w-4 text-green-500" />;
+        return <GitCommit className="h-3 w-3" />;
       case "CreateEvent":
-        return <GitBranch className="h-4 w-4 text-blue-500" />;
+      case "DeleteEvent":
+        return <GitBranch className="h-3 w-3" />;
       case "IssuesEvent":
-        return <AlertCircle className="h-4 w-4 text-orange-500" />;
       case "PullRequestEvent":
-        return <GitBranch className="h-4 w-4 text-purple-500" />;
-      case "ForkEvent":
-        return <GitBranch className="h-4 w-4 text-yellow-500" />;
+        return <Activity className="h-3 w-3" />;
       case "WatchEvent":
-        return <Star className="h-4 w-4 text-yellow-500" />;
+        return <Star className="h-3 w-3" />;
       default:
-        return <Activity className="h-4 w-4 text-muted-foreground" />;
+        return <Github className="h-3 w-3" />;
     }
   };
 
+  // Función para formatear el tiempo relativo
   const formatTimeAgo = (date: Date): string => {
     const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInMinutes < 1) return "Ahora";
-    if (diffInMinutes < 60) return `${diffInMinutes}m`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
-    return `${Math.floor(diffInMinutes / 1440)}d`;
+    if (diffInSeconds < 60) {
+      return "hace unos segundos";
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `hace ${minutes} min`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `hace ${hours}h`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `hace ${days}d`;
+    }
   };
 
-  const toggleLiveMode = () => {
-    setIsLive(!isLive);
+  // Función para formatear números grandes
+  const formatNumber = (num: number): string => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + "M";
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + "K";
+    }
+    return num.toString();
   };
+
+  // Efectos de vida (simulación de actividad en tiempo real)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsLive((prev) => !prev);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // No renderizar si debe estar oculto en desktop
   if (shouldHide) {
@@ -278,7 +117,7 @@ export function FloatingGitHub() {
 
   return (
     <div
-      className="fixed z-50 transition-all duration-500 ease-out top-1/2 right-4 -translate-y-1/2"
+      className="fixed z-50 transition-all duration-500 ease-out top-20 right-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -288,7 +127,7 @@ export function FloatingGitHub() {
           transition-all duration-500 ease-out transform-gpu
           ${
             isHovered
-              ? "w-96 h-80 shadow-2xl scale-105 border-primary/20 origin-right"
+              ? "w-96 h-80 shadow-2xl scale-105 border-primary/20"
               : "w-16 h-16 hover:shadow-xl hover:scale-110"
           }
           rounded-2xl overflow-hidden
@@ -299,12 +138,21 @@ export function FloatingGitHub() {
       >
         {!isHovered ? (
           // Vista compacta (icono)
-          <div className="h-full w-full flex items-center justify-center relative group">
-            <Github className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
-            {isLive && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-            )}
-            <div className="absolute -top-1 -left-1 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
+          <div className="h-full w-full flex items-center justify-center group relative">
+            <div className="relative">
+              <Github
+                className={`h-6 w-6 text-muted-foreground transition-all duration-300 ${
+                  isLive ? "text-green-500 animate-pulse" : ""
+                }`}
+              />
+              <div
+                className={`absolute -top-1 -right-1 w-3 h-3 rounded-full transition-all duration-300 ${
+                  isLive
+                    ? "bg-green-500 opacity-100 animate-ping"
+                    : "bg-primary opacity-0 group-hover:opacity-100"
+                }`}
+              />
+            </div>
 
             {/* Indicador de toque para móvil */}
             {isMobile && (
@@ -312,18 +160,12 @@ export function FloatingGitHub() {
             )}
 
             {/* Tooltip */}
-            <div
-              className={`absolute ${
-                isMobile
-                  ? "top-8"
-                  : "top-1/2 -left-20 transform -translate-y-1/2"
-              } left-1/2 transform -translate-x-1/2 bg-background/95 backdrop-blur-sm border rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}
-            >
-              {isLive
-                ? "GitHub Live"
+            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-background/95 backdrop-blur-sm border rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              {stats.totalStars > 0
+                ? `${formatNumber(stats.totalStars)} ⭐`
                 : isMobile
                 ? "Toca para ver"
-                : "GitHub Stats"}
+                : "GitHub"}
             </div>
           </div>
         ) : (
@@ -332,97 +174,98 @@ export function FloatingGitHub() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Github className="h-5 w-5" />
+                  <Github className="h-5 w-5 text-muted-foreground" />
                   <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                    GitHub Live
+                    GitHub Activity
                   </span>
                   {isLive && (
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                   )}
                 </CardTitle>
-                <div className="flex items-center gap-2">
+                {isMobile && (
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    onClick={toggleLiveMode}
-                    className="text-xs hover:bg-primary/10 transition-colors duration-200"
+                    onClick={() => setIsHovered(false)}
+                    className="text-xs h-8 w-8 p-0"
                   >
-                    {isLive ? "Pausar" : "Live"}
+                    <X className="h-4 w-4" />
                   </Button>
-                  {isMobile && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsHovered(false)}
-                      className="text-xs h-8 w-8 p-0"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
+                )}
               </div>
             </CardHeader>
             <CardContent className="space-y-4 animate-in fade-in-50 duration-300">
               {loading ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    Cargando datos...
+                  <Activity className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <span className="ml-2 text-muted-foreground">
+                    Cargando actividad...
                   </span>
                 </div>
               ) : error ? (
-                <div className="text-center py-4">
-                  <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                  <p className="text-sm text-red-500">Error: {error}</p>
+                <div className="flex items-center justify-center py-4 text-center">
+                  <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                  <div>
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      Error de conexión
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Mostrando datos demo
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <>
-                  {/* Stats compactas */}
-                  <div className="grid grid-cols-3 gap-2 text-center bg-muted/30 rounded-lg p-3">
-                    <div>
-                      <p className="text-lg font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                        {stats.totalRepos}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Repos</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold bg-gradient-to-r from-yellow-500 to-yellow-600 bg-clip-text text-transparent">
-                        {stats.totalStars}
+                  {/* Stats rápidas */}
+                  <div className="grid grid-cols-3 gap-3 text-center">
+                    <div className="space-y-1">
+                      <p className="text-xl font-bold text-primary">
+                        {formatNumber(stats.totalStars)}
                       </p>
                       <p className="text-xs text-muted-foreground">Stars</p>
                     </div>
-                    <div>
-                      <p className="text-lg font-bold bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent">
-                        {stats.followers}
+                    <div className="space-y-1">
+                      <p className="text-xl font-bold text-primary">
+                        {formatNumber(stats.totalRepos)}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        Seguidores
+                      <p className="text-xs text-muted-foreground">Repos</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xl font-bold text-primary">
+                        {formatNumber(stats.followers)}
                       </p>
+                      <p className="text-xs text-muted-foreground">Followers</p>
                     </div>
                   </div>
 
-                  {/* Actividades recientes */}
+                  {/* Actividad reciente */}
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium flex items-center gap-2">
-                      <Activity className="h-4 w-4" />
+                    <h4 className="text-sm font-medium text-muted-foreground">
                       Actividad Reciente
                     </h4>
-                    <div className="space-y-2 max-h-36 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20">
-                      {activities.slice(0, 3).map((activity) => (
+                    <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                      {activities.slice(0, 4).map((activity) => (
                         <div
                           key={activity.id}
-                          className="flex items-start gap-2 p-2 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors duration-200"
+                          className="flex items-start gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                         >
-                          {getActivityIcon(activity.type)}
+                          <Badge
+                            variant="secondary"
+                            className={`flex items-center gap-1 text-xs px-2 py-0.5 ${getActivityColor(
+                              activity.type
+                            )}`}
+                          >
+                            {getActivityIcon(activity.type)}
+                          </Badge>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-medium truncate">
-                              📁 {activity.repo.split("/")[1]}
-                            </p>
-                            <p className="text-xs text-muted-foreground truncate">
                               {activity.message}
                             </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {activity.repo}
+                            </p>
                           </div>
-                          <span className="text-xs text-muted-foreground bg-background/50 px-2 py-1 rounded">
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">
                             {formatTimeAgo(activity.timestamp)}
                           </span>
                         </div>
@@ -432,12 +275,19 @@ export function FloatingGitHub() {
 
                   {githubUsername && (
                     <div className="text-center">
-                      <Badge
-                        variant="secondary"
-                        className="text-xs bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20"
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs"
+                        onClick={() =>
+                          window.open(
+                            `https://github.com/${githubUsername}`,
+                            "_blank"
+                          )
+                        }
                       >
-                        👤 @{githubUsername}
-                      </Badge>
+                        Ver perfil completo
+                      </Button>
                     </div>
                   )}
                 </>
