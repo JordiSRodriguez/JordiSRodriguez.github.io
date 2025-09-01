@@ -13,6 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Star, MessageSquare, Heart, Send, Filter } from "lucide-react";
 import { createBrowserClient } from "@supabase/ssr";
 
@@ -29,12 +36,19 @@ interface Feedback {
 
 export function VisitorFeedback() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-  const [newFeedback, setNewFeedback] = useState({
+  const [newFeedback, setNewFeedback] = useState<{
+    name: string;
+    email: string;
+    rating: number;
+    message: string;
+    type: "general" | "project" | "design" | "suggestion";
+    is_public: boolean;
+  }>({
     name: "",
     email: "",
     rating: 5,
     message: "",
-    type: "general" as const,
+    type: "general",
     is_public: true,
   });
   const [filter, setFilter] = useState<string>("all");
@@ -203,22 +217,29 @@ export function VisitorFeedback() {
 
               <div>
                 <Label htmlFor="type">Feedback Type</Label>
-                <select
-                  id="type"
+                <Select
                   value={newFeedback.type}
-                  onChange={(e) =>
+                  onValueChange={(value) =>
                     setNewFeedback((prev) => ({
                       ...prev,
-                      type: e.target.value as any,
+                      type: value as
+                        | "general"
+                        | "project"
+                        | "design"
+                        | "suggestion",
                     }))
                   }
-                  className="w-full p-2 border rounded-md"
                 >
-                  <option value="general">General</option>
-                  <option value="project">About Projects</option>
-                  <option value="design">Design & UX</option>
-                  <option value="suggestion">Suggestion</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select feedback type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general">General</SelectItem>
+                    <SelectItem value="project">About Projects</SelectItem>
+                    <SelectItem value="design">Design & UX</SelectItem>
+                    <SelectItem value="suggestion">Suggestion</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -277,17 +298,21 @@ export function VisitorFeedback() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Filter className="w-4 h-4" />
-                  <select
+                  <Select
                     value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="p-1 border rounded-md text-xs"
+                    onValueChange={(value) => setFilter(value)}
                   >
-                    <option value="all">All</option>
-                    <option value="general">General</option>
-                    <option value="project">Projects</option>
-                    <option value="design">Design</option>
-                    <option value="suggestion">Suggestions</option>
-                  </select>
+                    <SelectTrigger className="w-fit text-xs">
+                      <SelectValue placeholder="Filter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="general">General</SelectItem>
+                      <SelectItem value="project">Projects</SelectItem>
+                      <SelectItem value="design">Design</SelectItem>
+                      <SelectItem value="suggestion">Suggestions</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>

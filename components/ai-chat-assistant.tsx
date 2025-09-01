@@ -61,7 +61,7 @@ const getAIResponseFromAPI = async (userMessage: string): Promise<string> => {
   const environment = getDeploymentEnvironment();
 
   // Si estamos en GitHub Pages, no usar la API
-  if (environment === 'github-pages') {
+  if (environment === "github-pages") {
     return "Lo siento, el chat con IA no está disponible en esta versión del sitio debido a limitaciones de hosting estático. Puedes contactarme directamente a través del formulario de contacto o visitar la versión completa en Vercel.";
   }
 
@@ -110,9 +110,10 @@ export function AIChatAssistant() {
       id: "1",
       sender: "ai",
       timestamp: new Date(),
-      content: env === 'github-pages'
-        ? "¡Hola! 👋 Actualmente estás viendo la versión estática del portfolio en GitHub Pages. El chat con IA está limitado aquí debido a restricciones de hosting estático. Para una experiencia completa con IA, visita la versión en Vercel o usa el formulario de contacto."
-        : "¡Hola! Soy tu asistente de IA. Puedo responder preguntas sobre el portfolio, proyectos, habilidades y experiencia. ¿En qué puedo ayudarte?"
+      content:
+        env === "github-pages"
+          ? "¡Hola! 👋 Actualmente estás viendo la versión estática del portfolio en GitHub Pages. El chat con IA está limitado aquí debido a restricciones de hosting estático. Para una experiencia completa con IA, visita la versión en Vercel o usa el formulario de contacto."
+          : "¡Hola! Soy tu asistente de IA. Puedo responder preguntas sobre el portfolio, proyectos, habilidades y experiencia. ¿En qué puedo ayudarte?",
     };
 
     setMessages([initialMessage]);
@@ -183,7 +184,7 @@ export function AIChatAssistant() {
     if (!inputValue.trim()) return;
 
     // Si estamos en GitHub Pages, mostrar mensaje de limitación
-    if (environment === 'github-pages') {
+    if (environment === "github-pages") {
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
@@ -193,7 +194,8 @@ export function AIChatAssistant() {
 
       const limitedResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Lo siento, el chat con IA no está disponible en GitHub Pages debido a limitaciones de hosting estático. Para una experiencia completa, visita la versión en Vercel o contáctame directamente mediante el formulario de contacto. 📧",
+        content:
+          "Lo siento, el chat con IA no está disponible en GitHub Pages debido a limitaciones de hosting estático. Para una experiencia completa, visita la versión en Vercel o contáctame directamente mediante el formulario de contacto. 📧",
         sender: "ai",
         timestamp: new Date(),
       };
@@ -270,7 +272,7 @@ export function AIChatAssistant() {
             style={{ zIndex: 10002 }}
           >
             <div className="relative">
-              {environment === 'github-pages' ? (
+              {environment === "github-pages" ? (
                 // Indicador naranja para GitHub Pages (limitado)
                 <>
                   <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-white shadow-lg"></div>
@@ -291,7 +293,7 @@ export function AIChatAssistant() {
           {/* Tooltip - Cambia según el entorno */}
           <div className="absolute -top-16 right-0 bg-gray-900/95 backdrop-blur-sm text-white text-xs px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pointer-events-none border border-gray-700/50">
             <div className="flex items-center gap-2">
-              {environment === 'github-pages' ? (
+              {environment === "github-pages" ? (
                 <>
                   <AlertCircle className="w-3 h-3 text-orange-400" />
                   <span className="font-medium">Asistente IA (Limitado)</span>
@@ -305,7 +307,7 @@ export function AIChatAssistant() {
               <span className="text-gray-400">•</span>
               <span className="text-gray-300">Ctrl+I</span>
             </div>
-            {environment === 'github-pages' && (
+            {environment === "github-pages" && (
               <div className="text-orange-300 text-xs mt-1">
                 GitHub Pages - Funcionalidad limitada
               </div>
@@ -525,12 +527,13 @@ export function AIChatAssistant() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={environment === 'github-pages'
-                      ? "Chat limitado en GitHub Pages..."
-                      : "Escribe tu pregunta aquí..."
+                    placeholder={
+                      environment === "github-pages"
+                        ? "Chat limitado en GitHub Pages..."
+                        : "Escribe tu pregunta aquí..."
                     }
                     className={`text-sm border-0 backdrop-blur-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 rounded-2xl py-4 px-5 pr-16 transition-all duration-300 shadow-sm hover:shadow-md resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                      environment === 'github-pages'
+                      environment === "github-pages"
                         ? "bg-orange-50/80 dark:bg-orange-900/20 focus:bg-orange-100 dark:focus:bg-orange-800/30"
                         : "bg-gray-100/80 dark:bg-gray-800/80 focus:bg-white dark:focus:bg-gray-700"
                     }`}
