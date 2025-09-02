@@ -19,7 +19,7 @@ import {
   Github,
   Linkedin,
   Twitter,
-  FileText,
+  MessageCircle,
   MessageSquare,
   Calendar,
 } from "lucide-react";
@@ -168,10 +168,10 @@ export function ContactSection() {
       color: "hover:text-blue-400",
     },
     {
-      icon: FileText,
-      label: "CV/Resume",
-      href: "/cv-jordi-sumba.pdf",
-      color: "hover:text-green-500",
+      icon: MessageCircle,
+      label: "Discord",
+      href: "https://discord.com/users/jordix",
+      color: "hover:text-indigo-500",
     },
   ];
 
