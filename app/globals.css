@@ -256,4 +256,72 @@
   .animate-blink {
     animation: blink 1s infinite;
   }
+
+  /* Tools Dock Animations */
+  .tools-dock-icon-stack {
+    transform-style: preserve-3d;
+  }
+
+  .tools-dock-icon-stack .dock-icon {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .tools-dock-icon-stack:hover .dock-icon {
+    transform: translateZ(10px);
+  }
+
+  .tools-dock-expand {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  @keyframes dock-hover {
+    0% {
+      transform: scale(1) translateY(0);
+    }
+    50% {
+      transform: scale(1.05) translateY(-2px);
+    }
+    100% {
+      transform: scale(1.02) translateY(-1px);
+    }
+  }
+
+  .dock-hover-effect {
+    animation: dock-hover 0.4s ease-out;
+  }
+
+  /* GitHub Stats Grid */
+  .github-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .github-stat-item {
+    transition: all 0.2s ease;
+  }
+
+  .github-stat-item:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Activity Timeline */
+  .activity-timeline {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  .activity-timeline::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .activity-timeline::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .activity-timeline::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
 }

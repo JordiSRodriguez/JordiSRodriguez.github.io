@@ -21,8 +21,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { AIChatAssistant } from "@/components/ai-chat-assistant";
 import { VisitorFeedback } from "@/components/visitor-feedback";
 import { VoiceNavigation } from "@/components/voice-navigation";
-import { FloatingGitHub } from "@/components/floating-github";
-import { FloatingWeather } from "@/components/floating-weather";
+import { ToolsDock } from "@/components/tools-dock";
 import { MobileFloatingDock } from "@/components/mobile-floating-dock";
 import { MobileModals } from "@/components/mobile-modals";
 import { PortfolioMusicPlayer } from "@/components/portfolio-music-player";
@@ -170,13 +169,8 @@ function HomePageContent() {
         onToggle={handleMusicToggle}
       />
 
-      {/* Componentes flotantes - Solo en desktop */}
-      {!isMobile && (
-        <>
-          <FloatingWeather />
-          <FloatingGitHub />
-        </>
-      )}
+      {/* Tools Dock - Solo en desktop */}
+      {!isMobile && <ToolsDock />}
 
       {/* Mobile Dock - Solo en móvil */}
       {isMobile && (

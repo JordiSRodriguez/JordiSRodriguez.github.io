@@ -13,6 +13,7 @@ interface FloatingComponentsState {
   aiChatOpen: boolean;
   githubExpanded: boolean;
   weatherExpanded: boolean;
+  toolsDockExpanded: boolean;
 }
 
 interface FloatingComponentsContextType {
@@ -37,6 +38,7 @@ export function FloatingComponentsProvider({
     aiChatOpen: false,
     githubExpanded: false,
     weatherExpanded: false,
+    toolsDockExpanded: false,
   });
 
   const setAiChatOpen = useCallback((open: boolean) => {
@@ -60,22 +62,20 @@ export function FloatingComponentsProvider({
     });
   }, []);
 
-  // Lógica para determinar qué componentes deben ocultarse en móvil - usando useMemo para optimización
+  // Lógica para determinar qué componentes deben ocultarse - usando useMemo para optimización
   const shouldHideComponent = useMemo(() => {
     return (component: keyof FloatingComponentsState): boolean => {
-      // Si el AI Chat está abierto, ocultar otros componentes en móvil
+      // Si el AI Chat está abierto, ocultar todos los demás componentes
       if (state.aiChatOpen && component !== "aiChatOpen") {
         return true;
       }
 
-      // Si GitHub está expandido, ocultar otros componentes
-      if (state.githubExpanded && component !== "githubExpanded") {
-        return true;
-      }
-
-      // Si Weather está expandido, ocultar otros componentes
-      if (state.weatherExpanded && component !== "weatherExpanded") {
-        return true;
+      // No ocultar componentes del dock entre sí, ya que están en el mismo contenedor
+      if (
+        (component === "githubExpanded" || component === "weatherExpanded") &&
+        (state.githubExpanded || state.weatherExpanded)
+      ) {
+        return false;
       }
 
       return false;
