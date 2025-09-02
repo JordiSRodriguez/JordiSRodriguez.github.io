@@ -335,8 +335,8 @@ export function VisitorFeedback() {
                 {filteredFeedbacks.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <MessageSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>No feedback yet</p>
-                    <p className="text-xs">Be the first to share!</p>
+                    <p>Todavía no hay feedback</p>
+                    <p className="text-xs">¡Sé el primero en comentar!</p>
                   </div>
                 ) : (
                   filteredFeedbacks.map((feedback) => (
