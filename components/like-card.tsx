@@ -119,8 +119,8 @@ export function LikeCard() {
     <>
       {/* Message Notification */}
       {showMessage && (
-        <div className="fixed top-4 right-4 z-50 animate-bounce">
-          <Card className="bg-gradient-to-r from-green-400 to-blue-500 text-white border-0">
+        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right-5 duration-300">
+          <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
                 <Heart className="h-5 w-5" />
@@ -132,53 +132,80 @@ export function LikeCard() {
       )}
 
       {/* Like Card */}
-      <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white w-full">
-        <CardContent className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm w-full">
+        <CardContent className="p-6 sm:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
             {/* Sección izquierda - Estadística */}
             <div className="text-center">
-              <div className="text-4xl font-bold mb-2">
+              <Heart className="h-12 w-12 text-primary mx-auto mb-4 animate-pulse" />
+              <div className="text-4xl sm:text-5xl font-bold text-foreground mb-2">
                 {formatStatValue(totalLikes)}
               </div>
-              <p className="text-lg opacity-90">Personas han dado like</p>
-              <p className="text-sm opacity-75 mt-1">¡Únete a la comunidad!</p>
+              <p className="text-base sm:text-lg text-muted-foreground mb-1">
+                Personas han dado like
+              </p>
+              <p className="text-sm text-muted-foreground/80">
+                ¡Únete a la comunidad!
+              </p>
             </div>
 
             {/* Sección derecha - Acción principal */}
             <div className="text-center">
-              <Heart className="h-16 w-16 mx-auto mb-4 animate-pulse" />
-              <h3 className="text-2xl font-bold mb-3">¡Gracias por visitar!</h3>
-              <p className="opacity-90 mb-6 text-lg">
-                Si te gusta mi portfolio, ¡déjame un like!
-              </p>
+              <div className="mb-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
+                  ¡Gracias por visitar!
+                </h3>
+                <p className="text-muted-foreground mb-6 text-sm sm:text-base">
+                  Si te gusta mi portfolio, ¡déjame un like!
+                </p>
+              </div>
               <Button
-                variant="secondary"
+                variant="default"
                 size="lg"
                 onClick={handleLike}
-                className="hover:scale-105 transition-transform text-lg px-8 py-3"
+                className="group/button hover:scale-105 transition-all duration-200 text-base px-6 py-3"
               >
-                ❤️ Dejar un like
+                <Heart className="h-5 w-5 mr-2 group-hover/button:animate-pulse" />
+                Dejar un like
               </Button>
             </div>
           </div>
 
           {/* Barra inferior con información adicional */}
-          <div className="mt-8 pt-6 border-t border-white/20">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center text-sm opacity-80">
-              <div>
-                <span className="font-semibold">💼 Portfolio interactivo</span>
-                <p>Explora mi trabajo y proyectos</p>
+          <div className="mt-8 pt-6 border-t border-border">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className="group/item hover:bg-muted/50 p-3 rounded-lg transition-colors">
+                <div className="text-primary mb-1">💼</div>
+                <div className="font-semibold text-sm text-foreground mb-1">
+                  Portfolio interactivo
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Explora mi trabajo y proyectos
+                </p>
               </div>
-              <div>
-                <span className="font-semibold">🚀 Tecnología moderna</span>
-                <p>Desarrollado con Next.js y React</p>
+              <div className="group/item hover:bg-muted/50 p-3 rounded-lg transition-colors">
+                <div className="text-primary mb-1">🚀</div>
+                <div className="font-semibold text-sm text-foreground mb-1">
+                  Tecnología moderna
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Desarrollado con Next.js y React
+                </p>
               </div>
-              <div>
-                <span className="font-semibold">⭐ Experiencia única</span>
-                <p>Diseño responsivo y UX optimizada</p>
+              <div className="group/item hover:bg-muted/50 p-3 rounded-lg transition-colors">
+                <div className="text-primary mb-1">⭐</div>
+                <div className="font-semibold text-sm text-foreground mb-1">
+                  Experiencia única
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Diseño responsivo y UX optimizada
+                </p>
               </div>
             </div>
           </div>
+
+          {/* Subtle background gradient effect */}
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         </CardContent>
       </Card>
     </>
