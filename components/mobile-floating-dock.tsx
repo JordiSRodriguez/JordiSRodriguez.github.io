@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  MessageCircle,
+  Grid3X3,
   Github,
   Cloud,
   ChevronUp,
@@ -62,7 +62,7 @@ export function MobileFloatingDock({
           >
             <div className="relative">
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <MessageCircle className="w-4 h-4 text-white" />
+                <Grid3X3 className="w-4 h-4 text-white" />
               </div>
               {/* Indicadores de notificación múltiples */}
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-background" />
@@ -80,7 +80,7 @@ export function MobileFloatingDock({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <MessageCircle className="w-3 h-3 text-white" />
+                  <Grid3X3 className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-sm font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                   Herramientas
