@@ -228,8 +228,9 @@ export function StatsSection() {
         statsResults.projectsData?.filter((p: any) => p.status === "completed")
           .length || 0;
       const inProgressProjects =
-        statsResults.projectsData?.filter((p: any) => p.status === "in-progress")
-          .length || 0;
+        statsResults.projectsData?.filter(
+          (p: any) => p.status === "in-progress"
+        ).length || 0;
       const totalVisits = statsResults.visitsData?.length || 0;
       const workExperiences = statsResults.workExperiencesData?.length || 0;
       const totalContacts = statsResults.contactsData?.length || 0;
