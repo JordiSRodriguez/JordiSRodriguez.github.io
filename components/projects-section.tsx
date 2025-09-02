@@ -1,32 +1,38 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Github, Eye, Filter } from "lucide-react"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, Github, Eye, Filter, FolderOpen } from "lucide-react";
+import Image from "next/image";
 
 interface Project {
-  id: string
-  title: string
-  description: string
-  long_description: string | null
-  image_url: string | null
-  demo_url: string | null
-  github_url: string | null
-  technologies: string[]
-  featured: boolean
-  status: "completed" | "in-progress" | "planned"
-  created_at: string
+  id: string;
+  title: string;
+  description: string;
+  long_description: string | null;
+  image_url: string | null;
+  demo_url: string | null;
+  github_url: string | null;
+  technologies: string[];
+  featured: boolean;
+  status: "completed" | "in-progress" | "planned";
+  created_at: string;
 }
 
 const statusColors = {
   completed: "bg-green-500/10 text-green-500 border-green-500/20",
   "in-progress": "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
   planned: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-}
+};
 
 const techColors = [
   "bg-chart-1/10 text-chart-1 border-chart-1/20",
@@ -34,53 +40,55 @@ const techColors = [
   "bg-chart-3/10 text-chart-3 border-chart-3/20",
   "bg-chart-4/10 text-chart-4 border-chart-4/20",
   "bg-chart-5/10 text-chart-5 border-chart-5/20",
-]
+];
 
 export function ProjectsSection() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([])
-  const [selectedFilter, setSelectedFilter] = useState<string>("all")
-  const [loading, setLoading] = useState(true)
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProjects()
-  }, [])
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
-    filterProjects()
-  }, [projects, selectedFilter])
+    filterProjects();
+  }, [projects, selectedFilter]);
 
   const fetchProjects = async () => {
     try {
-      const supabase = createClient()
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("projects")
         .select("*")
         .order("featured", { ascending: false })
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false });
 
-      if (error) throw error
-      setProjects(data || [])
+      if (error) throw error;
+      setProjects(data || []);
     } catch (error) {
-      console.error("Error fetching projects:", error)
+      console.error("Error fetching projects:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const filterProjects = () => {
     if (selectedFilter === "all") {
-      setFilteredProjects(projects)
+      setFilteredProjects(projects);
     } else if (selectedFilter === "featured") {
-      setFilteredProjects(projects.filter((project) => project.featured))
+      setFilteredProjects(projects.filter((project) => project.featured));
     } else {
-      setFilteredProjects(projects.filter((project) => project.status === selectedFilter))
+      setFilteredProjects(
+        projects.filter((project) => project.status === selectedFilter)
+      );
     }
-  }
+  };
 
   const getTechColor = (index: number) => {
-    return techColors[index % techColors.length]
-  }
+    return techColors[index % techColors.length];
+  };
 
   if (loading) {
     return (
@@ -103,21 +111,26 @@ export function ProjectsSection() {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
     <section className="py-20 px-6 bg-muted/20">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-            Featured Projects
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            A collection of projects that showcase my skills in full-stack development, UI/UX design, and modern web
-            technologies.
-          </p>
+        <div className="text-center space-y-4 mb-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-rose-500 text-white">
+            <FolderOpen className="h-8 w-8" />
+          </div>
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
+              Featured Projects
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              A collection of projects that showcase my skills in full-stack
+              development, UI/UX design, and modern web technologies.
+            </p>
+          </div>
         </div>
 
         {/* Filter buttons */}
@@ -134,7 +147,9 @@ export function ProjectsSection() {
               onClick={() => setSelectedFilter(key)}
               className="group"
             >
-              {Icon && <Icon className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />}
+              {Icon && (
+                <Icon className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+              )}
               {label}
             </Button>
           ))}
@@ -158,29 +173,43 @@ export function ProjectsSection() {
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-chart-1/20 flex items-center justify-center">
-                    <div className="text-4xl font-bold text-muted-foreground opacity-50">{project.title.charAt(0)}</div>
+                    <div className="text-4xl font-bold text-muted-foreground opacity-50">
+                      {project.title.charAt(0)}
+                    </div>
                   </div>
                 )}
                 {project.featured && (
                   <div className="absolute top-4 left-4">
-                    <Badge className="bg-primary text-primary-foreground">Featured</Badge>
+                    <Badge className="bg-primary text-primary-foreground">
+                      Featured
+                    </Badge>
                   </div>
                 )}
                 <div className="absolute top-4 right-4">
-                  <Badge className={statusColors[project.status]}>{project.status.replace("-", " ")}</Badge>
+                  <Badge className={statusColors[project.status]}>
+                    {project.status.replace("-", " ")}
+                  </Badge>
                 </div>
               </div>
 
               <CardHeader>
-                <CardTitle className="group-hover:text-primary transition-colors">{project.title}</CardTitle>
-                <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                <CardTitle className="group-hover:text-primary transition-colors">
+                  {project.title}
+                </CardTitle>
+                <CardDescription className="line-clamp-2">
+                  {project.description}
+                </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4">
                 {/* Technologies */}
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.slice(0, 4).map((tech, techIndex) => (
-                    <Badge key={tech} variant="outline" className={getTechColor(techIndex)}>
+                    <Badge
+                      key={tech}
+                      variant="outline"
+                      className={getTechColor(techIndex)}
+                    >
                       {tech}
                     </Badge>
                   ))}
@@ -195,15 +224,28 @@ export function ProjectsSection() {
                 <div className="flex gap-2 pt-2">
                   {project.demo_url && (
                     <Button size="sm" className="flex-1 group/btn" asChild>
-                      <a href={project.demo_url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={project.demo_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                         Demo
                       </a>
                     </Button>
                   )}
                   {project.github_url && (
-                    <Button size="sm" variant="outline" className="flex-1 group/btn bg-transparent" asChild>
-                      <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 group/btn bg-transparent"
+                      asChild
+                    >
+                      <a
+                        href={project.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                         Code
                       </a>
@@ -222,19 +264,25 @@ export function ProjectsSection() {
               <Filter className="h-12 w-12 text-muted-foreground" />
             </div>
             <h3 className="text-xl font-semibold mb-2">No projects found</h3>
-            <p className="text-muted-foreground">Try adjusting your filter or check back later for new projects.</p>
+            <p className="text-muted-foreground">
+              Try adjusting your filter or check back later for new projects.
+            </p>
           </div>
         )}
 
         {/* View all projects button */}
         {filteredProjects.length > 0 && selectedFilter !== "all" && (
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg" onClick={() => setSelectedFilter("all")}>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setSelectedFilter("all")}
+            >
               View All Projects
             </Button>
           </div>
         )}
       </div>
     </section>
-  )
+  );
 }

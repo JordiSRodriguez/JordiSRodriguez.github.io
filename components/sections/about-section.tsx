@@ -227,7 +227,7 @@ export function AboutSection() {
       {/* Header */}
       <div className="text-center space-y-3 sm:space-y-4">
         <div className="relative inline-block">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 p-1">
             <div className="w-full h-full rounded-full bg-background flex items-center justify-center text-2xl sm:text-4xl font-bold">
               {profile?.full_name?.charAt(0) || "D"}
             </div>
@@ -235,7 +235,7 @@ export function AboutSection() {
           <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-full border-2 sm:border-4 border-background animate-pulse" />
         </div>
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             {profile?.full_name || "Full Stack Developer"}
           </h1>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-muted-foreground mt-2 text-sm sm:text-base">

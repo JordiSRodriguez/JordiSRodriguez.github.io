@@ -11,6 +11,7 @@ import {
   Award,
   Users,
   Target,
+  Briefcase,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -128,22 +129,30 @@ export function WorkExperienceSection() {
 
   return (
     <div className="space-y-8">
-      {/* Header with metrics */}
+      {/* Header */}
       <div className="text-center space-y-4">
-        <h2 className="text-3xl font-bold">Professional Experience</h2>
-        <div className="flex justify-center gap-8 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
-            <span>{getTotalExperience()} experience</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Building className="w-4 h-4" />
-            <span>{experiences.length} companies</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Award className="w-4 h-4" />
-            <span>{getAllTechnologies().length} technologies</span>
-          </div>
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-violet-500 text-white">
+          <Briefcase className="h-8 w-8" />
+        </div>
+        <div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+            Professional Experience
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            My professional journey and career development
+          </p>
+        </div>
+      </div>
+
+      {/* Metrics */}
+      <div className="flex justify-center gap-8 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-4 h-4" />
+          <span>{getTotalExperience()} experience</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Building className="w-4 h-4" />
+          <span>{experiences.length} companies</span>
         </div>
       </div>
 
@@ -163,13 +172,13 @@ export function WorkExperienceSection() {
         >
           Comparison
         </Button>
-        <Button
+        {/* <Button
           variant={viewMode === "metrics" ? "default" : "outline"}
           size="sm"
           onClick={() => setViewMode("metrics")}
         >
           Growth Metrics
-        </Button>
+        </Button> */}
       </div>
 
       {/* Timeline View */}
@@ -423,11 +432,11 @@ export function WorkExperienceSection() {
       )}
 
       {/* Growth Metrics View */}
-      {viewMode === "metrics" && (
+      {/* {viewMode === "metrics" && (
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Career Growth Metrics</CardTitle>
+              <CardTitle className="bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">Career Growth Metrics</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -502,7 +511,7 @@ export function WorkExperienceSection() {
             </CardContent>
           </Card>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -176,11 +176,11 @@ export function EducationSection() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center space-y-4">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 text-white">
           <GraduationCap className="h-8 w-8" />
         </div>
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
             Educación y Formación
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -193,7 +193,7 @@ export function EducationSection() {
       <Card>
         <CardContent className="p-6">
           <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-            <GraduationCap className="h-6 w-6 text-purple-500" />
+            <GraduationCap className="h-6 w-6 text-orange-500" />
             Educación Formal
           </h2>
 
@@ -202,14 +202,14 @@ export function EducationSection() {
               {education.map((edu) => (
                 <div
                   key={edu.id}
-                  className="relative pl-8 pb-6 border-l-2 border-purple-200 last:border-l-0 last:pb-0"
+                  className="relative pl-8 pb-6 border-l-2 border-orange-200 last:border-l-0 last:pb-0"
                 >
-                  <div className="absolute -left-2 top-0 w-4 h-4 bg-purple-500 rounded-full border-4 border-background" />
+                  <div className="absolute -left-2 top-0 w-4 h-4 bg-orange-500 rounded-full border-4 border-background" />
 
                   <div className="space-y-3">
                     <div>
                       <h3 className="text-xl font-semibold">{edu.title}</h3>
-                      <p className="text-lg text-purple-600 font-medium">
+                      <p className="text-lg text-orange-600 font-medium">
                         {edu.company}
                       </p>
                     </div>

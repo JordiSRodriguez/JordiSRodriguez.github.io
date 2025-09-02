@@ -311,7 +311,7 @@ export function ContactSection() {
             {/* Contact Details */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold mb-6">
+                <h2 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
                   Contact Information
                 </h2>
                 <div className="space-y-4">
@@ -344,7 +344,9 @@ export function ContactSection() {
             {/* Social Links */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold mb-6">Follow me on</h2>
+                <h2 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                  Follow me on
+                </h2>
                 <div className="grid grid-cols-2 gap-4">
                   {socialLinks.map((social) => {
                     const Icon = social.icon;
