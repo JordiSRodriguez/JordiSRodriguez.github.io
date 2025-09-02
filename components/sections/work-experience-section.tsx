@@ -104,7 +104,7 @@ export function WorkExperienceSection() {
         (end.getMonth() - start.getMonth());
     });
     const years = Math.floor(totalMonths / 12);
-    return `${years}+ years`;
+    return `${years}+ año${years === 1 ? "" : "s"}`;
   };
 
   const getAllTechnologies = () => {
