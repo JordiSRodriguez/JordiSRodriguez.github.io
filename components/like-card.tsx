@@ -119,7 +119,7 @@ export function LikeCard() {
     <>
       {/* Message Notification */}
       {showMessage && (
-        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right-5 duration-300">
+        <div className="fixed top-4 right-4 z-[9999] animate-in slide-in-from-right-5 duration-300">
           <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">

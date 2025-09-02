@@ -280,7 +280,7 @@ export function SidebarNavigation({
                 <span>Cmd/Ctrl + I</span>
                 <span className="text-muted-foreground">Asistente IA</span>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span>Cmd/Ctrl + V</span>
                 <span className="text-muted-foreground">
                   Navegación por voz
@@ -291,7 +291,7 @@ export function SidebarNavigation({
                 <span className="text-muted-foreground">
                   Reproductor música
                 </span>
-              </div>
+              </div> */}
               <div className="flex justify-between">
                 <span>Cmd/Ctrl + F</span>
                 <span className="text-muted-foreground">Modo enfoque</span>
@@ -424,7 +424,7 @@ export function SidebarNavigation({
             <span className="ml-2">Tema</span>
           </Button>
 
-          {onVoiceToggle && (
+          {/* {onVoiceToggle && (
             <Button
               variant="ghost"
               size="sm"
@@ -436,7 +436,7 @@ export function SidebarNavigation({
               />
               <span className="ml-2 truncate">Control por Voz</span>
             </Button>
-          )}
+          )} */}
 
           {/* {onMusicToggle && (
             <Button

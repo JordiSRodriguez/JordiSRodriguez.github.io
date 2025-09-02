@@ -159,11 +159,11 @@ function HomePageContent() {
       />
       {/* AI Chat Assistant */}
       <AIChatAssistant />
-      <VoiceNavigation
+      {/* <VoiceNavigation
         isActive={isVoiceActive}
         onSectionChange={navigateToSection}
         onToggle={handleVoiceToggle}
-      />
+      /> */}
       {/* <PortfolioMusicPlayer
         isActive={isMusicActive}
         onToggle={handleMusicToggle}

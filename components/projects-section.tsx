@@ -47,6 +47,7 @@ export function ProjectsSection() {
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+  const [expandedTechs, setExpandedTechs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchProjects();
@@ -88,6 +89,18 @@ export function ProjectsSection() {
 
   const getTechColor = (index: number) => {
     return techColors[index % techColors.length];
+  };
+
+  const toggleTechExpansion = (projectId: string) => {
+    setExpandedTechs((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(projectId)) {
+        newSet.delete(projectId);
+      } else {
+        newSet.add(projectId);
+      }
+      return newSet;
+    });
   };
 
   if (loading) {
@@ -156,11 +169,11 @@ export function ProjectsSection() {
         </div>
 
         {/* Projects grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
           {filteredProjects.map((project, index) => (
             <Card
               key={project.id}
-              className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50"
+              className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50 w-full h-fit"
             >
               {/* Project image */}
               <div className="relative aspect-video overflow-hidden bg-muted">
@@ -192,11 +205,11 @@ export function ProjectsSection() {
                 </div>
               </div>
 
-              <CardHeader>
-                <CardTitle className="group-hover:text-primary transition-colors">
+              <CardHeader className="pb-4">
+                <CardTitle className="group-hover:text-primary transition-colors line-clamp-2">
                   {project.title}
                 </CardTitle>
-                <CardDescription className="line-clamp-2">
+                <CardDescription className="line-clamp-3 text-sm">
                   {project.description}
                 </CardDescription>
               </CardHeader>
@@ -204,18 +217,27 @@ export function ProjectsSection() {
               <CardContent className="space-y-4">
                 {/* Technologies */}
                 <div className="flex flex-wrap gap-2">
-                  {project.technologies.slice(0, 4).map((tech, techIndex) => (
+                  {(expandedTechs.has(project.id)
+                    ? project.technologies
+                    : project.technologies.slice(0, 4)
+                  ).map((tech, techIndex) => (
                     <Badge
                       key={tech}
                       variant="outline"
-                      className={getTechColor(techIndex)}
+                      className={`${getTechColor(techIndex)} text-xs`}
                     >
                       {tech}
                     </Badge>
                   ))}
                   {project.technologies.length > 4 && (
-                    <Badge variant="outline" className="text-muted-foreground">
-                      +{project.technologies.length - 4}
+                    <Badge
+                      variant="outline"
+                      className="text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors text-xs"
+                      onClick={() => toggleTechExpansion(project.id)}
+                    >
+                      {expandedTechs.has(project.id)
+                        ? "Ver menos"
+                        : `+${project.technologies.length - 4}`}
                     </Badge>
                   )}
                 </div>
