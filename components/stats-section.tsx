@@ -16,10 +16,12 @@ import {
   MessageSquare,
   GraduationCap,
   Briefcase,
+  Loader,
 } from "lucide-react";
 
 interface StatsData {
   completedProjects: number;
+  inProgressProjects: number;
   totalVisits: number;
   workExperiences: number;
   totalContacts: number;
@@ -33,6 +35,7 @@ export function StatsSection() {
   const [visitCount, setVisitCount] = useState(0);
   const [statsData, setStatsData] = useState<StatsData>({
     completedProjects: 0,
+    inProgressProjects: 0,
     totalVisits: 0,
     workExperiences: 0,
     totalContacts: 0,
@@ -224,6 +227,9 @@ export function StatsSection() {
       const completedProjects =
         statsResults.projectsData?.filter((p: any) => p.status === "completed")
           .length || 0;
+      const inProgressProjects =
+        statsResults.projectsData?.filter((p: any) => p.status === "in-progress")
+          .length || 0;
       const totalVisits = statsResults.visitsData?.length || 0;
       const workExperiences = statsResults.workExperiencesData?.length || 0;
       const totalContacts = statsResults.contactsData?.length || 0;
@@ -237,6 +243,7 @@ export function StatsSection() {
       // Store stats for use in the stats array
       setStatsData({
         completedProjects,
+        inProgressProjects,
         totalVisits,
         workExperiences,
         totalContacts,
@@ -259,6 +266,7 @@ export function StatsSection() {
       // Set fallback data - production should be silent
       setStatsData({
         completedProjects: 0,
+        inProgressProjects: 0,
         totalVisits: 1, // At least one visit (current)
         workExperiences: 0,
         totalContacts: 0,
@@ -318,11 +326,11 @@ export function StatsSection() {
       available: true, // Always show, even if 0
     },
     {
-      icon: Briefcase,
-      label: "Experiencias Laborales",
-      value: formatStatValue(statsData.workExperiences),
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
+      icon: Loader,
+      label: "Proyectos en Curso",
+      value: formatStatValue(statsData.inProgressProjects),
+      color: "text-amber-500",
+      bgColor: "bg-amber-500/10",
       available: true, // Always show, even if 0
     },
     {
@@ -331,6 +339,14 @@ export function StatsSection() {
       value: formatStatValue(statsData.experiencesCount),
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
+      available: true, // Always show, even if 0
+    },
+    {
+      icon: Briefcase,
+      label: "Experiencias Laborales",
+      value: formatStatValue(statsData.workExperiences),
+      color: "text-purple-500",
+      bgColor: "bg-purple-500/10",
       available: true, // Always show, even if 0
     },
     {
@@ -348,14 +364,6 @@ export function StatsSection() {
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
       available: true, // GitHub stats are fetched separately
-    },
-    {
-      icon: Eye,
-      label: "Visitas al Portfolio",
-      value: formatStatValue(statsData.totalVisits),
-      color: "text-red-500",
-      bgColor: "bg-red-500/10",
-      available: true, // Always show, at least 1 visit
     },
     {
       icon: Heart,
