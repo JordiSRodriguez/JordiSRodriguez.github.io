@@ -3,6 +3,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CompactThemeGenerator } from "@/components/compact-theme-generator";
 import { MobileBottomNavigation } from "@/components/mobile-bottom-navigation";
 import { useSidebarState } from "@/contexts/navigation-context";
@@ -98,6 +105,7 @@ export function SidebarNavigation({
   const [focusMode, setFocusMode] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
   const [showThemeGenerator, setShowThemeGenerator] = useState(false);
+  const [showCvModal, setShowCvModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [indicatorsVisible, setIndicatorsVisible] = useState(true);
   const { theme, setTheme } = useTheme();
@@ -179,7 +187,22 @@ export function SidebarNavigation({
   ]);
 
   const exportCV = () => {
-    console.log("Exporting CV...");
+    setShowCvModal(true);
+  };
+
+  const downloadCV = (language: "spanish" | "english") => {
+    const filename =
+      language === "spanish"
+        ? "Jordi Alejandro Sumba Rodriguez CV (Spanish).pdf"
+        : "Jordi Alejandro Sumba Rodriguez CV (English).pdf";
+
+    const link = document.createElement("a");
+    link.href = `/cv/${filename}`;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setShowCvModal(false);
   };
 
   const shareSection = () => {
@@ -456,7 +479,7 @@ export function SidebarNavigation({
             className="w-full justify-start text-sm"
           >
             <Download className="h-4 w-4" />
-            <span className="ml-2 truncate">Exportar CV</span>
+            <span className="ml-2 truncate">Descargar CV</span>
           </Button>
 
           <Button
@@ -480,6 +503,78 @@ export function SidebarNavigation({
           </Button>
         </div>
       </aside>
+
+      {/* Modal para seleccionar idioma del CV */}
+      <Dialog open={showCvModal} onOpenChange={setShowCvModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader className="text-center space-y-3">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white mx-auto">
+              <Download className="h-8 w-8" />
+            </div>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Descargar CV
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Selecciona el idioma en el que deseas descargar mi currículum
+              vitae
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 gap-4 pt-6">
+            <Button
+              onClick={() => downloadCV("spanish")}
+              variant="outline"
+              className="group h-16 p-4 border-2 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-200 hover:shadow-lg"
+            >
+              <div className="flex items-center gap-4 w-full">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white font-bold text-lg">ES</span>
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-semibold text-lg text-foreground">
+                    Español
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Currículum Vitae completo en español
+                  </div>
+                </div>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Download className="h-5 w-5 text-blue-500" />
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              onClick={() => downloadCV("english")}
+              variant="outline"
+              className="group h-16 p-4 border-2 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950/30 transition-all duration-200 hover:shadow-lg"
+            >
+              <div className="flex items-center gap-4 w-full">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white font-bold text-lg">EN</span>
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-semibold text-lg text-foreground">
+                    English
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Complete resume in English
+                  </div>
+                </div>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Download className="h-5 w-5 text-purple-500" />
+                </div>
+              </div>
+            </Button>
+          </div>
+
+          <div className="pt-4 border-t mt-6">
+            <p className="text-xs text-muted-foreground text-center">
+              Ambos documentos contienen la misma información profesional
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

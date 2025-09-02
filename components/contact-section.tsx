@@ -201,7 +201,7 @@ export function ContactSection() {
             className="rounded-md"
           >
             <MessageSquare className="h-4 w-4 mr-2" />
-            Direct Message
+            Mensaje Directo
           </Button>
           <Button
             variant={activeTab === "meeting" ? "default" : "ghost"}
@@ -209,7 +209,7 @@ export function ContactSection() {
             className="rounded-md"
           >
             <Calendar className="h-4 w-4 mr-2" />
-            Schedule Meeting
+            Agendar Reunión
           </Button>
         </div>
       </div>
@@ -241,7 +241,7 @@ export function ContactSection() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Name *</Label>
+                      <Label htmlFor="name">Nombre *</Label>
                       <Input
                         id="name"
                         name="name"
@@ -375,13 +375,13 @@ export function ContactSection() {
                   🟢 Disponible para proyectos
                 </h3>
                 <p className="opacity-90 mb-4">
-                  Currently accepting new freelance projects and collaborations.
-                  Let's talk about your idea!
+                  Actualmente acepto nuevos proyectos freelance y
+                  colaboraciones. ¡Hablemos sobre tu idea!
                 </p>
                 <div className="flex gap-2 text-sm opacity-75">
-                  <span>• 24h response</span>
-                  <span>• Free consultation</span>
-                  <span>• No-commitment quote</span>
+                  <span>• Respuesta en 24h</span>
+                  <span>• Consulta gratuita</span>
+                  <span>• Presupuesto sin compromiso</span>
                 </div>
               </CardContent>
             </Card>

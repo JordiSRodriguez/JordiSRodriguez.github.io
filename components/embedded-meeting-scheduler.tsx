@@ -100,7 +100,9 @@ export function EmbeddedMeetingScheduler() {
       ...meetingForm,
       preferred_date: selectedSlot.date,
       preferred_time: selectedSlot.time,
-      duration: selectedSlot.duration,
+      duration:
+        meetingTypes.find((type) => type.value === meetingForm.meeting_type)
+          ?.duration || 30,
       status: "pending",
     };
 
@@ -273,7 +275,10 @@ export function EmbeddedMeetingScheduler() {
             </CardTitle>
             <CardDescription>
               {formatDate(selectedSlot.date)} a las {selectedSlot.time} (
-              {selectedSlot.duration} minutos)
+              {meetingTypes.find(
+                (type) => type.value === meetingForm.meeting_type
+              )?.duration || 30}{" "}
+              minutos)
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
