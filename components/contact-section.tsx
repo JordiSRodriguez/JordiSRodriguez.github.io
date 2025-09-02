@@ -123,14 +123,14 @@ export function ContactSection() {
     },
     {
       icon: Phone,
-      label: "Phone",
+      label: "Teléfono",
       value: "+34 640 853 140",
       href: "tel:+34640853140",
       color: "text-green-500",
     },
     {
       icon: MapPin,
-      label: "Location",
+      label: "Ubicación",
       value: profile?.location || "Madrid, Spain",
       href: `https://maps.google.com/?q=${encodeURIComponent(
         profile?.location || "Madrid,Spain"
@@ -139,9 +139,8 @@ export function ContactSection() {
     },
     {
       icon: Calendar,
-      label: "Availability",
-      value: "Mon - Fri, 9:00 - 18:00",
-      href: "https://calendly.com/tu-usuario",
+      label: "Disponibilidad",
+      value: "Lun - Vie, 9:00 - 18:00",
       color: "text-purple-500",
     },
   ];
