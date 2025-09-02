@@ -121,7 +121,7 @@ export function MobileFloatingDock({
                 <Github className="w-3 h-3 text-white" />
               </div>
               <div className="flex-1 text-left">
-                <div className="font-medium">GitHub Stats</div>
+                <div className="font-medium">Estadísticas GitHub</div>
                 {githubStats && (
                   <div className="text-xs text-muted-foreground flex items-center gap-2">
                     <span>⭐ {githubStats.totalStars}</span>

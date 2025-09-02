@@ -219,7 +219,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                 className="h-8 px-3"
               >
                 <Cloud className="w-4 h-4 mr-2" />
-                Weather
+                Clima
               </Button>
               <Button
                 variant={activeTab === "github" ? "default" : "ghost"}
@@ -279,7 +279,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                       <div className="flex items-center space-x-2">
                         <Thermometer className="w-4 h-4 text-orange-500" />
                         <div>
-                          <div className="text-sm font-medium">Temperature</div>
+                          <div className="text-sm font-medium">Temperatura</div>
                           <div className="text-sm text-muted-foreground">
                             {weather.temperature}°C
                           </div>
@@ -288,7 +288,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                       <div className="flex items-center space-x-2">
                         <Wind className="w-4 h-4 text-blue-500" />
                         <div>
-                          <div className="text-sm font-medium">Wind</div>
+                          <div className="text-sm font-medium">Viento</div>
                           <div className="text-sm text-muted-foreground">
                             {weather.windSpeed} m/s
                           </div>
@@ -297,7 +297,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                       <div className="flex items-center space-x-2">
                         <Activity className="w-4 h-4 text-green-500" />
                         <div>
-                          <div className="text-sm font-medium">Humidity</div>
+                          <div className="text-sm font-medium">Humedad</div>
                           <div className="text-sm text-muted-foreground">
                             {weather.humidity}%
                           </div>
@@ -306,7 +306,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-purple-500" />
                         <div>
-                          <div className="text-sm font-medium">Condition</div>
+                          <div className="text-sm font-medium">Condición</div>
                           <div className="text-sm text-muted-foreground">
                             {weather.condition}
                           </div>
@@ -320,7 +320,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                         <Separator />
                         <div className="p-3 rounded-lg bg-muted/30">
                           <div className="text-sm font-medium mb-2">
-                            🖥️ Coding Weather
+                            🖥️ Clima para Programar
                           </div>
                           <div className="text-sm text-muted-foreground">
                             {codingWeather}
@@ -331,7 +331,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                   </>
                 ) : (
                   <div className="text-center text-muted-foreground py-8">
-                    Weather data not available
+                    Datos del clima no disponibles
                   </div>
                 )}
               </div>
@@ -349,7 +349,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                   </div>
                 ) : githubError ? (
                   <div className="text-center text-muted-foreground py-8">
-                    Unable to load GitHub data
+                    No se pueden cargar los datos de GitHub
                   </div>
                 ) : (
                   <div className="flex flex-col h-full space-y-4">
@@ -360,7 +360,9 @@ export function ToolsDock({ className }: ToolsDockProps) {
                           <div className="flex items-center space-x-2 github-stat-item">
                             <Star className="w-4 h-4 text-yellow-500" />
                             <div>
-                              <div className="text-sm font-medium">Stars</div>
+                              <div className="text-sm font-medium">
+                                Estrellas
+                              </div>
                               <div className="text-sm text-muted-foreground">
                                 {stats.totalStars}
                               </div>
@@ -369,7 +371,9 @@ export function ToolsDock({ className }: ToolsDockProps) {
                           <div className="flex items-center space-x-2 github-stat-item">
                             <GitBranch className="w-4 h-4 text-blue-500" />
                             <div>
-                              <div className="text-sm font-medium">Repos</div>
+                              <div className="text-sm font-medium">
+                                Repositorios
+                              </div>
                               <div className="text-sm text-muted-foreground">
                                 {stats.totalRepos}
                               </div>
@@ -379,7 +383,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                             <Users className="w-4 h-4 text-green-500" />
                             <div>
                               <div className="text-sm font-medium">
-                                Followers
+                                Seguidores
                               </div>
                               <div className="text-sm text-muted-foreground">
                                 {stats.followers}
@@ -390,7 +394,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                             <UserPlus className="w-4 h-4 text-purple-500" />
                             <div>
                               <div className="text-sm font-medium">
-                                Following
+                                Siguiendo
                               </div>
                               <div className="text-sm text-muted-foreground">
                                 {stats.following}
@@ -425,7 +429,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                     <div className="space-y-3 flex-1 overflow-y-auto activity-timeline">
                       <div className="text-sm font-medium flex items-center">
                         <Activity className="w-4 h-4 mr-2" />
-                        Recent Activity
+                        Actividad Reciente
                       </div>
                       {activities && activities.length > 0 ? (
                         activities.slice(0, 6).map((activity, index) => (
@@ -461,7 +465,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                         ))
                       ) : (
                         <div className="text-center text-muted-foreground py-4">
-                          No recent activity
+                          Sin actividad reciente
                         </div>
                       )}
                     </div>

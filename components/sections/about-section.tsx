@@ -122,10 +122,10 @@ export function AboutSection() {
 
   // Function to get experience level based on percentage
   const getSkillLevel = (level: number) => {
-    if (level >= 90) return { text: "Expert", color: "text-emerald-600" };
-    if (level >= 75) return { text: "Advanced", color: "text-blue-600" };
-    if (level >= 50) return { text: "Intermediate", color: "text-yellow-600" };
-    return { text: "Beginner", color: "text-orange-600" };
+    if (level >= 90) return { text: "Experto", color: "text-emerald-600" };
+    if (level >= 75) return { text: "Avanzado", color: "text-blue-600" };
+    if (level >= 50) return { text: "Intermedio", color: "text-yellow-600" };
+    return { text: "Principiante", color: "text-orange-600" };
   };
 
   useEffect(() => {

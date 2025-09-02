@@ -118,18 +118,18 @@ export function useWeatherData() {
       codingMood = "Bueno para desarrollo web";
       emoji = "🌤️";
     } else {
-      codingMood = "Better stay with air conditioning";
+      codingMood = "Mejor quédate con aire acondicionado";
       emoji = "🔥";
     }
 
     if (condition === "Rain" || condition === "Drizzle") {
-      codingMood = "Perfect weather for coding at home";
+      codingMood = "Clima perfecto para programar en casa";
       emoji = "🌧️";
     } else if (condition === "Snow") {
-      codingMood = "Ideal for Christmas projects";
+      codingMood = "Ideal para proyectos navideños";
       emoji = "⛄";
     } else if (condition === "Clear") {
-      codingMood = "How about an outdoor project?";
+      codingMood = "¿Qué tal un proyecto al aire libre?";
       emoji = "☀️";
     }
 

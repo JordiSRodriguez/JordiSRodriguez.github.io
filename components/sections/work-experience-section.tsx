@@ -88,7 +88,7 @@ export function WorkExperienceSection() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("es-ES", {
       month: "short",
       year: "numeric",
     });
@@ -254,7 +254,7 @@ export function WorkExperienceSection() {
                               {formatDate(experience.start_date)} -{" "}
                               {experience.end_date
                                 ? formatDate(experience.end_date)
-                                : "Present"}
+                                : "Presente"}
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
@@ -335,7 +335,7 @@ export function WorkExperienceSection() {
                       {experience.team_size && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground flex-shrink-0">
                           <Users className="w-4 h-4" />
-                          <span>Team of {experience.team_size}</span>
+                          <span>Equipo de {experience.team_size}</span>
                         </div>
                       )}
                     </div>
@@ -397,7 +397,7 @@ export function WorkExperienceSection() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span>Duration:</span>
+                  <span>Duración:</span>
                   <span className="font-medium">
                     {calculateDuration(
                       experience.start_date,
@@ -406,20 +406,20 @@ export function WorkExperienceSection() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Technologies:</span>
+                  <span>Tecnologías:</span>
                   <span className="font-medium">
                     {experience.technologies?.length || 0}
                   </span>
                 </div>
                 {experience.team_size && (
                   <div className="flex justify-between text-sm">
-                    <span>Team Size:</span>
+                    <span>Tamaño del Equipo:</span>
                     <span className="font-medium">{experience.team_size}</span>
                   </div>
                 )}
                 {experience.salary_growth && (
                   <div className="flex justify-between text-sm">
-                    <span>Growth:</span>
+                    <span>Crecimiento:</span>
                     <span className="font-medium text-green-600">
                       +{experience.salary_growth}%
                     </span>
