@@ -80,10 +80,10 @@ export function WorkExperienceSection() {
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
 
-    if (years === 0) return `${months} months`;
-    if (remainingMonths === 0) return `${years} year${years > 1 ? "s" : ""}`;
-    return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${
-      remainingMonths > 1 ? "s" : ""
+    if (years === 0) return `${months} meses`;
+    if (remainingMonths === 0) return `${years} año${years > 1 ? "s" : ""}`;
+    return `${years} año${years > 1 ? "s" : ""} ${remainingMonths} mes${
+      remainingMonths > 1 ? "es" : ""
     }`;
   };
 
@@ -139,7 +139,7 @@ export function WorkExperienceSection() {
             Professional Experience
           </h1>
           <p className="text-muted-foreground mt-2">
-            My professional journey and career development
+            Mi trayectoria profesional y desarrollo de carrera
           </p>
         </div>
       </div>
@@ -148,11 +148,11 @@ export function WorkExperienceSection() {
       <div className="flex justify-center gap-8 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4" />
-          <span>{getTotalExperience()} experience</span>
+          <span>{getTotalExperience()} de experiencia</span>
         </div>
         <div className="flex items-center gap-2">
           <Building className="w-4 h-4" />
-          <span>{experiences.length} companies</span>
+          <span>{experiences.length} empresas</span>
         </div>
       </div>
 
@@ -163,14 +163,14 @@ export function WorkExperienceSection() {
           size="sm"
           onClick={() => setViewMode("timeline")}
         >
-          Timeline
+          Cronología
         </Button>
         <Button
           variant={viewMode === "comparison" ? "default" : "outline"}
           size="sm"
           onClick={() => setViewMode("comparison")}
         >
-          Comparison
+          Comparación
         </Button>
         {/* <Button
           variant={viewMode === "metrics" ? "default" : "outline"}
@@ -276,7 +276,7 @@ export function WorkExperienceSection() {
                           } flex-shrink-0`}
                         >
                           <div className="text-sm text-muted-foreground">
-                            Salary Growth
+                            Crecimiento Salarial
                           </div>
                           <div className="text-lg font-semibold text-green-600">
                             +{experience.salary_growth}%
@@ -296,7 +296,7 @@ export function WorkExperienceSection() {
                         <div>
                           <h4 className="font-semibold mb-2 flex items-center gap-2">
                             <Target className="w-4 h-4" />
-                            Key Achievements
+                            Logros Clave
                           </h4>
                           <ul className="space-y-1 text-sm text-muted-foreground">
                             {experience.achievements.map((achievement, idx) => (

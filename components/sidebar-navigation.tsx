@@ -45,35 +45,35 @@ interface SidebarNavigationProps {
 }
 
 const baseNavigationItems = [
-  { id: "home", label: "Home", icon: Home, color: "bg-blue-500" },
-  { id: "about", label: "About Me", icon: User, color: "bg-green-500" },
+  { id: "home", label: "Inicio", icon: Home, color: "bg-blue-500" },
+  { id: "about", label: "Acerca de Mí", icon: User, color: "bg-green-500" },
   {
     id: "experience",
-    label: "Experience",
+    label: "Experiencia",
     icon: Briefcase,
     color: "bg-purple-500",
   },
   {
     id: "education",
-    label: "Education",
+    label: "Educación",
     icon: GraduationCap,
     color: "bg-orange-500",
   },
-  { id: "projects", label: "Projects", icon: FolderOpen, color: "bg-red-500" },
+  { id: "projects", label: "Proyectos", icon: FolderOpen, color: "bg-red-500" },
   { id: "blog", label: "Blog", icon: BookOpen, color: "bg-indigo-500" },
-  { id: "contact", label: "Contact", icon: Mail, color: "bg-pink-500" },
+  { id: "contact", label: "Contacto", icon: Mail, color: "bg-pink-500" },
 ];
 
 const devNavigationItems = [
   {
     id: "analytics",
-    label: "Analytics",
+    label: "Analíticas",
     icon: BarChart3,
     color: "bg-teal-500",
   },
   {
     id: "dev",
-    label: "Dev Tools",
+    label: "Herramientas Dev",
     icon: Settings,
     color: "bg-slate-500",
   },
@@ -409,7 +409,7 @@ export function SidebarNavigation({
             </Button>
           )}
 
-          {onMusicToggle && (
+          {/* {onMusicToggle && (
             <Button
               variant="ghost"
               size="sm"
@@ -421,7 +421,7 @@ export function SidebarNavigation({
               />
               <span className="ml-2 truncate">Música Lo-Fi</span>
             </Button>
-          )}
+          )} */}
 
           <Button
             variant="ghost"

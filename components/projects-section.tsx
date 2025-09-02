@@ -124,11 +124,11 @@ export function ProjectsSection() {
           </div>
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-              Featured Projects
+              Proyectos Destacados
             </h1>
             <p className="text-muted-foreground mt-2">
-              A collection of projects that showcase my skills in full-stack
-              development, UI/UX design, and modern web technologies.
+              Una colección de proyectos que demuestran mis habilidades en
+              desarrollo full-stack, diseño UI/UX, y tecnologías web modernas.
             </p>
           </div>
         </div>
@@ -136,10 +136,10 @@ export function ProjectsSection() {
         {/* Filter buttons */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {[
-            { key: "all", label: "All Projects", icon: Filter },
-            { key: "featured", label: "Featured", icon: Eye },
-            { key: "completed", label: "Completed", icon: null },
-            { key: "in-progress", label: "In Progress", icon: null },
+            { key: "all", label: "Todos los Proyectos", icon: Filter },
+            { key: "featured", label: "Destacados", icon: Eye },
+            { key: "completed", label: "Completados", icon: null },
+            { key: "in-progress", label: "En Progreso", icon: null },
           ].map(({ key, label, icon: Icon }) => (
             <Button
               key={key}
@@ -263,9 +263,11 @@ export function ProjectsSection() {
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
               <Filter className="h-12 w-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">No projects found</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              No se encontraron proyectos
+            </h3>
             <p className="text-muted-foreground">
-              Try adjusting your filter or check back later for new projects.
+              Ajusta tus filtros o vuelve más tarde para ver nuevos proyectos.
             </p>
           </div>
         )}
@@ -278,7 +280,7 @@ export function ProjectsSection() {
               size="lg"
               onClick={() => setSelectedFilter("all")}
             >
-              View All Projects
+              Ver Todos los Proyectos
             </Button>
           </div>
         )}

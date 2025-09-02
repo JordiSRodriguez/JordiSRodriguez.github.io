@@ -30,14 +30,14 @@ export function HeroSection() {
 
   // Default data if no data in Supabase
   const defaultProfile = {
-    full_name: "Full Stack Developer",
-    bio: "I craft exceptional digital experiences with modern technologies. Passionate about clean code, innovative solutions, and bringing ideas to life.",
+    full_name: "Desarrollador Full Stack",
+    bio: "Creo experiencias digitales excepcionales con tecnologías modernas. Apasionado por el código limpio, soluciones innovadoras y dar vida a las ideas.",
     initials: "FS",
     roles: [
-      "Full Stack Developer",
-      "Backend Specialist",
-      "Coding Enthusiast",
-      "Problem Solver",
+      "Desarrollador Full Stack",
+      "Especialista Backend",
+      "Entusiasta del Código",
+      "Solucionador de Problemas",
     ],
     github_username: null,
     linkedin_url: null,
@@ -163,7 +163,7 @@ export function HeroSection() {
         {/* Animated greeting */}
         <div className="mb-3 sm:mb-4">
           <span className="text-base sm:text-lg text-muted-foreground animate-fade-in">
-            Hello, I'm
+            Hola, soy
           </span>
         </div>
 
@@ -192,7 +192,7 @@ export function HeroSection() {
             className="group relative overflow-hidden w-full sm:w-auto"
             onClick={() => navigateToSection("projects")}
           >
-            <span className="relative z-10">View My Work</span>
+            <span className="relative z-10">Ver Mi Trabajo</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-chart-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Button>
           <Button
@@ -202,7 +202,7 @@ export function HeroSection() {
             onClick={() => navigateToSection("contact")}
           >
             <Mail className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-            Get In Touch
+            Contactar
           </Button>
         </div>
 

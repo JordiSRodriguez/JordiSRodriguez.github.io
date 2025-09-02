@@ -164,10 +164,10 @@ function HomePageContent() {
         onSectionChange={navigateToSection}
         onToggle={handleVoiceToggle}
       />
-      <PortfolioMusicPlayer
+      {/* <PortfolioMusicPlayer
         isActive={isMusicActive}
         onToggle={handleMusicToggle}
-      />
+      /> */}
 
       {/* Tools Dock - Solo en desktop */}
       {!isMobile && <ToolsDock />}

@@ -24,6 +24,17 @@ export function VoiceNavigation({
   const recognitionRef = useRef<any>(null);
 
   const commands = {
+    "ir a proyectos": () => onSectionChange("projects"),
+    "mostrar experiencia": () => onSectionChange("experience"),
+    "abrir contacto": () => onSectionChange("contact"),
+    "leer acerca": () => onSectionChange("about"),
+    "mostrar blog": () => onSectionChange("blog"),
+    "ir a inicio": () => onSectionChange("home"),
+    "mostrar educación": () => onSectionChange("education"),
+    "abrir analíticas": () => onSectionChange("analytics"),
+    "cambiar tema": () => document.documentElement.classList.toggle("dark"),
+    "cerrar voz": () => onToggle(),
+    // English commands for compatibility
     "go to projects": () => onSectionChange("projects"),
     "show experience": () => onSectionChange("experience"),
     "open contact": () => onSectionChange("contact"),
@@ -170,24 +181,24 @@ export function VoiceNavigation({
 
           {transcript && (
             <div className="space-y-2">
-              <div className="text-sm font-medium">Last Command:</div>
+              <div className="text-sm font-medium">Último Comando:</div>
               <div className="p-2 bg-muted rounded text-sm">"{transcript}"</div>
               <div className="text-xs text-muted-foreground">
-                Confidence: {Math.round(confidence * 100)}%
+                Confianza: {Math.round(confidence * 100)}%
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">Available Commands:</div>
+            <div className="text-sm font-medium">Comandos Disponibles:</div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>• "Go to projects" - Go to projects</div>
-              <div>• "Show experience" - Show experience</div>
-              <div>• "Open contact" - Open contact</div>
-              <div>• "Read about" - Read about me</div>
-              <div>• "Show blog" - Show blog</div>
-              <div>• "Go home" - Go to home</div>
-              <div>• "Close voice" - Close voice control</div>
+              <div>• "Ir a proyectos" - Ir a proyectos</div>
+              <div>• "Mostrar experiencia" - Mostrar experiencia</div>
+              <div>• "Abrir contacto" - Abrir contacto</div>
+              <div>• "Leer acerca" - Leer acerca de mí</div>
+              <div>• "Mostrar blog" - Mostrar blog</div>
+              <div>• "Ir a inicio" - Ir al inicio</div>
+              <div>• "Cerrar voz" - Cerrar control por voz</div>
             </div>
           </div>
         </CardContent>

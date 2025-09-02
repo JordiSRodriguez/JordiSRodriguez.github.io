@@ -245,7 +245,7 @@ export function AboutSection() {
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <span>Available for projects</span>
+              <span>Disponible para proyectos</span>
             </div>
           </div>
         </div>
@@ -255,7 +255,7 @@ export function AboutSection() {
       <Card>
         <CardContent className="p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
-            About Me
+            Acerca de Mí
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
             {profile?.bio ||
@@ -274,7 +274,7 @@ export function AboutSection() {
       <Card>
         <CardContent className="p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">
-            Technical Skills
+            Habilidades Técnicas
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {skills.map((skill) => {
@@ -306,7 +306,7 @@ export function AboutSection() {
       <Card>
         <CardContent className="p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">
-            Interests & Passions
+            Intereses y Pasiones
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
             {interests.map((interest) => {

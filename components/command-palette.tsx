@@ -57,56 +57,56 @@ export function CommandPalette({
     },
     {
       id: "about",
-      title: "About Me",
-      description: "Learn more about my background",
+      title: "Acerca de Mí",
+      description: "Conoce más sobre mi experiencia",
       icon: <Search className="w-4 h-4" />,
       action: () => navigateToSection("about"),
       keywords: ["about", "bio", "background", "sobre mi"],
     },
     {
       id: "projects",
-      title: "View Projects",
-      description: "Explore my portfolio projects",
+      title: "Ver Proyectos",
+      description: "Explora mis proyectos del portfolio",
       icon: <Code className="w-4 h-4" />,
       action: () => navigateToSection("projects"),
       keywords: ["projects", "portfolio", "work", "proyectos"],
     },
     {
       id: "experience",
-      title: "Work Experience",
-      description: "View my professional experience",
+      title: "Experiencia Laboral",
+      description: "Ve mi experiencia profesional",
       icon: <Coffee className="w-4 h-4" />,
       action: () => navigateToSection("experience"),
       keywords: ["experience", "work", "job", "career", "experiencia"],
     },
     {
       id: "education",
-      title: "Education",
-      description: "View my educational background",
+      title: "Educación",
+      description: "Ve mi formación académica",
       icon: <Search className="w-4 h-4" />,
       action: () => navigateToSection("education"),
       keywords: ["education", "school", "university", "educacion"],
     },
     {
       id: "blog",
-      title: "Read Blog",
-      description: "Check out my latest articles",
+      title: "Leer Blog",
+      description: "Revisa mis últimos artículos",
       icon: <Search className="w-4 h-4" />,
       action: () => navigateToSection("blog"),
       keywords: ["blog", "articles", "posts", "writing"],
     },
     {
       id: "contact",
-      title: "Contact Me",
-      description: "Get in touch",
+      title: "Contáctame",
+      description: "Ponte en contacto",
       icon: <Mail className="w-4 h-4" />,
       action: () => navigateToSection("contact"),
       keywords: ["contact", "email", "message", "contacto"],
     },
     {
       id: "theme-toggle",
-      title: `Switch to ${currentTheme === "dark" ? "Light" : "Dark"} Mode`,
-      description: "Toggle between light and dark themes",
+      title: `Cambiar a Modo ${currentTheme === "dark" ? "Claro" : "Oscuro"}`,
+      description: "Alterna entre temas claro y oscuro",
       icon:
         currentTheme === "dark" ? (
           <Sun className="w-4 h-4" />
@@ -118,8 +118,8 @@ export function CommandPalette({
     },
     {
       id: "download-cv",
-      title: "Download CV",
-      description: "Download my resume as PDF",
+      title: "Descargar CV",
+      description: "Descarga mi currículum en PDF",
       icon: <Download className="w-4 h-4" />,
       action: () => {
         // Generate and download CV
@@ -132,13 +132,13 @@ export function CommandPalette({
     },
     {
       id: "share",
-      title: "Share Portfolio",
-      description: "Share this portfolio with others",
+      title: "Compartir Portfolio",
+      description: "Comparte este portfolio con otros",
       icon: <Share2 className="w-4 h-4" />,
       action: () => {
         if (navigator.share) {
           navigator.share({
-            title: "Check out my portfolio!",
+            title: "¡Echa un vistazo a mi portfolio!",
             url: window.location.href,
           });
         } else {
@@ -149,8 +149,8 @@ export function CommandPalette({
     },
     {
       id: "presentation",
-      title: "Presentation Mode",
-      description: "Start auto-presentation of portfolio",
+      title: "Modo Presentación",
+      description: "Iniciar presentación automática del portfolio",
       icon: <Presentation className="w-4 h-4" />,
       action: () => {
         // Start presentation mode
@@ -264,7 +264,7 @@ export function CommandPalette({
           <div className="flex items-center px-4 py-3">
             <Search className="w-4 h-4 text-muted-foreground mr-3" />
             <Input
-              placeholder="Type a command or search..."
+              placeholder="Escribe un comando o busca..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="border-0 focus-visible:ring-0 text-sm"

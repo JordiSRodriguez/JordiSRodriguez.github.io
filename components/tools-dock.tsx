@@ -245,7 +245,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                     <div className="flex items-center space-x-3">
                       <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
                       <span className="text-sm text-muted-foreground">
-                        Loading weather...
+                        Cargando clima...
                       </span>
                     </div>
                   </div>
@@ -343,7 +343,7 @@ export function ToolsDock({ className }: ToolsDockProps) {
                     <div className="flex items-center space-x-3">
                       <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
                       <span className="text-sm text-muted-foreground">
-                        Loading GitHub data...
+                        Cargando datos de GitHub...
                       </span>
                     </div>
                   </div>

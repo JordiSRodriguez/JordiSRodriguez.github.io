@@ -102,10 +102,10 @@ export function BlogSection() {
         </div>
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Blog & Articles
+            Blog y Artículos
           </h1>
           <p className="text-muted-foreground mt-2">
-            I share knowledge, experiences and insights about web development
+            Comparto conocimientos, experiencias e ideas sobre desarrollo web
           </p>
         </div>
       </div>
@@ -117,7 +117,7 @@ export function BlogSection() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search articles..."
+                placeholder="Buscar artículos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -130,7 +130,7 @@ export function BlogSection() {
                 size="sm"
                 onClick={() => setSelectedTag(null)}
               >
-                All
+                Todos
               </Button>
               {allTags.map((tag) => (
                 <Button
@@ -197,7 +197,7 @@ export function BlogSection() {
 
                   <Link href={`/blog/${post.slug}`}>
                     <Button className="w-full group-hover:bg-primary/90 transition-colors">
-                      Read article
+                      Leer artículo
                       <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
@@ -210,11 +210,13 @@ export function BlogSection() {
         <Card>
           <CardContent className="p-12 text-center">
             <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-lg font-semibold mb-2">No articles found</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              No se encontraron artículos
+            </h3>
             <p className="text-muted-foreground">
               {searchTerm || selectedTag
-                ? "Try different search terms or filters"
-                : "Blog articles will appear here soon"}
+                ? "Prueba con otros términos de búsqueda o filtros"
+                : "Los artículos del blog aparecerán aquí pronto"}
             </p>
           </CardContent>
         </Card>
@@ -223,13 +225,13 @@ export function BlogSection() {
       {/* Call to Action */}
       <Card className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
         <CardContent className="p-8 text-center">
-          <h3 className="text-2xl font-bold mb-2">Do you like my content?</h3>
+          <h3 className="text-2xl font-bold mb-2">¿Te gusta mi contenido?</h3>
           <p className="mb-4 opacity-90">
-            Subscribe to receive notifications of new articles and exclusive
-            resources
+            Suscríbete para recibir notificaciones de nuevos artículos y
+            recursos exclusivos
           </p>
           <Button variant="secondary" size="lg">
-            Subscribe to Newsletter
+            Suscribirse al Newsletter
           </Button>
         </CardContent>
       </Card>

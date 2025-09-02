@@ -109,9 +109,9 @@ export function VisitorFeedback() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Visitor Feedback</h1>
+        <h1 className="text-4xl font-bold mb-4">Comentarios de Visitantes</h1>
         <p className="text-muted-foreground">
-          Share your thoughts and see what others are saying
+          Comparte tus pensamientos y ve lo que otros están diciendo
         </p>
       </div>
 
@@ -127,7 +127,9 @@ export function VisitorFeedback() {
                 <div className="text-2xl font-bold">
                   {averageRating.toFixed(1)}
                 </div>
-                <p className="text-sm text-muted-foreground">Average Rating</p>
+                <p className="text-sm text-muted-foreground">
+                  Calificación Promedio
+                </p>
               </CardContent>
             </Card>
 
@@ -137,7 +139,9 @@ export function VisitorFeedback() {
                   <MessageSquare className="w-8 h-8 text-blue-500" />
                 </div>
                 <div className="text-2xl font-bold">{feedbacks.length}</div>
-                <p className="text-sm text-muted-foreground">Total Feedback</p>
+                <p className="text-sm text-muted-foreground">
+                  Total Comentarios
+                </p>
               </CardContent>
             </Card>
 
@@ -149,22 +153,24 @@ export function VisitorFeedback() {
                 <div className="text-2xl font-bold">
                   {feedbacks.filter((f) => f.rating >= 4).length}
                 </div>
-                <p className="text-sm text-muted-foreground">Happy Visitors</p>
+                <p className="text-sm text-muted-foreground">
+                  Visitantes Satisfechos
+                </p>
               </CardContent>
             </Card>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Leave Your Feedback</CardTitle>
+              <CardTitle>Deja tu Opinión</CardTitle>
               <CardDescription>
-                Help improve this portfolio with your thoughts
+                Ayuda a mejorar este portfolio con tus comentarios
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Name *</Label>
+                  <Label htmlFor="name">Nombre *</Label>
                   <Input
                     id="name"
                     value={newFeedback.name}
@@ -174,11 +180,11 @@ export function VisitorFeedback() {
                         name: e.target.value,
                       }))
                     }
-                    placeholder="Your name"
+                    placeholder="Tu nombre"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email (optional)</Label>
+                  <Label htmlFor="email">Email (opcional)</Label>
                   <Input
                     id="email"
                     type="email"
@@ -189,13 +195,13 @@ export function VisitorFeedback() {
                         email: e.target.value,
                       }))
                     }
-                    placeholder="your@email.com"
+                    placeholder="tu@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <Label>Rating</Label>
+                <Label>Calificación</Label>
                 <div className="flex gap-1 mt-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -231,19 +237,19 @@ export function VisitorFeedback() {
                   }
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select feedback type" />
+                    <SelectValue placeholder="Selecciona el tipo de comentario" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="general">General</SelectItem>
-                    <SelectItem value="project">About Projects</SelectItem>
-                    <SelectItem value="design">Design & UX</SelectItem>
-                    <SelectItem value="suggestion">Suggestion</SelectItem>
+                    <SelectItem value="project">Sobre Proyectos</SelectItem>
+                    <SelectItem value="design">Diseño y UX</SelectItem>
+                    <SelectItem value="suggestion">Sugerencia</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="message">Message *</Label>
+                <Label htmlFor="message">Mensaje *</Label>
                 <Textarea
                   id="message"
                   value={newFeedback.message}
@@ -253,7 +259,7 @@ export function VisitorFeedback() {
                       message: e.target.value,
                     }))
                   }
-                  placeholder="Share your thoughts..."
+                  placeholder="Comparte tus pensamientos..."
                   rows={4}
                 />
               </div>
@@ -270,7 +276,7 @@ export function VisitorFeedback() {
                     }))
                   }
                 />
-                <Label htmlFor="public">Make this feedback public</Label>
+                <Label htmlFor="public">Hacer este comentario público</Label>
               </div>
 
               <Button
@@ -279,7 +285,7 @@ export function VisitorFeedback() {
                 className="w-full"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {isSubmitting ? "Submitting..." : "Submit Feedback"}
+                {isSubmitting ? "Enviando..." : "Enviar Comentario"}
               </Button>
             </CardContent>
           </Card>
@@ -291,9 +297,11 @@ export function VisitorFeedback() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-lg">Community Feedback</CardTitle>
+                  <CardTitle className="text-lg">
+                    Comentarios de la Comunidad
+                  </CardTitle>
                   <CardDescription className="text-sm">
-                    What visitors are saying
+                    Lo que dicen los visitantes
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
@@ -303,10 +311,10 @@ export function VisitorFeedback() {
                     onValueChange={(value) => setFilter(value)}
                   >
                     <SelectTrigger className="w-fit text-xs">
-                      <SelectValue placeholder="Filter" />
+                      <SelectValue placeholder="Filtrar" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="all">Todos</SelectItem>
                       <SelectItem value="general">General</SelectItem>
                       <SelectItem value="project">Projects</SelectItem>
                       <SelectItem value="design">Design</SelectItem>
