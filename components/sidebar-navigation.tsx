@@ -189,15 +189,21 @@ export function SidebarNavigation({
   };
 
   if (presentationMode) {
+    // En móvil no mostrar el botón ya que no hay sidebar para restaurar
+    if (isMobile) {
+      return null;
+    }
+
     return (
-      <div className="fixed top-4 right-4 z-50 flex gap-2">
+      <div className="fixed top-4 left-4 z-50 flex gap-2">
         <Button
           variant="outline"
           size="sm"
           onClick={() => setPresentationMode(false)}
-          className="bg-background/80 backdrop-blur-sm"
+          className="bg-background/80 backdrop-blur-sm shadow-lg"
         >
           <Eye className="h-4 w-4" />
+          <span className="ml-2">Restaurar Sidebar</span>
         </Button>
       </div>
     );
@@ -303,12 +309,12 @@ export function SidebarNavigation({
       )}
 
       <aside
-        className={`fixed left-0 top-0 h-full bg-background/95 backdrop-blur-sm border-r transition-all duration-300 z-40 flex flex-col ${
+        className={`fixed left-0 top-0 h-full bg-background/95 backdrop-blur-sm border-r z-40 flex flex-col ${
+          isMobile ? "w-72 sm:w-64" : "w-64"
+        } ${
           isSidebarCollapsed
-            ? "-translate-x-full"
-            : isMobile
-            ? "w-72 sm:w-64"
-            : "w-64"
+            ? "transform -translate-x-full transition-transform duration-300 ease-in-out"
+            : "transform translate-x-0 transition-transform duration-300 ease-in-out"
         } ${focusMode ? "opacity-30 hover:opacity-100" : ""}`}
       >
         <div className="p-3 sm:p-4 border-b flex-shrink-0">
