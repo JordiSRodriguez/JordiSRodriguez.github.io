@@ -300,9 +300,9 @@ export function StatsSection() {
       const { data, error } = await supabase.from("visit_stats").insert([
         {
           visitor_id: visitorId,
-          page_url: window.location.href,
+          page_path: window.location.pathname,
           user_agent: navigator.userAgent,
-          created_at: new Date().toISOString(),
+          referrer: document.referrer || null,
         },
       ]);
 
