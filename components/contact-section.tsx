@@ -175,7 +175,7 @@ export function ContactSection() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div data-testid="contact-section" className="space-y-8">
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-red-500 text-white">

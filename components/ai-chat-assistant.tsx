@@ -325,6 +325,7 @@ export function AIChatAssistant() {
 
   return (
     <div
+      data-testid="ai-chat-modal"
       className={`fixed ${isMobile ? "bottom-24 right-4" : "bottom-6 right-6"}`}
       style={{ zIndex: 10000 }}
     >

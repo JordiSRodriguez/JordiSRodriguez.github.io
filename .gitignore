@@ -83,3 +83,10 @@ pids
 # Temporary folders
 tmp/
 temp/
+
+# Claude Code files
+.claude/
+CLAUDE.md
+PROJECT_INDEX.md
+TEST_COVERAGE_REPORT.md
+*.claude/

@@ -8,7 +8,17 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "next start",
-    "export": "npm run build:github"
+    "export": "npm run build:github",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui",
+    "test:e2e": "npm run build:github && playwright test",
+    "test:e2e:ui": "npm run build:github && playwright test --ui",
+    "test:e2e:debug": "npm run build:github && playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:visual": "playwright test --project=visual-regression",
+    "test:visual:update": "playwright test --project=visual-regression --update-snapshots"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -50,7 +60,7 @@
     "geist": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "15.5.2",
+    "next": "^16.1.4",
     "next-themes": "latest",
     "openai": "^5.16.0",
     "react": "^19",
@@ -66,14 +76,25 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
+    "@mswjs/http-middleware": "^0.10.3",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.9",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.18.0",
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.8",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.18",
     "cross-env": "^10.0.0",
+    "jsdom": "^27.4.0",
+    "msw": "^2.12.7",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }

@@ -1,0 +1,83 @@
+name: Visual Regression
+
+on:
+  schedule:
+    # Run every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to test'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  visual-regression:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        browser: [chromium, firefox]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Run visual regression tests
+        run: npm run test:visual
+        continue-on-error: true
+        env:
+          BROWSER: ${{ matrix.browser }}
+
+      - name: Upload visual regression results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-${{ matrix.browser }}-results
+          path: |
+            test-results/
+            test-results/visual-*/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Comment visual diff on PR
+        if: github.event_name == 'pull_request' && failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              body: '⚠️ Visual regression tests failed. Please check the [workflow run](https://github.com/${{ context.repo.owner }}/actions/runs/${{ github.run_id }}) for details.'
+            })
+          github-token: ${{ secrets.GITHUB_TOKEN }}

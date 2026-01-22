@@ -43,7 +43,7 @@ export function MobileFloatingDock({
   }
 
   return (
-    <div className="fixed top-4 right-4 z-40">
+    <div data-testid="mobile-dock" className="fixed top-4 right-4 z-40">
       <Card
         className={`
           bg-background/95 backdrop-blur-md border shadow-lg
