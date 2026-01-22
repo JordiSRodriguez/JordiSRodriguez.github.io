@@ -223,7 +223,7 @@ export function AboutSection() {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
+    <div data-testid="about-section" className="space-y-6 sm:space-y-8 px-4 sm:px-0">
       {/* Header */}
       <div className="text-center space-y-3 sm:space-y-4">
         <div className="relative inline-block">

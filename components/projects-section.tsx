@@ -128,7 +128,7 @@ export function ProjectsSection() {
   }
 
   return (
-    <section className="py-20 px-6 bg-muted/20">
+    <section data-testid="projects-section" className="py-20 px-6 bg-muted/20">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="text-center space-y-4 mb-16">
@@ -173,6 +173,7 @@ export function ProjectsSection() {
           {filteredProjects.map((project, index) => (
             <Card
               key={project.id}
+              data-testid="project-card"
               className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50 w-full h-fit"
             >
               {/* Project image */}
@@ -214,7 +215,7 @@ export function ProjectsSection() {
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-4">
+              <CardContent data-testid="project-details" className="space-y-4">
                 {/* Technologies */}
                 <div className="flex flex-wrap gap-2">
                   {(expandedTechs.has(project.id)

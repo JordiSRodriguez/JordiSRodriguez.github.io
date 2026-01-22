@@ -414,7 +414,7 @@ export function StatsSection() {
   }
 
   return (
-    <div className="w-full">
+    <div data-testid="stats-section" className="w-full">
       {/* Development Notice */}
       {process.env.NODE_ENV === "development" && error && (
         <div className="mb-4 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-center">
