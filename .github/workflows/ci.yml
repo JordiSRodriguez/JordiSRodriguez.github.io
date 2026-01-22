@@ -103,7 +103,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - install dependencies
+      - name: Install dependencies
         run: npm ci
 
       - name: Run ESLint
