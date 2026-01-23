@@ -3,6 +3,9 @@
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, Github, Linkedin, Mail, Terminal, Code2, GitCommit, Sparkles } from "lucide-react";
+import { ParticleSystem } from "@/components/particle-system";
+import { WebGLShader } from "@/components/webgl-shader";
+import { SoundWrapper } from "@/lib/sounds";
 import { createClient } from "@/lib/supabase/client";
 import { useNavigateToSection } from "@/contexts/navigation-context";
 import logger from "@/lib/logger";
@@ -260,6 +263,12 @@ export function HeroSection() {
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
 
+      {/* Floating particle system */}
+      <ParticleSystem />
+
+      {/* WebGL shader overlay */}
+      <WebGLShader intensity={0.4} />
+
       {/* Commit graph */}
       <CommitGraph />
 
@@ -384,59 +393,67 @@ export function HeroSection() {
 
         {/* CTA buttons with enhanced styling */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 px-4">
-          <Button
-            size="lg"
-            className="group relative overflow-hidden font-mono-display text-sm bg-git-branch hover:bg-git-branch/90 text-white border-0 shadow-lg shadow-git-branch/20 hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300"
-            onClick={() => navigateToSection("projects")}
-          >
-            <Sparkles className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="relative z-10">./projects</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-git-clean to-git-branch opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </Button>
+          <SoundWrapper sound="hover">
+            <Button
+              size="lg"
+              className="group relative overflow-hidden font-mono-display text-sm bg-git-branch hover:bg-git-branch/90 text-white border-0 shadow-lg shadow-git-branch/20 hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300"
+              onClick={() => navigateToSection("projects")}
+            >
+              <Sparkles className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
+              <span className="relative z-10">./projects</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-git-clean to-git-branch opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </Button>
+          </SoundWrapper>
 
-          <Button
-            variant="outline"
-            size="lg"
-            className="group font-mono-display text-sm border-2 border-border hover:border-git-clean/50 hover:bg-git-clean/5 transition-all duration-300"
-            onClick={() => navigateToSection("contact")}
-          >
-            <Mail className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-            ./contact
-          </Button>
+          <SoundWrapper sound="hover">
+            <Button
+              variant="outline"
+              size="lg"
+              className="group font-mono-display text-sm border-2 border-border hover:border-git-clean/50 hover:bg-git-clean/5 transition-all duration-300"
+              onClick={() => navigateToSection("contact")}
+            >
+              <Mail className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+              ./contact
+            </Button>
+          </SoundWrapper>
         </div>
 
         {/* Social links with terminal-style icons */}
         <div className="flex justify-center gap-6 mb-16">
           {(profile?.github_username || defaultProfile.github_username) && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:scale-110 transition-all duration-300 hover:bg-git-branch/10 group"
-              onClick={() => {
-                const githubUrl = `https://github.com/${
-                  profile?.github_username || "jordisumba"
-                }`;
-                window.open(githubUrl, "_blank");
-              }}
-              aria-label="Visit GitHub profile"
-            >
-              <Github className="h-5 w-5 group-hover:text-git-branch transition-colors" />
-            </Button>
+            <SoundWrapper sound="hover">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:scale-110 transition-all duration-300 hover:bg-git-branch/10 group"
+                onClick={() => {
+                  const githubUrl = `https://github.com/${
+                    profile?.github_username || "jordisumba"
+                  }`;
+                  window.open(githubUrl, "_blank");
+                }}
+                aria-label="Visit GitHub profile"
+              >
+                <Github className="h-5 w-5 group-hover:text-git-branch transition-colors" />
+              </Button>
+            </SoundWrapper>
           )}
           {(profile?.linkedin_url || defaultProfile.linkedin_url) && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:scale-110 transition-all duration-300 hover:bg-git-clean/10 group"
-              onClick={() => {
-                const linkedinUrl =
-                  profile?.linkedin_url || defaultProfile.linkedin_url;
-                if (linkedinUrl) window.open(linkedinUrl, "_blank");
-              }}
-              aria-label="Visit LinkedIn profile"
-            >
-              <Linkedin className="h-5 w-5 group-hover:text-git-clean transition-colors" />
-            </Button>
+            <SoundWrapper sound="hover">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:scale-110 transition-all duration-300 hover:bg-git-clean/10 group"
+                onClick={() => {
+                  const linkedinUrl =
+                    profile?.linkedin_url || defaultProfile.linkedin_url;
+                  if (linkedinUrl) window.open(linkedinUrl, "_blank");
+                }}
+                aria-label="Visit LinkedIn profile"
+              >
+                <Linkedin className="h-5 w-5 group-hover:text-git-clean transition-colors" />
+              </Button>
+            </SoundWrapper>
           )}
         </div>
 

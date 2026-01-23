@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HolographicCard } from "@/components/holographic-card";
 import { ExternalLink, Github, Eye, Filter, FolderOpen } from "lucide-react";
 import Image from "next/image";
 import { ProjectsSectionSkeleton } from "@/components/loading-skeletons";
@@ -121,115 +122,126 @@ export const ProjectsSection = memo(function ProjectsSection() {
 
         {/* Projects grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-          {filteredProjects.map((project, index) => (
-            <Card
-              key={project.id}
-              data-testid="project-card"
-              className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50 w-full h-fit"
-            >
-              {/* Project image */}
-              <div className="relative aspect-video overflow-hidden bg-muted">
-                {project.image_url ? (
-                  <Image
-                    src={project.image_url || "/placeholder.svg"}
-                    alt={project.title}
-                    fill
-                    loading="lazy"
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-chart-1/20 flex items-center justify-center">
-                    <div className="text-4xl font-bold text-muted-foreground opacity-50">
-                      {project.title.charAt(0)}
+          {filteredProjects.map((project, index) => {
+            const ProjectCard = (
+              <Card
+                key={project.id}
+                data-testid="project-card"
+                className="group overflow-visible hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50 w-full h-fit"
+              >
+                {/* Project image */}
+                <div className="relative aspect-video overflow-hidden bg-muted rounded-t-lg">
+                  {project.image_url ? (
+                    <Image
+                      src={project.image_url || "/placeholder.svg"}
+                      alt={project.title}
+                      fill
+                      loading="lazy"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-chart-1/20 flex items-center justify-center">
+                      <div className="text-4xl font-bold text-muted-foreground opacity-50">
+                        {project.title.charAt(0)}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {project.featured && (
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-primary text-primary-foreground">
-                      Featured
+                  )}
+                  {project.featured && (
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-primary text-primary-foreground">
+                        Featured
+                      </Badge>
+                    </div>
+                  )}
+                  <div className="absolute top-4 right-4">
+                    <Badge className={statusColors[project.status]}>
+                      {project.status.replace("-", " ")}
                     </Badge>
                   </div>
-                )}
-                <div className="absolute top-4 right-4">
-                  <Badge className={statusColors[project.status]}>
-                    {project.status.replace("-", " ")}
-                  </Badge>
-                </div>
-              </div>
-
-              <CardHeader className="pb-4">
-                <CardTitle className="group-hover:text-primary transition-colors line-clamp-2">
-                  {project.title}
-                </CardTitle>
-                <CardDescription className="line-clamp-3 text-sm">
-                  {project.description}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent data-testid="project-details" className="space-y-4">
-                {/* Technologies */}
-                <div className="flex flex-wrap gap-2">
-                  {(expandedTechs.has(project.id)
-                    ? project.technologies
-                    : project.technologies.slice(0, 4)
-                  ).map((tech, techIndex) => (
-                    <Badge
-                      key={tech}
-                      variant="outline"
-                      className={`${getTechColor(techIndex)} text-xs`}
-                    >
-                      {tech}
-                    </Badge>
-                  ))}
-                  {project.technologies.length > 4 && (
-                    <Badge
-                      variant="outline"
-                      className="text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors text-xs"
-                      onClick={() => toggleTechExpansion(project.id)}
-                    >
-                      {expandedTechs.has(project.id)
-                        ? "Ver menos"
-                        : `+${project.technologies.length - 4}`}
-                    </Badge>
-                  )}
                 </div>
 
-                {/* Action buttons */}
-                <div className="flex gap-2 pt-2">
-                  {project.demo_url && (
-                    <Button size="sm" className="flex-1 group/btn" asChild>
-                      <a
-                        href={project.demo_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                <CardHeader className="pb-4">
+                  <CardTitle className="group-hover:text-primary transition-colors line-clamp-2">
+                    {project.title}
+                  </CardTitle>
+                  <CardDescription className="line-clamp-3 text-sm">
+                    {project.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent data-testid="project-details" className="space-y-4">
+                  {/* Technologies */}
+                  <div className="flex flex-wrap gap-2">
+                    {(expandedTechs.has(project.id)
+                      ? project.technologies
+                      : project.technologies.slice(0, 4)
+                    ).map((tech, techIndex) => (
+                      <Badge
+                        key={tech}
+                        variant="outline"
+                        className={`${getTechColor(techIndex)} text-xs`}
                       >
-                        <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
-                        Demo
-                      </a>
-                    </Button>
-                  )}
-                  {project.github_url && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1 group/btn bg-transparent"
-                      asChild
-                    >
-                      <a
-                        href={project.github_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        {tech}
+                      </Badge>
+                    ))}
+                    {project.technologies.length > 4 && (
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors text-xs"
+                        onClick={() => toggleTechExpansion(project.id)}
                       >
-                        <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
-                        Code
-                      </a>
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                        {expandedTechs.has(project.id)
+                          ? "Ver menos"
+                          : `+${project.technologies.length - 4}`}
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex gap-2 pt-2">
+                    {project.demo_url && (
+                      <Button size="sm" className="flex-1 group/btn" asChild>
+                        <a
+                          href={project.demo_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                          Demo
+                        </a>
+                      </Button>
+                    )}
+                    {project.github_url && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 group/btn bg-transparent"
+                        asChild
+                      >
+                        <a
+                          href={project.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                          Code
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+
+            // Use HolographicCard for featured projects
+            return project.featured ? (
+              <HolographicCard key={project.id} intensity="high">
+                {ProjectCard}
+              </HolographicCard>
+            ) : (
+              ProjectCard
+            );
+          })}
         </div>
 
         {/* Empty state */}

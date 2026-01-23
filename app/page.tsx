@@ -20,7 +20,10 @@ import { MobileModals } from "@/components/mobile-modals";
 import { LikeCard } from "@/components/like-card";
 import { InteractiveTerminal } from "@/components/interactive-terminal";
 import { VSCodeStatusBar } from "@/components/vscode-statusbar";
+import { MatrixLoader } from "@/components/matrix-loader";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PageTransition } from "@/components/page-transition";
+import { useKeyboardSound } from "@/lib/sounds";
 
 // Lazy load section components for better performance
 const AboutSection = lazy(
@@ -70,11 +73,15 @@ function HomePageContent() {
   const isMobile = useIsMobile();
   const [currentTheme, setCurrentTheme] = useState("dark");
   const [indicatorsVisible, setIndicatorsVisible] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Estados para los modales flotantes desde el dock móvil
   const [showMobileGithub, setShowMobileGithub] = useState(false);
   const [showMobileWeather, setShowMobileWeather] = useState(false);
   const [showMobileAiChat, setShowMobileAiChat] = useState(false);
+
+  // Enable keyboard sound effects (subtle typing sounds)
+  useKeyboardSound(false); // Set to true to enable
 
   // Handlers para el mobile dock
   const handleAiChatToggle = () => {
@@ -145,7 +152,7 @@ function HomePageContent() {
       }
     })();
 
-    // Wrap lazy-loaded components in Suspense with a loading fallback
+    // Wrap lazy-loaded components in Suspense with PageTransition
     if (
       currentSection === "about" ||
       currentSection === "experience" ||
@@ -167,12 +174,13 @@ function HomePageContent() {
             </div>
           }
         >
-          {content}
+          <PageTransition key={currentSection}>{content}</PageTransition>
         </Suspense>
       );
     }
 
-    return content;
+    // Home section (not lazy-loaded)
+    return <PageTransition key={currentSection}>{content}</PageTransition>;
   };
 
   const handleThemeChange = (theme: string) => {
@@ -182,11 +190,21 @@ function HomePageContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SidebarNavigation
-        currentSection={currentSection}
-        onSectionChange={navigateToSection}
-        onIndicatorsVisibilityChange={setIndicatorsVisible}
-      />
+      {/* Epic Matrix Loading Animation - Only on first visit */}
+      {isLoading && (
+        <MatrixLoader
+          minDuration={3000}
+          onComplete={() => setIsLoading(false)}
+        />
+      )}
+
+      {!isLoading && (
+        <>
+          <SidebarNavigation
+            currentSection={currentSection}
+            onSectionChange={navigateToSection}
+            onIndicatorsVisibilityChange={setIndicatorsVisible}
+          />
 
       {/* Breadcrumbs para móviles */}
       <MobileBreadcrumbs
@@ -242,6 +260,8 @@ function HomePageContent() {
 
       {/* VSCode-style Status Bar - Desktop only */}
       {!isMobile && <VSCodeStatusBar />}
+        </>
+      )}
     </div>
   );
 }
