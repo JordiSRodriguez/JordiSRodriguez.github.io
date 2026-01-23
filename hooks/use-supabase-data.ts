@@ -4,7 +4,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 import logger from "@/lib/logger";
 
 // Types for database tables
@@ -147,10 +147,7 @@ export function useProfile() {
   return useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -170,10 +167,7 @@ export function useSkills() {
   return useQuery({
     queryKey: ["skills"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("skills")
         .select("*")
@@ -193,10 +187,7 @@ export function useInterests() {
   return useQuery({
     queryKey: ["interests"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("interests")
         .select("*")
@@ -216,10 +207,7 @@ export function useFunFacts() {
   return useQuery({
     queryKey: ["funFacts"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("fun_facts")
         .select("*")
@@ -239,10 +227,7 @@ export function useProjects() {
   return useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("projects")
         .select("*")
@@ -263,10 +248,7 @@ export function useWorkExperiences() {
   return useQuery({
     queryKey: ["work-experiences"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("work_experiences")
         .select("*")
@@ -286,10 +268,7 @@ export function useEducation() {
   return useQuery({
     queryKey: ["education"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("experiences")
         .select("*")
@@ -310,10 +289,7 @@ export function useCertifications() {
   return useQuery({
     queryKey: ["certifications"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("certifications")
         .select("*")
@@ -333,10 +309,7 @@ export function useCourses() {
   return useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("courses")
         .select("*")
@@ -356,10 +329,7 @@ export function useLearningGoals() {
   return useQuery({
     queryKey: ["learning-goals"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("learning_goals")
         .select("*")
@@ -380,10 +350,7 @@ export function useBlogPosts() {
   return useQuery({
     queryKey: ["blog-posts"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("blog_posts")
         .select("*")
@@ -404,10 +371,7 @@ export function useVisitorStats() {
   return useQuery({
     queryKey: ["visitor-stats"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("visit_stats")
         .select("id");
@@ -433,10 +397,7 @@ export function usePortfolioLikes() {
   return useQuery({
     queryKey: ["portfolio-likes"],
     queryFn: async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("portfolio_likes")
         .select("id");

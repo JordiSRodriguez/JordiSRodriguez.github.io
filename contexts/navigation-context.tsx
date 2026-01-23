@@ -6,6 +6,7 @@ import {
   useState,
   ReactNode,
   useEffect,
+  useMemo,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { VALID_SECTIONS, DEV_ONLY_SECTIONS, SECTION_NAMES, type Section } from "@/lib/constants";
@@ -156,17 +157,21 @@ export function NavigationProvider({
     setIsSidebarCollapsed(collapsed);
   };
 
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      currentSection,
+      setCurrentSection,
+      navigateToSection,
+      prefetchSection,
+      isSidebarCollapsed,
+      setSidebarCollapsed,
+    }),
+    [currentSection, isSidebarCollapsed, prefetchSection]
+  );
+
   return (
-    <NavigationContext.Provider
-      value={{
-        currentSection,
-        setCurrentSection,
-        navigateToSection,
-        prefetchSection,
-        isSidebarCollapsed,
-        setSidebarCollapsed,
-      }}
-    >
+    <NavigationContext.Provider value={contextValue}>
       {children}
     </NavigationContext.Provider>
   );

@@ -1,75 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 import { Heart } from "lucide-react";
+import logger from "@/lib/logger";
+import { usePortfolioLikesRealtime } from "@/hooks/use-portfolio-likes-realtime";
 
 export function LikeCard() {
-  const [totalLikes, setTotalLikes] = useState(0);
+  const { totalLikes } = usePortfolioLikesRealtime();
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("¡Gracias por tu like! ❤️");
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient();
 
   // Helper function para formatear números
   const formatStatValue = (value: number): string => {
     if (value === 0) return "0";
     if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
     return value.toString();
-  };
-
-  useEffect(() => {
-    fetchLikes();
-
-    // Configurar suscripción en tiempo real para likes
-    const likesChannel = supabase
-      .channel("portfolio_likes_realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "*", // Escuchar todos los eventos (INSERT, UPDATE, DELETE)
-          schema: "public",
-          table: "portfolio_likes",
-        },
-        (payload) => {
-          console.log("Cambio en likes detectado:", payload);
-
-          if (payload.eventType === "INSERT") {
-            // Nuevo like agregado
-            console.log("Like agregado");
-            setTotalLikes((prev) => prev + 1);
-          } else if (payload.eventType === "DELETE") {
-            // Like eliminado
-            console.log("Like eliminado");
-            setTotalLikes((prev) => Math.max(0, prev - 1));
-          }
-        }
-      )
-      .subscribe();
-
-    // Cleanup: cancel subscription when component unmounts
-    return () => {
-      supabase.removeChannel(likesChannel);
-    };
-  }, []);
-
-  const fetchLikes = async () => {
-    try {
-      const { data: likesData, error: likesError } = await supabase
-        .from("portfolio_likes")
-        .select("id");
-
-      if (likesError) throw likesError;
-
-      setTotalLikes(likesData?.length || 0);
-    } catch (error) {
-      console.error("Error fetching likes:", error);
-    }
   };
 
   const handleLike = async () => {
@@ -108,7 +58,7 @@ export function LikeCard() {
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 3000);
     } catch (error) {
-      console.error("Error adding like:", error);
+      logger.error("Error adding like:", error);
       setMessage("Error al enviar el like. Inténtalo de nuevo.");
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 3000);
