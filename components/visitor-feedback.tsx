@@ -202,13 +202,15 @@ export function VisitorFeedback() {
 
               <div>
                 <Label>Calificación</Label>
-                <div className="flex gap-1 mt-1">
+                <div className="flex gap-1 mt-1" role="group" aria-label="Rating selection">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       onClick={() =>
                         setNewFeedback((prev) => ({ ...prev, rating: star }))
                       }
+                      aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                      aria-pressed={star <= newFeedback.rating}
                       className={`w-8 h-8 ${
                         star <= newFeedback.rating
                           ? "text-yellow-500 fill-current"

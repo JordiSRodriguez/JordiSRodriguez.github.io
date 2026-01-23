@@ -175,9 +175,9 @@ export function HeroSection() {
           {displayName}
         </h1>
 
-        {/* Animated role text */}
-        <div className="mb-6 sm:mb-8 h-12 sm:h-16 flex items-center justify-center">
-          <h2 className="text-xl sm:text-2xl md:text-4xl font-semibold text-muted-foreground">
+        {/* Animated role text - Fixed height container prevents CLS */}
+        <div className="mb-6 sm:mb-8 h-16 sm:h-20 flex items-center justify-center">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-semibold text-muted-foreground whitespace-nowrap">
             {displayText}
             <span className="animate-blink">|</span>
           </h2>

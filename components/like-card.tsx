@@ -67,10 +67,10 @@ export function LikeCard() {
 
   return (
     <>
-      {/* Message Notification */}
-      {showMessage && (
-        <div className="fixed top-4 right-4 z-[9999] animate-in slide-in-from-right-5 duration-300">
-          <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg">
+      {/* Message Notification - Fixed position with reserved space to prevent CLS */}
+      <div className="fixed top-4 right-4 z-[9999] pointer-events-none">
+        <div className={`transition-opacity duration-300 ${showMessage ? 'opacity-100' : 'opacity-0'}`}>
+          <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg pointer-events-auto">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
                 <Heart className="h-5 w-5" />
@@ -79,7 +79,7 @@ export function LikeCard() {
             </CardContent>
           </Card>
         </div>
-      )}
+      </div>
 
       {/* Like Card */}
       <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm w-full">
