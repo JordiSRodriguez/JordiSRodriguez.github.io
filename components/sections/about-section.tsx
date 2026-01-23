@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, memo } from "react";
+import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { createBrowserClient } from "@supabase/ssr";
-import logger from "@/lib/logger";
+import { useProfile, useSkills, useInterests, useFunFacts } from "@/hooks/use-supabase-data";
 import {
   MapPin,
   Calendar,
@@ -110,16 +109,13 @@ const iconMap = {
 };
 
 export const AboutSection = memo(function AboutSection() {
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [interests, setInterests] = useState<Interest[]>([]);
-  const [funFacts, setFunFacts] = useState<FunFact[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use React Query hooks for data fetching
+  const { data: profile, isLoading: profileLoading, error: profileError } = useProfile();
+  const { data: skills, isLoading: skillsLoading, error: skillsError } = useSkills();
+  const { data: interests, isLoading: interestsLoading, error: interestsError } = useInterests();
+  const { data: funFacts, isLoading: funFactsLoading, error: funFactsError } = useFunFacts();
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const loading = profileLoading || skillsLoading || interestsLoading || funFactsLoading;
 
   // Function to get experience level based on percentage
   const getSkillLevel = (level: number) => {
@@ -127,90 +123,6 @@ export const AboutSection = memo(function AboutSection() {
     if (level >= 75) return { text: "Avanzado", color: "text-blue-600" };
     if (level >= 50) return { text: "Intermedio", color: "text-yellow-600" };
     return { text: "Principiante", color: "text-orange-600" };
-  };
-
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
-  const fetchAllData = async () => {
-    setLoading(true);
-    try {
-      await Promise.all([
-        fetchProfile(),
-        fetchSkills(),
-        fetchInterests(),
-        fetchFunFacts(),
-      ]);
-    } catch (error) {
-      logger.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .limit(1);
-
-      if (error) throw error;
-
-      setProfile(data && data.length > 0 ? data[0] : null);
-    } catch (error) {
-      logger.error("Error fetching profile:", error);
-      setProfile(null);
-    }
-  };
-
-  const fetchSkills = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("skills")
-        .select("*")
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-
-      setSkills(data || []);
-    } catch (error) {
-      logger.error("Error fetching skills:", error);
-      setSkills([]);
-    }
-  };
-
-  const fetchInterests = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("interests")
-        .select("*")
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-
-      setInterests(data || []);
-    } catch (error) {
-      logger.error("Error fetching interests:", error);
-      setInterests([]);
-    }
-  };
-
-  const fetchFunFacts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("fun_facts")
-        .select("*")
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-
-      setFunFacts(data || []);
-    } catch (error) {
-      logger.error("Error fetching fun facts:", error);
-      setFunFacts([]);
-    }
   };
 
   if (loading) {

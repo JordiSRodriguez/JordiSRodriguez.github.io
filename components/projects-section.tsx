@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, memo } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState, memo } from "react";
+import { useProjects } from "@/hooks/use-supabase-data";
 import { Button } from "@/components/ui/button";
 import logger from "@/lib/logger";
 import {
@@ -44,49 +44,18 @@ const techColors = [
 ];
 
 export const ProjectsSection = memo(function ProjectsSection() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
-  const [loading, setLoading] = useState(true);
   const [expandedTechs, setExpandedTechs] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+  // Use React Query for data fetching
+  const { data: projects = [], isLoading, error } = useProjects();
 
-  useEffect(() => {
-    filterProjects();
-  }, [projects, selectedFilter]);
-
-  const fetchProjects = async () => {
-    try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .order("featured", { ascending: false })
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
-    } catch (error) {
-      logger.error("Error fetching projects:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterProjects = () => {
-    if (selectedFilter === "all") {
-      setFilteredProjects(projects);
-    } else if (selectedFilter === "featured") {
-      setFilteredProjects(projects.filter((project) => project.featured));
-    } else {
-      setFilteredProjects(
-        projects.filter((project) => project.status === selectedFilter)
-      );
-    }
-  };
+  // Derive filtered projects from projects data
+  const filteredProjects = projects.filter((project) => {
+    if (selectedFilter === "all") return true;
+    if (selectedFilter === "featured") return project.featured;
+    return project.status === selectedFilter;
+  });
 
   const getTechColor = (index: number) => {
     return techColors[index % techColors.length];
@@ -104,7 +73,7 @@ export const ProjectsSection = memo(function ProjectsSection() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
@@ -283,7 +252,7 @@ export const ProjectsSection = memo(function ProjectsSection() {
         </div>
 
         {/* Empty state */}
-        {filteredProjects.length === 0 && !loading && (
+        {filteredProjects.length === 0 && !isLoading && (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
               <Filter className="h-12 w-12 text-muted-foreground" />

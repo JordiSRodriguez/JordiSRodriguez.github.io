@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, memo } from "react";
+import { useState, memo } from "react";
 import { createBrowserClient } from "@supabase/ssr";
+import { useWorkExperiences } from "@/hooks/use-supabase-data";
 import logger from "@/lib/logger";
 import {
   Calendar,
@@ -39,38 +40,12 @@ interface WorkExperience {
 }
 
 export const WorkExperienceSection = memo(function WorkExperienceSection() {
-  const [experiences, setExperiences] = useState<WorkExperience[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedExperience, setSelectedExperience] = useState<string | null>(
-    null
-  );
-  const [viewMode, setViewMode] = useState<
-    "timeline" | "comparison" | "metrics"
-  >("timeline");
+  const [selectedExperience, setSelectedExperience] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"timeline" | "comparison" | "metrics">("timeline");
+
+  // Use React Query for data fetching
+  const { data: experiences = [], isLoading, error } = useWorkExperiences();
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    const fetchExperiences = async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-
-      const { data, error } = await supabase
-        .from("work_experiences")
-        .select("*")
-        .order("start_date", { ascending: false });
-
-      if (error) {
-        logger.error("Error fetching work experiences:", error);
-      } else {
-        setExperiences(data || []);
-      }
-      setLoading(false);
-    };
-
-    fetchExperiences();
-  }, []);
 
   const calculateDuration = (startDate: string, endDate: string | null) => {
     const start = new Date(startDate);
@@ -116,7 +91,7 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
     return Array.from(techSet);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-8">
         {[...Array(3)].map((_, i) => (

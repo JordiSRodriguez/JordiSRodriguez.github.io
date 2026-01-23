@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { CompactThemeGenerator } from "@/components/compact-theme-generator";
 import { MobileBottomNavigation } from "@/components/mobile-bottom-navigation";
-import { useSidebarState } from "@/contexts/navigation-context";
+import { useSidebarState, useNavigation } from "@/contexts/navigation-context";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Home,
@@ -100,7 +100,7 @@ export function SidebarNavigation({
   isMusicActive,
   onIndicatorsVisibilityChange,
 }: SidebarNavigationProps) {
-  const { isSidebarCollapsed, setSidebarCollapsed } = useSidebarState();
+  const { isSidebarCollapsed, setSidebarCollapsed, prefetchSection } = useNavigation();
   const [presentationMode, setPresentationMode] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
@@ -374,6 +374,7 @@ export function SidebarNavigation({
                 variant={isActive ? "secondary" : "ghost"}
                 className="w-full justify-start relative group px-2 sm:px-3 text-sm"
                 onClick={() => handleSectionChange(item.id)}
+                onMouseEnter={() => prefetchSection(item.id)}
               >
                 <div
                   className={`w-2 h-2 rounded-full ${item.color} mr-2 sm:mr-3 ${

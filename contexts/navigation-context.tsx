@@ -7,13 +7,16 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { VALID_SECTIONS, DEV_ONLY_SECTIONS, SECTION_NAMES, type Section } from "@/lib/constants";
 import logger from "@/lib/logger";
+import { prefetchSectionData, getAdjacentSections } from "@/lib/prefetch";
 
 interface NavigationContextType {
   currentSection: string;
   setCurrentSection: (section: string) => void;
   navigateToSection: (section: string) => void;
+  prefetchSection: (section: string) => Promise<void>;
   isSidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;
 }
@@ -33,6 +36,7 @@ export function NavigationProvider({
 }: NavigationProviderProps) {
   const [currentSection, setCurrentSection] = useState(initialSection);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Iniciamos colapsada por defecto
+  const queryClient = useQueryClient();
 
   // Función auxiliar para obtener las secciones válidas
   const getValidSections = (): Section[] => {
@@ -47,6 +51,25 @@ export function NavigationProvider({
 
     return baseSections;
   };
+
+  // Prefetch data for a specific section
+  const prefetchSection = async (section: string) => {
+    try {
+      await prefetchSectionData(queryClient, section);
+      logger.log(`Prefetched data for section: ${section}`);
+    } catch (error) {
+      logger.error(`Error prefetching section ${section}:`, error);
+    }
+  };
+
+  // Prefetch initial sections on mount
+  useEffect(() => {
+    // Prefetch common sections that users are likely to visit first
+    const initialSectionsToPrefetch = ["about", "projects", "skills"];
+    initialSectionsToPrefetch.forEach((section) => {
+      prefetchSection(section);
+    });
+  }, []);
 
   // Sincronizar con el hash de la URL al cargar la página
   useEffect(() => {
@@ -105,6 +128,14 @@ export function NavigationProvider({
     // Opcional: agregar analytics, logging, etc.
     logger.log(`Navigating to: ${section}`);
 
+    // Prefetch adjacent sections for faster navigation
+    const validSections = getValidSections();
+    const { previous, next } = getAdjacentSections(section, validSections);
+
+    // Prefetch previous and next sections in background
+    if (previous) prefetchSection(previous);
+    if (next) prefetchSection(next);
+
     // Actualizar URL hash
     if (typeof window !== "undefined") {
       // Usar pushState para que el cambio de URL no active el evento hashchange
@@ -131,6 +162,7 @@ export function NavigationProvider({
         currentSection,
         setCurrentSection,
         navigateToSection,
+        prefetchSection,
         isSidebarCollapsed,
         setSidebarCollapsed,
       }}

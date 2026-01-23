@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect, memo } from "react";
+import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { createBrowserClient } from "@supabase/ssr";
-import logger from "@/lib/logger";
 import {
   GraduationCap,
   Award,
@@ -16,55 +14,13 @@ import {
   Trophy,
   Briefcase as Certificate,
 } from "lucide-react";
+import {
+  useEducation,
+  useCertifications,
+  useCourses,
+  useLearningGoals,
+} from "@/hooks/use-supabase-data";
 
-interface Education {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  description: string;
-  start_date: string;
-  end_date: string | null;
-  is_current: boolean;
-  type: string;
-}
-
-interface Certification {
-  id: string;
-  name: string;
-  issuer: string;
-  date: string;
-  credential_id: string | null;
-  icon: string;
-  color: string;
-  verification_url: string | null;
-  display_order: number;
-}
-
-interface Course {
-  id: string;
-  name: string;
-  provider: string;
-  duration: string;
-  status: string;
-  grade: string | null;
-  completion_date: string | null;
-  start_date: string | null;
-  course_url: string | null;
-  display_order: number;
-}
-
-interface LearningGoal {
-  id: string;
-  title: string;
-  category: string;
-  color: string;
-  priority: number;
-  target_date: string | null;
-  is_completed: boolean;
-  progress: number;
-  display_order: number;
-}
 
 // Icon mapping for certifications
 const iconMap = {
@@ -75,86 +31,12 @@ const iconMap = {
 };
 
 export const EducationSection = memo(function EducationSection() {
-  const [education, setEducation] = useState<Education[]>([]);
-  const [certifications, setCertifications] = useState<Certification[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [learningGoals, setLearningGoals] = useState<LearningGoal[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: education = [], isLoading: educationLoading } = useEducation();
+  const { data: certifications = [], isLoading: certificationsLoading } = useCertifications();
+  const { data: courses = [], isLoading: coursesLoading } = useCourses();
+  const { data: learningGoals = [], isLoading: learningGoalsLoading } = useLearningGoals();
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
-  const fetchAllData = async () => {
-    try {
-      const [
-        educationData,
-        certificationsData,
-        coursesData,
-        learningGoalsData,
-      ] = await Promise.all([
-        fetchEducation(),
-        fetchCertifications(),
-        fetchCourses(),
-        fetchLearningGoals(),
-      ]);
-    } catch (error) {
-      logger.error("Error fetching education data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchEducation = async () => {
-    const { data, error } = await supabase
-      .from("experiences")
-      .select("*")
-      .eq("type", "education")
-      .order("start_date", { ascending: false });
-
-    if (error) throw error;
-    setEducation(data || []);
-    return data;
-  };
-
-  const fetchCertifications = async () => {
-    const { data, error } = await supabase
-      .from("certifications")
-      .select("*")
-      .order("display_order", { ascending: true });
-
-    if (error) throw error;
-    setCertifications(data || []);
-    return data;
-  };
-
-  const fetchCourses = async () => {
-    const { data, error } = await supabase
-      .from("courses")
-      .select("*")
-      .order("display_order", { ascending: true });
-
-    if (error) throw error;
-    setCourses(data || []);
-    return data;
-  };
-
-  const fetchLearningGoals = async () => {
-    const { data, error } = await supabase
-      .from("learning_goals")
-      .select("*")
-      .order("category", { ascending: true })
-      .order("display_order", { ascending: true });
-
-    if (error) throw error;
-    setLearningGoals(data || []);
-    return data;
-  };
+  const isLoading = educationLoading || certificationsLoading || coursesLoading || learningGoalsLoading;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("es-ES", {
@@ -163,7 +45,7 @@ export const EducationSection = memo(function EducationSection() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-32 bg-muted rounded-lg" />

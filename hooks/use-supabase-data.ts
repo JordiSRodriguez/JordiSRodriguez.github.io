@@ -79,13 +79,49 @@ interface WorkExperience {
 interface Education {
   id: string;
   title: string;
-  institution: string;
+  company: string;
   location: string;
   description: string;
   start_date: string;
   end_date: string | null;
   is_current: boolean;
   type: string;
+}
+
+interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  credential_id: string | null;
+  icon: string;
+  color: string;
+  verification_url: string | null;
+  display_order: number;
+}
+
+interface Course {
+  id: string;
+  name: string;
+  provider: string;
+  duration: string;
+  status: string;
+  grade: string | null;
+  completion_date: string | null;
+  start_date: string | null;
+  course_url: string | null;
+  display_order: number;
+}
+
+interface LearningGoal {
+  id: string;
+  title: string;
+  category: string;
+  color: string;
+  priority: number;
+  target_date: string | null;
+  is_completed: boolean;
+  progress: number;
   display_order: number;
 }
 
@@ -244,7 +280,7 @@ export function useWorkExperiences() {
 }
 
 /**
- * Hook for fetching education
+ * Hook for fetching education (from experiences table with type=education)
  */
 export function useEducation() {
   return useQuery({
@@ -255,12 +291,83 @@ export function useEducation() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
       const { data, error } = await supabase
-        .from("education")
+        .from("experiences")
         .select("*")
-        .order("display_order", { ascending: false });
+        .eq("type", "education")
+        .order("start_date", { ascending: false });
 
       if (error) throw error;
       return data as Education[];
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+}
+
+/**
+ * Hook for fetching certifications
+ */
+export function useCertifications() {
+  return useQuery({
+    queryKey: ["certifications"],
+    queryFn: async () => {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data, error } = await supabase
+        .from("certifications")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data as Certification[];
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+}
+
+/**
+ * Hook for fetching courses
+ */
+export function useCourses() {
+  return useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data, error } = await supabase
+        .from("courses")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data as Course[];
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+}
+
+/**
+ * Hook for fetching learning goals
+ */
+export function useLearningGoals() {
+  return useQuery({
+    queryKey: ["learning-goals"],
+    queryFn: async () => {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data, error } = await supabase
+        .from("learning_goals")
+        .select("*")
+        .order("category", { ascending: true })
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data as LearningGoal[];
     },
     staleTime: 1000 * 60 * 10,
   });

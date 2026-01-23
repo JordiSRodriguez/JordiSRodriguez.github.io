@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect, memo } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createBrowserClient } from "@supabase/ssr";
-import logger from "@/lib/logger";
 import {
   Calendar,
   Clock,
@@ -16,53 +14,12 @@ import {
   BookOpen,
 } from "lucide-react";
 import Link from "next/link";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  tags: string[];
-  published: boolean;
-  featured_image: string;
-  reading_time: number;
-  views: number;
-  created_at: string;
-  published_at: string;
-}
+import { useBlogPosts } from "@/hooks/use-supabase-data";
 
 export const BlogSection = memo(function BlogSection() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: posts = [], isLoading } = useBlogPosts();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("published", true)
-        .order("published_at", { ascending: false });
-
-      if (error) throw error;
-      setPosts(data || []);
-    } catch (error) {
-      logger.error("Error fetching blog posts:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
@@ -82,7 +39,7 @@ export const BlogSection = memo(function BlogSection() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-32 bg-muted rounded-lg" />
