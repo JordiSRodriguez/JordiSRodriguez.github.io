@@ -7,7 +7,22 @@ type LogLevel = "log" | "error" | "warn" | "info" | "debug";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-const logger = {
+type Logger = {
+  log: (...args: unknown[]) => void;
+  error: (...args: unknown[]) => void;
+  warn: (...args: unknown[]) => void;
+  info: (...args: unknown[]) => void;
+  debug: (...args: unknown[]) => void;
+  group: (label: string) => void;
+  groupCollapsed: (label: string) => void;
+  groupEnd: () => void;
+  table: (data: unknown) => void;
+  time: (label: string) => void;
+  timeEnd: (label: string) => void;
+  trace: (...args: unknown[]) => void;
+};
+
+const logger: Logger = {
   log: (...args: unknown[]) => {
     if (isDevelopment) {
       console.log(...args);
@@ -33,60 +48,60 @@ const logger = {
       console.debug(...args);
     }
   },
-};
 
-/**
- * Group logger for grouping related console messages
- */
-logger.group = (label: string) => {
-  if (isDevelopment) {
-    console.group(label);
-  }
-};
+  /**
+   * Group logger for grouping related console messages
+   */
+  group: (label: string) => {
+    if (isDevelopment) {
+      console.group(label);
+    }
+  },
 
-logger.groupCollapsed = (label: string) => {
-  if (isDevelopment) {
-    console.groupCollapsed(label);
-  }
-};
+  groupCollapsed: (label: string) => {
+    if (isDevelopment) {
+      console.groupCollapsed(label);
+    }
+  },
 
-logger.groupEnd = () => {
-  if (isDevelopment) {
-    console.groupEnd();
-  }
-};
+  groupEnd: () => {
+    if (isDevelopment) {
+      console.groupEnd();
+    }
+  },
 
-/**
- * Table logger for displaying tabular data
- */
-logger.table = (data: unknown) => {
-  if (isDevelopment) {
-    console.table(data);
-  }
-};
+  /**
+   * Table logger for displaying tabular data
+   */
+  table: (data: unknown) => {
+    if (isDevelopment) {
+      console.table(data);
+    }
+  },
 
-/**
- * Time logger for measuring execution time
- */
-logger.time = (label: string) => {
-  if (isDevelopment) {
-    console.time(label);
-  }
-};
+  /**
+   * Time logger for measuring execution time
+   */
+  time: (label: string) => {
+    if (isDevelopment) {
+      console.time(label);
+    }
+  },
 
-logger.timeEnd = (label: string) => {
-  if (isDevelopment) {
-    console.timeEnd(label);
-  }
-};
+  timeEnd: (label: string) => {
+    if (isDevelopment) {
+      console.timeEnd(label);
+    }
+  },
 
-/**
- * Trace logger for stack traces
- */
-logger.trace = (...args: unknown[]) => {
-  if (isDevelopment) {
-    console.trace(...args);
-  }
+  /**
+   * Trace logger for stack traces
+   */
+  trace: (...args: unknown[]) => {
+    if (isDevelopment) {
+      console.trace(...args);
+    }
+  },
 };
 
 export default logger;
