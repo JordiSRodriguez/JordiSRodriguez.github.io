@@ -102,12 +102,77 @@ function CodeRain() {
 }
 
 // Commit graph visualization
-function CommitGraph() {
-  const commits = Array.from({ length: 8 }, (_, i) => ({
-    id: `a3f8d${2 + i}c`,
-    branch: i % 3 === 0 ? 'main' : i % 3 === 1 ? 'feat' : 'fix',
-    time: `${(8 - i) * 2}m ago`,
-  }));
+function CommitGraph({ githubUsername }: { githubUsername?: string | null }) {
+  const [commits, setCommits] = useState<Array<{ id: string; branch: string; time: string }>>([]);
+
+  useEffect(() => {
+    if (!githubUsername) {
+      // Use mock data if no GitHub username
+      setCommits(Array.from({ length: 8 }, (_, i) => ({
+        id: `a3f8d${2 + i}c`,
+        branch: i % 3 === 0 ? 'main' : i % 3 === 1 ? 'feat' : 'fix',
+        time: `${(8 - i) * 2}m ago`,
+      })));
+      return;
+    }
+
+    const fetchCommits = async () => {
+      try {
+        // Fetch recent events from GitHub
+        const response = await fetch(
+          `https://api.github.com/users/${githubUsername}/events/public?per_page=10`
+        );
+
+        if (!response.ok) {
+          throw new Error('GitHub API request failed');
+        }
+
+        const events = await response.json();
+
+        // Convert events to commit-like data
+        const commitData = events
+          .filter((event: any) => event.type === 'PushEvent')
+          .slice(0, 8)
+          .map((event: any, index: number) => ({
+            id: event.payload?.commits?.[0]?.sha?.substring(0, 7) || `abc${index}def`,
+            branch: event.payload?.ref?.replace('refs/heads/', '') || 'main',
+            time: formatTimeAgo(event.created_at),
+          }));
+
+        if (commitData.length > 0) {
+          setCommits(commitData);
+        } else {
+          // Fallback to mock data if no commits found
+          setCommits(Array.from({ length: 8 }, (_, i) => ({
+            id: `a3f8d${2 + i}c`,
+            branch: i % 3 === 0 ? 'main' : i % 3 === 1 ? 'feat' : 'fix',
+            time: `${(8 - i) * 2}m ago`,
+          })));
+        }
+      } catch (error) {
+        logger.error('Error fetching commits:', error);
+        // Fallback to mock data
+        setCommits(Array.from({ length: 8 }, (_, i) => ({
+          id: `a3f8d${2 + i}c`,
+          branch: i % 3 === 0 ? 'main' : i % 3 === 1 ? 'feat' : 'fix',
+          time: `${(8 - i) * 2}m ago`,
+        })));
+      }
+    };
+
+    fetchCommits();
+  }, [githubUsername]);
+
+  const formatTimeAgo = (dateString: string): string => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  };
 
   return (
     <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-2">
@@ -123,7 +188,7 @@ function CommitGraph() {
           <div
             className={cn(
               "w-2 h-2 rounded-full",
-              commit.branch === 'main' ? 'bg-git-branch' : commit.branch === 'feat' ? 'bg-git-clean' : 'bg-git-modified'
+              commit.branch === 'main' ? 'bg-git-branch' : commit.branch === 'feat' || commit.branch === 'develop' ? 'bg-git-clean' : 'bg-git-modified'
             )}
           />
           <span className="text-muted-foreground">{commit.id}</span>
@@ -272,7 +337,7 @@ export function HeroSection() {
       <WebGLShader intensity={0.4} />
 
       {/* Commit graph */}
-      <CommitGraph />
+      <CommitGraph githubUsername={profile?.github_username || defaultProfile.github_username} />
 
       {/* Main content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -400,9 +465,10 @@ export function HeroSection() {
               className="group relative overflow-hidden font-mono-display text-sm bg-git-branch hover:bg-git-branch/90 text-white border-0 shadow-lg shadow-git-branch/20 px-6 py-3"
               onClick={() => navigateToSection("projects")}
             >
-              <Sparkles className="mr-2 h-4 w-4" />
-              ./projects
-              <div className="absolute inset-0 bg-gradient-to-r from-git-clean to-git-branch opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative z-10 flex items-center">
+                <Sparkles className="mr-2 h-4 w-4" />
+                ./projects
+              </span>
             </MagneticButton>
           </SoundWrapper>
 
@@ -411,8 +477,10 @@ export function HeroSection() {
               className="group font-mono-display text-sm border-2 border-border hover:border-git-clean/50 hover:bg-git-clean/5 bg-background px-6 py-3"
               onClick={() => navigateToSection("contact")}
             >
-              <Mail className="mr-2 h-4 w-4" />
-              ./contact
+              <span className="relative z-10 flex items-center">
+                <Mail className="mr-2 h-4 w-4" />
+                ./contact
+              </span>
             </MagneticButton>
           </SoundWrapper>
         </div>

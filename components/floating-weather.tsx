@@ -29,7 +29,7 @@ export function FloatingWeather() {
   if (shouldHide) {
     return (
       <div
-        className="fixed z-50 top-5 right-4 w-16 h-16 opacity-0 pointer-events-none"
+        className="fixed z-50 top-5 left-4 w-16 h-16 opacity-0 pointer-events-none"
         aria-hidden="true"
       />
     );
@@ -37,7 +37,7 @@ export function FloatingWeather() {
 
   return (
     <div
-      className="fixed z-50 transition-all duration-500 ease-out top-5 right-4"
+      className="fixed z-50 transition-all duration-500 ease-out top-5 left-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

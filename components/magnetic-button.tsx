@@ -52,11 +52,14 @@ export function MagneticButton({
       onMouseEnter={() => setIsHovering(true)}
       {...props}
     >
+      {/* Content - must be first for proper stacking */}
+      <span className="relative z-20">{children}</span>
+
       {/* Ripple effect */}
       {isHovering && (
         <span
           className={cn(
-            "absolute inset-0 rounded-full",
+            "absolute inset-0 rounded-full z-0",
             "bg-primary/20 animate-ping",
             "pointer-events-none"
           )}
@@ -67,15 +70,12 @@ export function MagneticButton({
       {isHovering && (
         <span
           className={cn(
-            "absolute inset-0 rounded-lg",
+            "absolute inset-0 rounded-lg z-0",
             "bg-gradient-to-r from-git-branch/20 to-git-clean/20",
             "blur-xl pointer-events-none"
           )}
         />
       )}
-
-      {/* Content */}
-      <span className="relative z-10">{children}</span>
     </button>
   );
 }

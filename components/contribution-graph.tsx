@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { createBrowserClient } from "@supabase/ssr";
+import logger from "@/lib/logger";
 
 interface ContributionDay {
   date: Date;
@@ -12,10 +14,104 @@ interface ContributionDay {
 export function ContributionGraph() {
   const [weeks, setWeeks] = useState<ContributionDay[][]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [githubUsername, setGithubUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    // Generate contribution data for the last 52 weeks
-    const generateData = () => {
+    const fetchGitHubUsername = async () => {
+      try {
+        const supabase = createBrowserClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+        const { data } = await supabase
+          .from("profiles")
+          .select("github_username")
+          .single();
+        if (data?.github_username) {
+          setGithubUsername(data.github_username);
+          fetchContributions(data.github_username);
+        } else {
+          generateMockData();
+        }
+      } catch (error) {
+        logger.error("Error fetching GitHub username:", error);
+        generateMockData();
+      }
+    };
+
+    const fetchContributions = async (username: string) => {
+      try {
+        // GitHub doesn't have a direct public API for contributions,
+        // but we can fetch events as a proxy
+        const response = await fetch(
+          `https://api.github.com/users/${username}/events/public?per_page=100`
+        );
+
+        if (!response.ok) {
+          throw new Error("GitHub API request failed");
+        }
+
+        const events = await response.json();
+        generateDataFromEvents(events);
+      } catch (error) {
+        logger.error("Error fetching contributions:", error);
+        generateMockData();
+      }
+    };
+
+    const generateDataFromEvents = (events: any[]) => {
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+      const startDate = new Date(today);
+      startDate.setDate(today.getDate() - 364 - dayOfWeek);
+
+      // Create a map to count contributions per day
+      const contributionMap = new Map<string, number>();
+
+      // Count events per day
+      events.forEach((event) => {
+        if (event.created_at) {
+          const date = new Date(event.created_at);
+          const dateKey = date.toISOString().split('T')[0];
+          contributionMap.set(dateKey, (contributionMap.get(dateKey) || 0) + 1);
+        }
+      });
+
+      const data: ContributionDay[][] = [];
+      let currentWeek: ContributionDay[] = [];
+
+      for (let i = 0; i < 364 + dayOfWeek + 1; i++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        const dateKey = date.toISOString().split('T')[0];
+        const count = contributionMap.get(dateKey) || 0;
+
+        // Calculate level based on count
+        let level: 0 | 1 | 2 | 3 | 4 = 0;
+        if (count > 0) level = 1;
+        if (count > 2) level = 2;
+        if (count > 4) level = 3;
+        if (count > 6) level = 4;
+
+        currentWeek.push({ date, count, level });
+
+        // Start new week on Sunday
+        if (date.getDay() === 6 && currentWeek.length === 7) {
+          data.push(currentWeek);
+          currentWeek = [];
+        }
+      }
+
+      // Add remaining days
+      if (currentWeek.length > 0) {
+        data.push(currentWeek);
+      }
+
+      setWeeks(data);
+      setIsLoaded(true);
+    };
+
+    const generateMockData = () => {
       const today = new Date();
       const dayOfWeek = today.getDay();
       const startDate = new Date(today);
@@ -53,7 +149,7 @@ export function ContributionGraph() {
 
         currentWeek.push({ date, count, level });
 
-        // Start new week on Sunday (except for first week)
+        // Start new week on Sunday
         if (date.getDay() === 6 && currentWeek.length === 7) {
           data.push(currentWeek);
           currentWeek = [];
@@ -65,11 +161,11 @@ export function ContributionGraph() {
         data.push(currentWeek);
       }
 
-      return data;
+      setWeeks(data);
+      setIsLoaded(true);
     };
 
-    setWeeks(generateData());
-    setIsLoaded(true);
+    fetchGitHubUsername();
   }, []);
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
