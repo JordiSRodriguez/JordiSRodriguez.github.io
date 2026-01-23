@@ -142,6 +142,16 @@
   .heading-responsive {
     @apply text-xl sm:text-2xl lg:text-3xl xl:text-4xl;
   }
+
+  /* Performance optimizations */
+  .contain-layout {
+    contain: layout style paint;
+  }
+
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
 }
 
 /* Added custom animations for 3D effects and hero section */

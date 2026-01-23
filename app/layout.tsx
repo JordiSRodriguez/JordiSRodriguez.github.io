@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   other: {
     "x-dns-prefetch-control": "on",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  },
 };
 
 export default function RootLayout({
@@ -25,10 +30,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Preconnect to critical origins */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL || "https://your-project.supabase.co"} />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL || "https://your-project.supabase.co"} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+
+        {/* Prefetch likely next pages */}
+        <link rel="prefetch" href="/projects" />
+        <link rel="prefetch" href="/about" />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <QueryProvider>

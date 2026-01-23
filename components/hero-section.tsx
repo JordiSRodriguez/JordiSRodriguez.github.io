@@ -152,6 +152,8 @@ export function HeroSection() {
                 alt={displayName}
                 width={128}
                 height={128}
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (

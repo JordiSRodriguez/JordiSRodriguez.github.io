@@ -176,6 +176,8 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
                     <img
                       src={experience.company_logo}
                       alt={`${experience.company} logo`}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -348,6 +350,8 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
                       <img
                         src={experience.company_logo}
                         alt={`${experience.company} logo`}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                     ) : (
