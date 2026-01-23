@@ -119,7 +119,7 @@ export function FloatingGitHub() {
           <Card
             className={cn(
               "transition-all duration-500 ease-out transform-gpu cursor-pointer overflow-hidden",
-              "bg-background/80 backdrop-blur-xl border border-git-branch/30",
+              "bg-gray-950/95 backdrop-blur-xl border border-git-branch/30",
               isHovered ? "w-[420px] h-auto shadow-2xl shadow-git-branch/20 scale-105" : "w-16 h-16 hover:scale-110",
               "rounded-xl"
             )}
