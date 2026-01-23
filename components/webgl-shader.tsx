@@ -44,7 +44,7 @@ export function WebGLShader({ className, intensity = 0.5 }: WebGLShaderProps) {
 
       float snoise(vec2 v) {
         const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                         0.0 - 0.577195983479233, 0.0243902424, 0.0);
+                         -0.577195983479233, 0.0243902424);
         vec4 i = perm(v.xyxy);
         vec4 p = perm(((i.xy + i.zw) * 0.02439024 + i.zw));
         float a = p.x;
