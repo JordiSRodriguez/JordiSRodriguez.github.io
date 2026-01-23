@@ -168,7 +168,7 @@ Categories:
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-4 z-40 p-3 bg-git-branch hover:bg-git-branch/90 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300 group"
+        className="fixed bottom-8 left-4 z-40 p-3 bg-git-branch hover:bg-git-branch/90 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300 group"
         title="Open Terminal (Ctrl+`)"
       >
         <Terminal className="w-5 h-5 group-hover:rotate-12 transition-transform" />
