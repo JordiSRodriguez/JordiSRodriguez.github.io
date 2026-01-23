@@ -28,7 +28,7 @@ export function WebGLShader({ className, intensity = 0.5 }: WebGLShaderProps) {
       }
     `;
 
-    // Fragment shader with noise and time-based animation
+    // Fragment shader with simplified gradient animation
     const fragmentShaderSource = `
       precision mediump float;
       varying vec2 vUv;
@@ -37,51 +37,33 @@ export function WebGLShader({ className, intensity = 0.5 }: WebGLShaderProps) {
       uniform vec2 u_resolution;
       uniform vec2 u_mouse;
 
-      // Simplex noise function
-      vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-      vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-      vec4 perm(vec4 x) { return mod289(((x * 34.0 + 1.0) * x); }
-
-      float snoise(vec2 v) {
-        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                         -0.577195983479233, 0.0243902424);
-        vec4 i = perm(v.xyxy);
-        vec4 p = perm(((i.xy + i.zw) * 0.02439024 + i.zw));
-        float a = p.x;
-        float b = p.y;
-        float c = p.z;
-        float d = p.w;
-        return ((a + b + c + d) * 0.25 - 1.0);
-      }
-
       void main() {
         vec2 uv = vUv;
         vec2 mouse = u_mouse / u_resolution;
 
-        float time = u_time * 0.5;
+        float time = u_time * 0.3;
 
-        // Create flowing noise pattern
-        float noise1 = snoise(uv * 3.0 + time);
-        float noise2 = snoise(uv * 5.0 - time * 0.5);
-        float noise3 = snoise(uv * 8.0 + mouse);
+        // Create flowing gradient pattern
+        vec2 pos = uv * 2.0 - 1.0;
+        float d1 = length(pos - vec2(sin(time * 0.5) * 0.5));
+        float d2 = length(pos - vec2(cos(time * 0.3) * 0.5));
 
-        // Combine noises
-        float combinedNoise = (noise1 + noise2 * 0.5 + noise3 * 0.25) * 0.5 + 0.5;
+        float pattern = sin(d1 * 5.0 + time) * cos(d2 * 5.0 - time);
+        pattern = pattern * 0.5 + 0.5;
 
-        // Create color gradient based on noise
+        // Create color gradient
         vec3 color1 = vec3(0.388, 0.4, 0.949); // git-branch
         vec3 color2 = vec3(0.133, 0.773, 0.369); // git-clean
         vec3 color3 = vec3(0.918, 0.702, 0.031); // git-modified
 
-        vec3 color = mix(color1, color2, combinedNoise);
-        color = mix(color, color3, noise2 * 0.5);
+        vec3 color = mix(color1, color2, pattern);
+        color = mix(color, color3, sin(time * 0.5 + uv.x * 3.0) * 0.5 + 0.5);
 
         // Add mouse influence
         float mouseInfluence = 1.0 - length(uv - mouse) * 2.0;
         mouseInfluence = clamp(mouseInfluence, 0.0, 1.0);
 
-        // Increase intensity near mouse
-        color += mouseInfluence * 0.2;
+        color += mouseInfluence * 0.15;
 
         // Add subtle scanlines
         float scanline = sin(vUv.y * 200.0 + time * 10.0) * 0.02;
@@ -89,10 +71,6 @@ export function WebGLShader({ className, intensity = 0.5 }: WebGLShaderProps) {
 
         // Apply overall intensity
         color *= u_intensity;
-
-        // Add glow effect
-        float glow = snoise(uv * 2.0 + time * 0.3) * 0.3;
-        color += glow * mouseInfluence * 0.2;
 
         gl_FragColor = vec4(color, 0.15);
       }
@@ -112,12 +90,15 @@ export function WebGLShader({ className, intensity = 0.5 }: WebGLShaderProps) {
     gl.compileShader(fragmentShader);
 
     if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(vertexShader));
+      const error = gl.getShaderInfoLog(vertexShader);
+      console.error('Vertex shader error:', error);
       return;
     }
 
     if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(fragmentShader));
+      const error = gl.getShaderInfoLog(fragmentShader);
+      console.error('Fragment shader error:', error);
+      console.error('Shader source:', fragmentShaderSource);
       return;
     }
 
