@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { FileCard } from "@/components/ui/file-card";
 import { ContributionGraph } from "@/components/contribution-graph";
+import { AnimatedCounter } from "@/components/animated-counter";
 import { createBrowserClient } from "@supabase/ssr";
 import {
   Code,
@@ -286,7 +287,7 @@ export function StatsSection() {
       icon: Code,
       label: "completed_projects",
       displayLabel: "Proyectos Completados",
-      value: formatStatValue(statsData.completedProjects),
+      value: statsData.completedProjects,
       type: "const" as const,
       color: "text-git-branch",
     },
@@ -294,7 +295,7 @@ export function StatsSection() {
       icon: Loader,
       label: "in_progress_projects",
       displayLabel: "En Desarrollo",
-      value: formatStatValue(statsData.inProgressProjects),
+      value: statsData.inProgressProjects,
       type: "let" as const,
       color: "text-git-modified",
     },
@@ -302,7 +303,7 @@ export function StatsSection() {
       icon: Briefcase,
       label: "work_experience",
       displayLabel: "Experiencia",
-      value: formatStatValue(statsData.workExperiences),
+      value: statsData.workExperiences,
       type: "const" as const,
       color: "text-git-clean",
     },
@@ -310,7 +311,7 @@ export function StatsSection() {
       icon: GraduationCap,
       label: "education",
       displayLabel: "Formación",
-      value: formatStatValue(statsData.experiencesCount),
+      value: statsData.experiencesCount,
       type: "const" as const,
       color: "text-git-branch",
     },
@@ -318,7 +319,7 @@ export function StatsSection() {
       icon: GitBranch,
       label: "github_repos",
       displayLabel: "Repositorios",
-      value: formatStatValue(statsData.githubRepos || 0),
+      value: statsData.githubRepos || 0,
       type: "async" as const,
       color: "text-git-clean",
     },
@@ -326,7 +327,7 @@ export function StatsSection() {
       icon: Heart,
       label: "portfolio_likes",
       displayLabel: "Likes",
-      value: formatStatValue(statsData.totalLikes),
+      value: statsData.totalLikes,
       type: "let" as const,
       color: "text-git-conflict",
     },
@@ -397,8 +398,14 @@ export function StatsSection() {
                 </div>
 
                 {/* Value */}
-                <span className={cn("font-bold text-lg", stat.color)}>
-                  {stat.value}
+                <span className={cn("font-bold text-lg inline-block", stat.color)}>
+                  <AnimatedCounter
+                    value={stat.value}
+                    duration={2000}
+                    prefix=""
+                    suffix="+"
+                    decimals={0}
+                  />
                 </span>
 
                 {/* Comment */}

@@ -6,6 +6,8 @@ import { ArrowDown, Github, Linkedin, Mail, Terminal, Code2, GitCommit, Sparkles
 import { ParticleSystem } from "@/components/particle-system";
 import { WebGLShader } from "@/components/webgl-shader";
 import { SoundWrapper } from "@/lib/sounds";
+import { GlitchText } from "@/components/glitch-text";
+import { MagneticButton } from "@/components/magnetic-button";
 import { createClient } from "@/lib/supabase/client";
 import { useNavigateToSection } from "@/contexts/navigation-context";
 import logger from "@/lib/logger";
@@ -332,12 +334,12 @@ export function HeroSection() {
           </span>
         </div>
 
-        {/* Main name with syntax highlighting */}
+        {/* Main name with syntax highlighting and glitch effect */}
         <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold mb-6 font-mono-display relative">
           <div className="relative inline-block">
-            <span className="bg-gradient-to-r from-foreground via-git-branch to-git-clean bg-clip-text text-transparent">
+            <GlitchText className="bg-gradient-to-r from-foreground via-git-branch to-git-clean bg-clip-text text-transparent" intensity="medium">
               {displayName}
-            </span>
+            </GlitchText>
             {/* Subtle underline */}
             <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-git-branch/50 to-transparent" />
           </div>
@@ -391,30 +393,27 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* CTA buttons with enhanced styling */}
+        {/* CTA buttons with magnetic effect */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 px-4">
           <SoundWrapper sound="hover">
-            <Button
-              size="lg"
-              className="group relative overflow-hidden font-mono-display text-sm bg-git-branch hover:bg-git-branch/90 text-white border-0 shadow-lg shadow-git-branch/20 hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300"
+            <MagneticButton
+              className="group relative overflow-hidden font-mono-display text-sm bg-git-branch hover:bg-git-branch/90 text-white border-0 shadow-lg shadow-git-branch/20 px-6 py-3"
               onClick={() => navigateToSection("projects")}
             >
-              <Sparkles className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
-              <span className="relative z-10">./projects</span>
+              <Sparkles className="mr-2 h-4 w-4" />
+              ./projects
               <div className="absolute inset-0 bg-gradient-to-r from-git-clean to-git-branch opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Button>
+            </MagneticButton>
           </SoundWrapper>
 
           <SoundWrapper sound="hover">
-            <Button
-              variant="outline"
-              size="lg"
-              className="group font-mono-display text-sm border-2 border-border hover:border-git-clean/50 hover:bg-git-clean/5 transition-all duration-300"
+            <MagneticButton
+              className="group font-mono-display text-sm border-2 border-border hover:border-git-clean/50 hover:bg-git-clean/5 bg-background px-6 py-3"
               onClick={() => navigateToSection("contact")}
             >
-              <Mail className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+              <Mail className="mr-2 h-4 w-4" />
               ./contact
-            </Button>
+            </MagneticButton>
           </SoundWrapper>
         </div>
 

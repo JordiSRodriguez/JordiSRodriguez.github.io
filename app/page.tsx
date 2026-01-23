@@ -24,6 +24,14 @@ import { MatrixLoader } from "@/components/matrix-loader";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PageTransition } from "@/components/page-transition";
 import { useKeyboardSound } from "@/lib/sounds";
+import { CustomCursor } from "@/components/custom-cursor";
+import { ScrollProgress } from "@/components/scroll-progress";
+import { NoiseOverlay, Scanlines } from "@/components/noise-overlay";
+import { ParallaxFloats, GradientOrbs } from "@/components/parallax-floats";
+import { ParticleExplosionCanvas } from "@/components/particle-explosion";
+import { Spotlight } from "@/components/spotlight-effect";
+import { WaveBackground, FloatingShapes } from "@/components/wave-background";
+import { ConfettiCanvas } from "@/components/confetti-effect";
 
 // Lazy load section components for better performance
 const AboutSection = lazy(
@@ -189,7 +197,20 @@ function HomePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Global Visual Effects - Always Present */}
+      <CustomCursor />
+      <ScrollProgress />
+      <NoiseOverlay opacity={0.015} />
+      <Scanlines />
+      <ParallaxFloats />
+      <GradientOrbs />
+      <Spotlight size={800} color="rgba(99, 102, 241, 0.08)" />
+      <WaveBackground waveCount={3} />
+      <FloatingShapes />
+      <ParticleExplosionCanvas />
+      <ConfettiCanvas />
+
       {/* Epic Matrix Loading Animation - Only on first visit */}
       {isLoading && (
         <MatrixLoader

@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HolographicCard } from "@/components/holographic-card";
-import { ExternalLink, Github, Eye, Filter, FolderOpen } from "lucide-react";
+import { TiltCard } from "@/components/tilt-card";
+import { CardSpotlight } from "@/components/spotlight-effect";
+import { ProjectPreviewModal } from "@/components/project-preview-modal";
+import { Eye, Filter, FolderOpen } from "lucide-react";
 import Image from "next/image";
 import { ProjectsSectionSkeleton } from "@/components/loading-skeletons";
 
@@ -37,20 +40,23 @@ const statusColors = {
   planned: "bg-blue-500/10 text-blue-500 border-blue-500/20",
 };
 
-const techColors = [
-  "bg-chart-1/10 text-chart-1 border-chart-1/20",
-  "bg-chart-2/10 text-chart-2 border-chart-2/20",
-  "bg-chart-3/10 text-chart-3 border-chart-3/20",
-  "bg-chart-4/10 text-chart-4 border-chart-4/20",
-  "bg-chart-5/10 text-chart-5 border-chart-5/20",
-];
-
 export const ProjectsSection = memo(function ProjectsSection() {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
-  const [expandedTechs, setExpandedTechs] = useState<Set<string>>(new Set());
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Use React Query for data fetching
   const { data: projects = [], isLoading, error } = useProjects();
+
+  const handleProjectClick = (project: Project) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedProject(null), 300);
+  };
 
   // Derive filtered projects from projects data
   const filteredProjects = projects.filter((project) => {
@@ -58,22 +64,6 @@ export const ProjectsSection = memo(function ProjectsSection() {
     if (selectedFilter === "featured") return project.featured;
     return project.status === selectedFilter;
   });
-
-  const getTechColor = (index: number) => {
-    return techColors[index % techColors.length];
-  };
-
-  const toggleTechExpansion = (projectId: string) => {
-    setExpandedTechs((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(projectId)) {
-        newSet.delete(projectId);
-      } else {
-        newSet.add(projectId);
-      }
-      return newSet;
-    });
-  };
 
   if (isLoading) {
     return <ProjectsSectionSkeleton />;
@@ -121,19 +111,20 @@ export const ProjectsSection = memo(function ProjectsSection() {
         </div>
 
         {/* Projects grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-          {filteredProjects.map((project, index) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project) => {
             const ProjectCard = (
               <Card
                 key={project.id}
                 data-testid="project-card"
-                className="group overflow-visible hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50 w-full h-fit"
+                onClick={() => handleProjectClick(project)}
+                className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-card/50 backdrop-blur-sm border-border/50 cursor-pointer hover:border-git-branch/50"
               >
                 {/* Project image */}
                 <div className="relative aspect-video overflow-hidden bg-muted rounded-t-lg">
                   {project.image_url ? (
                     <Image
-                      src={project.image_url || "/placeholder.svg"}
+                      src={project.image_url}
                       alt={project.title}
                       fill
                       loading="lazy"
@@ -146,100 +137,56 @@ export const ProjectsSection = memo(function ProjectsSection() {
                       </div>
                     </div>
                   )}
-                  {project.featured && (
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-primary text-primary-foreground">
+
+                  {/* Badges overlay */}
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    {project.featured && (
+                      <Badge className="bg-primary text-primary-foreground text-xs">
                         Featured
                       </Badge>
-                    </div>
-                  )}
-                  <div className="absolute top-4 right-4">
-                    <Badge className={statusColors[project.status]}>
+                    )}
+                    <Badge className={statusColors[project.status] + " text-xs"}>
                       {project.status.replace("-", " ")}
                     </Badge>
                   </div>
                 </div>
 
                 <CardHeader className="pb-4">
-                  <CardTitle className="group-hover:text-primary transition-colors line-clamp-2">
+                  <CardTitle className="group-hover:text-primary transition-colors line-clamp-1">
                     {project.title}
                   </CardTitle>
-                  <CardDescription className="line-clamp-3 text-sm">
+                  <CardDescription className="line-clamp-2 text-sm">
                     {project.description}
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent data-testid="project-details" className="space-y-4">
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2">
-                    {(expandedTechs.has(project.id)
-                      ? project.technologies
-                      : project.technologies.slice(0, 4)
-                    ).map((tech, techIndex) => (
-                      <Badge
-                        key={tech}
-                        variant="outline"
-                        className={`${getTechColor(techIndex)} text-xs`}
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                    {project.technologies.length > 4 && (
-                      <Badge
-                        variant="outline"
-                        className="text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors text-xs"
-                        onClick={() => toggleTechExpansion(project.id)}
-                      >
-                        {expandedTechs.has(project.id)
-                          ? "Ver menos"
-                          : `+${project.technologies.length - 4}`}
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Action buttons */}
-                  <div className="flex gap-2 pt-2">
-                    {project.demo_url && (
-                      <Button size="sm" className="flex-1 group/btn" asChild>
-                        <a
-                          href={project.demo_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
-                          Demo
-                        </a>
-                      </Button>
-                    )}
-                    {project.github_url && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 group/btn bg-transparent"
-                        asChild
-                      >
-                        <a
-                          href={project.github_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform" />
-                          Code
-                        </a>
-                      </Button>
-                    )}
+                <CardContent className="pt-0">
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <Eye className="w-3 h-3 mr-1" />
+                    Click to view details
                   </div>
                 </CardContent>
               </Card>
             );
 
-            // Use HolographicCard for featured projects
+            // Apply effects to all projects
+            const cardWithEffects = (
+              <CardSpotlight key={project.id}>
+                <TiltCard intensity={15} scale={1.03} glare={true}>
+                  {ProjectCard}
+                </TiltCard>
+              </CardSpotlight>
+            );
+
+            // Use HolographicCard + TiltCard for featured projects
             return project.featured ? (
               <HolographicCard key={project.id} intensity="high">
-                {ProjectCard}
+                <TiltCard intensity={20} scale={1.05} glare={true}>
+                  {ProjectCard}
+                </TiltCard>
               </HolographicCard>
             ) : (
-              ProjectCard
+              cardWithEffects
             );
           })}
         </div>
@@ -272,6 +219,13 @@ export const ProjectsSection = memo(function ProjectsSection() {
           </div>
         )}
       </div>
+
+      {/* Project Preview Modal */}
+      <ProjectPreviewModal
+        project={selectedProject}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </section>
   );
 });
