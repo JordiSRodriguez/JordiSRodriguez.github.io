@@ -78,8 +78,6 @@ interface WorkExperience {
   url?: string;
   testimonial?: string;
   testimonial_author?: string;
-  current_job: boolean;
-  display_order: number;
 }
 
 interface Education {
@@ -258,7 +256,7 @@ export function useWorkExperiences() {
       const { data, error } = await supabase
         .from("work_experiences")
         .select("*")
-        .order("display_order", { ascending: false });
+        .order("start_date", { ascending: false });
 
       if (error) throw error;
       return data as WorkExperience[];

@@ -170,7 +170,11 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
                 <div
                   className={`relative z-10 flex items-center justify-center ${
                     isMobile ? "w-12 h-12" : "w-16 h-16"
-                  } aspect-square flex-shrink-0 rounded-full bg-primary text-primary-foreground shadow-lg overflow-hidden`}
+                  } aspect-square flex-shrink-0 rounded-full shadow-lg overflow-hidden ${
+                    experience.company_logo
+                      ? "bg-muted/50"
+                      : "bg-primary text-primary-foreground"
+                  }`}
                 >
                   {experience.company_logo ? (
                     <img
@@ -345,7 +349,11 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
             >
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 aspect-square flex-shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center overflow-hidden">
+                  <div className={`w-10 h-10 aspect-square flex-shrink-0 rounded-full flex items-center justify-center overflow-hidden ${
+                    experience.company_logo
+                      ? "bg-muted/50"
+                      : "bg-primary text-primary-foreground"
+                  }`}>
                     {experience.company_logo ? (
                       <img
                         src={experience.company_logo}
