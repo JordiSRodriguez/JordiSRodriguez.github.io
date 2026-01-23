@@ -43,8 +43,11 @@ export function useParticleExplosion() {
         particle.vy += 0.2; // gravity
         particle.life -= 0.02;
 
+        // Skip drawing if particle life is negative or zero
+        if (particle.life <= 0) return;
+
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, Math.max(0, particle.size * particle.life), 0, Math.PI * 2);
         ctx.fillStyle = particle.color.replace(")", `, ${particle.life})`).replace("rgb", "rgba");
         ctx.fill();
       });

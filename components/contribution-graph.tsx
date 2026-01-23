@@ -209,8 +209,8 @@ export function ContributionGraph() {
       <div className="flex gap-1">
         {/* Day labels */}
         <div className="flex flex-col gap-1 mr-2 text-[10px] text-muted-foreground font-mono-display">
-          {days.map((day) => (
-            <div key={day} className="h-3 flex items-center">
+          {days.map((day, index) => (
+            <div key={`${day}-${index}`} className="h-3 flex items-center">
               {day}
             </div>
           ))}
