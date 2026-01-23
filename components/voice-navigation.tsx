@@ -5,6 +5,38 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Mic, MicOff, Volume2, VolumeX, Headphones, X } from "lucide-react";
+import logger from "@/lib/logger";
+
+// Web Speech API types
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;
+  start(): void;
+  stop(): void;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: {
+      new (): SpeechRecognition;
+    };
+    webkitSpeechRecognition: {
+      new (): SpeechRecognition;
+    };
+  }
+}
 
 interface VoiceNavigationProps {
   isActive: boolean;
@@ -21,7 +53,7 @@ export function VoiceNavigation({
   const [transcript, setTranscript] = useState("");
   const [confidence, setConfidence] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const commands = {
     "ir a proyectos": () => onSectionChange("projects"),
@@ -72,7 +104,7 @@ export function VoiceNavigation({
     recognitionRef.current.interimResults = true;
     recognitionRef.current.lang = "en-US";
 
-    recognitionRef.current.onresult = (event: any) => {
+    recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
       const current = event.resultIndex;
       const transcript = event.results[current][0].transcript
         .toLowerCase()
@@ -99,8 +131,8 @@ export function VoiceNavigation({
       }
     };
 
-    recognitionRef.current.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
+    recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+      logger.error("Speech recognition error:", event.error);
       setIsListening(false);
     };
 

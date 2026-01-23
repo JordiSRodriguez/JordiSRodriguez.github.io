@@ -18,6 +18,37 @@ import {
   Briefcase,
   Loader,
 } from "lucide-react";
+import logger from "@/lib/logger";
+
+// Database table types
+interface VisitStat {
+  id: string;
+}
+
+interface Project {
+  id: string;
+  status: "completed" | "in-progress" | "planned";
+}
+
+interface WorkExperience {
+  id: string;
+}
+
+interface Contact {
+  id: string;
+}
+
+interface PortfolioLike {
+  id: string;
+}
+
+interface Skill {
+  id: string;
+}
+
+interface Experience {
+  id: string;
+}
 
 interface StatsData {
   completedProjects: number;
@@ -75,7 +106,7 @@ export function StatsSection() {
           table: "portfolio_likes",
         },
         (payload) => {
-          console.log("Cambio en likes detectado:", payload);
+          logger.log("Cambio en likes detectado:", payload);
 
           if (payload.eventType === "INSERT") {
             // Nuevo like agregado
@@ -121,7 +152,7 @@ export function StatsSection() {
         }
       }
     } catch (error) {
-      console.error("Error fetching GitHub stats:", error);
+      logger.error("Error fetching GitHub stats:", error);
       // Mantener el valor por defecto si falla
     }
   };
@@ -163,13 +194,13 @@ export function StatsSection() {
 
       // Process results with graceful degradation
       const statsResults: {
-        visitsData: any[] | null;
-        projectsData: any[] | null;
-        workExperiencesData: any[] | null;
-        contactsData: any[] | null;
-        likesData: any[] | null;
-        skillsData: any[] | null;
-        experiencesData: any[] | null;
+        visitsData: VisitStat[] | null;
+        projectsData: Project[] | null;
+        workExperiencesData: WorkExperience[] | null;
+        contactsData: Contact[] | null;
+        likesData: PortfolioLike[] | null;
+        skillsData: Skill[] | null;
+        experiencesData: Experience[] | null;
       } = {
         visitsData: null,
         projectsData: null,
@@ -215,7 +246,7 @@ export function StatsSection() {
         } else {
           failedTables.push(tableName);
           if (process.env.NODE_ENV === "development") {
-            console.warn(
+            logger.warn(
               `Table '${tableName}' not available:`,
               result.status === "fulfilled" ? result.value.error : result.reason
             );
@@ -225,11 +256,11 @@ export function StatsSection() {
 
       // Calculate stats from available data
       const completedProjects =
-        statsResults.projectsData?.filter((p: any) => p.status === "completed")
+        statsResults.projectsData?.filter((p: Project) => p.status === "completed")
           .length || 0;
       const inProgressProjects =
         statsResults.projectsData?.filter(
-          (p: any) => p.status === "in-progress"
+          (p: Project) => p.status === "in-progress"
         ).length || 0;
       const totalVisits = statsResults.visitsData?.length || 0;
       const workExperiences = statsResults.workExperiencesData?.length || 0;
@@ -255,14 +286,14 @@ export function StatsSection() {
 
       // Only show warning in development if some tables failed
       if (process.env.NODE_ENV === "development" && failedTables.length > 0) {
-        console.info(
+        logger.info(
           `Portfolio stats loaded successfully. Available tables: ${availableTables.join(
             ", "
           )}. Unavailable: ${failedTables.join(", ")}`
         );
       }
     } catch (error) {
-      console.error("Error fetching stats:", error);
+      logger.error("Error fetching stats:", error);
 
       // Set fallback data - production should be silent
       setStatsData({
@@ -294,7 +325,7 @@ export function StatsSection() {
       localStorage.setItem("visitor_id", visitorId);
 
       if (process.env.NODE_ENV === "development") {
-        console.log("Attempting to track visit for visitor:", visitorId);
+        logger.log("Attempting to track visit for visitor:", visitorId);
       }
 
       const { data, error } = await supabase.from("visit_stats").insert([
@@ -307,11 +338,11 @@ export function StatsSection() {
       ]);
 
       if (error && process.env.NODE_ENV === "development") {
-        console.warn("Visit tracking unavailable:", error.message);
+        logger.warn("Visit tracking unavailable:", error.message);
       }
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
-        console.warn("Visit tracking failed:", error);
+        logger.warn("Visit tracking failed:", error);
       }
       // Silently fail in production - analytics shouldn't break the user experience
     }

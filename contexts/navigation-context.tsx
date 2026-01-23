@@ -7,6 +7,8 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import { VALID_SECTIONS, DEV_ONLY_SECTIONS, SECTION_NAMES, type Section } from "@/lib/constants";
+import logger from "@/lib/logger";
 
 interface NavigationContextType {
   currentSection: string;
@@ -33,23 +35,17 @@ export function NavigationProvider({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Iniciamos colapsada por defecto
 
   // Función auxiliar para obtener las secciones válidas
-  const getValidSections = () => {
-    let validSections = [
-      "home",
-      "about",
-      "experience",
-      "education",
-      "projects",
-      "blog",
-      "contact",
-    ];
+  const getValidSections = (): Section[] => {
+    const baseSections: Section[] = Object.values(VALID_SECTIONS).filter(
+      (section) => !DEV_ONLY_SECTIONS.includes(section as any)
+    );
 
     // Agregar secciones de desarrollo solo en modo desarrollo
     if (process.env.NODE_ENV === "development") {
-      validSections = [...validSections, "analytics", "dev"];
+      return [...baseSections, ...DEV_ONLY_SECTIONS] as Section[];
     }
 
-    return validSections;
+    return baseSections;
   };
 
   // Sincronizar con el hash de la URL al cargar la página
@@ -107,7 +103,7 @@ export function NavigationProvider({
     setCurrentSection(section);
 
     // Opcional: agregar analytics, logging, etc.
-    console.log(`Navigating to: ${section}`);
+    logger.log(`Navigating to: ${section}`);
 
     // Actualizar URL hash
     if (typeof window !== "undefined") {

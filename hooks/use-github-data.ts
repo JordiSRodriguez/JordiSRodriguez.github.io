@@ -2,6 +2,41 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import logger from "@/lib/logger";
+import { API } from "@/lib/constants";
+
+// GitHub API Response Types
+interface GitHubUser {
+  login: string;
+  public_repos: number;
+  followers: number;
+  following: number;
+}
+
+interface GitHubRepo {
+  id: number;
+  name: string;
+  stargazers_count: number;
+  forks_count: number;
+}
+
+interface GitHubEventPayload {
+  ref_type?: string;
+  action?: string;
+  commits?: Array<{
+    message?: string;
+  }>;
+}
+
+interface GitHubEvent {
+  id: string;
+  type: string;
+  repo: {
+    name: string;
+  };
+  created_at: string;
+  payload?: GitHubEventPayload;
+}
 
 export interface GitHubActivity {
   id: string;
@@ -53,11 +88,11 @@ export function useGitHubData() {
         if (data?.github_username) {
           setGithubUsername(data.github_username);
         } else {
-          setGithubUsername("octocat"); // Username por defecto para demo
+          setGithubUsername(API.GITHUB.DEFAULT_USERNAME); // Username por defecto para demo
         }
       } catch (error) {
-        console.error("Error fetching profile:", error);
-        setGithubUsername("octocat"); // Fallback
+        logger.error("Error fetching profile:", error);
+        setGithubUsername(API.GITHUB.DEFAULT_USERNAME); // Fallback
       }
     };
 
@@ -85,7 +120,7 @@ export function useGitHubData() {
 
         // Fetch repositories
         const reposResponse = await fetch(
-          `https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=10`
+          `https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=${API.GITHUB.REPOS_PER_PAGE}`
         );
 
         if (!reposResponse.ok) {
@@ -96,7 +131,7 @@ export function useGitHubData() {
 
         // Fetch recent events
         const eventsResponse = await fetch(
-          `https://api.github.com/users/${githubUsername}/events?per_page=5`
+          `https://api.github.com/users/${githubUsername}/events?per_page=${API.GITHUB.EVENTS_PER_PAGE}`
         );
 
         if (!eventsResponse.ok) {
@@ -107,11 +142,11 @@ export function useGitHubData() {
 
         // Calculate total stars and forks
         const totalStars = reposData.reduce(
-          (sum: number, repo: any) => sum + repo.stargazers_count,
+          (sum: number, repo: GitHubRepo) => sum + repo.stargazers_count,
           0
         );
         const totalForks = reposData.reduce(
-          (sum: number, repo: any) => sum + repo.forks_count,
+          (sum: number, repo: GitHubRepo) => sum + repo.forks_count,
           0
         );
 
@@ -126,8 +161,8 @@ export function useGitHubData() {
 
         // Process recent activities
         const processedActivities: GitHubActivity[] = eventsData
-          .slice(0, 5)
-          .map((event: any) => ({
+          .slice(0, API.GITHUB.EVENTS_PER_PAGE)
+          .map((event: GitHubEvent) => ({
             id: event.id,
             type: event.type,
             repo: event.repo.name,
@@ -138,7 +173,7 @@ export function useGitHubData() {
 
         setActivities(processedActivities);
       } catch (error) {
-        console.error("Error fetching GitHub data:", error);
+        logger.error("Error fetching GitHub data:", error);
         setError(error instanceof Error ? error.message : "Error desconocido");
         // Set fallback data for demo
         setFallbackData();
@@ -201,7 +236,7 @@ export function useGitHubData() {
     ]);
   };
 
-  const getEventMessage = (event: any): string => {
+  const getEventMessage = (event: GitHubEvent): string => {
     switch (event.type) {
       case "PushEvent":
         const commits = event.payload?.commits?.length || 1;

@@ -1,6 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { createClient } from "@supabase/supabase-js";
+import logger from "@/lib/logger";
+
+// Types for database responses
+interface Profile {
+  full_name?: string;
+  bio?: string;
+  location?: string;
+  roles?: string[];
+  github_username?: string;
+  linkedin_url?: string;
+  website_url?: string;
+}
+
+interface Project {
+  title: string;
+  description: string;
+  technologies: string[];
+  featured: boolean;
+}
+
+interface WorkExperience {
+  title: string;
+  company: string;
+  position?: string;
+  technologies?: string[];
+  current_job?: boolean;
+}
+
+interface Skill {
+  name: string;
+  category: string;
+  level: number;
+}
+
+interface DynamicContextData {
+  profile: Profile;
+  projects: Project[];
+  workExperiences: WorkExperience[];
+  skills: Skill[];
+}
 
 // Cliente de Supabase para obtener datos dinámicos
 const supabase = createClient(
@@ -9,7 +49,7 @@ const supabase = createClient(
 );
 
 // Función para obtener contexto dinámico desde la base de datos
-async function getDynamicContext() {
+async function getDynamicContext(): Promise<DynamicContextData | null> {
   try {
     // Obtener información del perfil
     const { data: profile } = await supabase
@@ -45,21 +85,24 @@ async function getDynamicContext() {
       skills: skills || [],
     };
   } catch (error) {
-    console.error("Error al obtener contexto dinámico:", error);
+    logger.error("Error al obtener contexto dinámico:", error);
     return null;
   }
 }
 
 // Función para construir el contexto basado en datos reales
-function buildContextFromData(data: any) {
+function buildContextFromData(data: DynamicContextData): string {
   const { profile, projects, workExperiences, skills } = data;
 
   // Agrupar habilidades por categoría
-  const skillsByCategory = skills.reduce((acc: any, skill: any) => {
-    if (!acc[skill.category]) acc[skill.category] = [];
-    acc[skill.category].push(skill.name);
-    return acc;
-  }, {});
+  const skillsByCategory = skills.reduce(
+    (acc: Record<string, string[]>, skill: Skill) => {
+      if (!acc[skill.category]) acc[skill.category] = [];
+      acc[skill.category].push(skill.name);
+      return acc;
+    },
+    {}
+  );
 
   const context = `
 Eres un asistente conciso para el portfolio de ${profile.full_name || "Jordi"}.
@@ -76,7 +119,7 @@ ${profile.roles ? `• Roles: ${profile.roles.join(", ")}` : ""}
 TECNOLOGÍAS PRINCIPALES:
 ${Object.entries(skillsByCategory)
   .map(
-    ([category, skillList]: [string, any]) =>
+    ([category, skillList]: [string, string[]]) =>
       `• ${category}: ${skillList.slice(0, 5).join(", ")}`
   )
   .join("\n")}
@@ -84,7 +127,7 @@ ${Object.entries(skillsByCategory)
 EXPERIENCIA RECIENTE:
 ${workExperiences
   .map(
-    (exp: any) =>
+    (exp: WorkExperience) =>
       `• ${exp.position || exp.title} en ${exp.company}${
         exp.current_job ? " (Actual)" : ""
       }`
@@ -94,7 +137,7 @@ ${workExperiences
 PROYECTOS DESTACADOS:
 ${projects
   .map(
-    (project: any) =>
+    (project: Project) =>
       `• ${project.title}: ${project.description.slice(0, 100)}...`
   )
   .join("\n")}
@@ -189,7 +232,7 @@ REGLAS:
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Error en AI Chat API:", error);
+    logger.error("Error en AI Chat API:", error);
 
     // Respuesta de fallback en caso de error
     const fallbackResponse =

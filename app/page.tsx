@@ -35,8 +35,6 @@ function HomePageContent() {
   const { isSidebarCollapsed } = useSidebarState();
   const isMobile = useIsMobile();
   const [currentTheme, setCurrentTheme] = useState("dark");
-  const [isVoiceActive, setIsVoiceActive] = useState(false);
-  const [isMusicActive, setIsMusicActive] = useState(false);
   const [indicatorsVisible, setIndicatorsVisible] = useState(true);
 
   // Estados para los modales flotantes desde el dock móvil
@@ -117,23 +115,11 @@ function HomePageContent() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   };
 
-  const handleVoiceToggle = () => {
-    setIsVoiceActive(!isVoiceActive);
-  };
-
-  const handleMusicToggle = () => {
-    setIsMusicActive(!isMusicActive);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <SidebarNavigation
         currentSection={currentSection}
         onSectionChange={navigateToSection}
-        onVoiceToggle={handleVoiceToggle}
-        onMusicToggle={handleMusicToggle}
-        isVoiceActive={isVoiceActive}
-        isMusicActive={isMusicActive}
         onIndicatorsVisibilityChange={setIndicatorsVisible}
       />
 
@@ -159,15 +145,6 @@ function HomePageContent() {
       />
       {/* AI Chat Assistant */}
       <AIChatAssistant />
-      {/* <VoiceNavigation
-        isActive={isVoiceActive}
-        onSectionChange={navigateToSection}
-        onToggle={handleVoiceToggle}
-      /> */}
-      {/* <PortfolioMusicPlayer
-        isActive={isMusicActive}
-        onToggle={handleMusicToggle}
-      /> */}
 
       {/* Tools Dock - Solo en desktop */}
       {!isMobile && <ToolsDock />}

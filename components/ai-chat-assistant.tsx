@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFloatingComponents } from "@/contexts/floating-components-context";
 import { Send, User, Brain, Zap, X, AlertCircle } from "lucide-react";
+import logger from "@/lib/logger";
+import { DEPLOYMENT_ENV, AI_CHAT, type DeploymentEnv } from "@/lib/constants";
 
 interface Message {
   id: string;
@@ -16,8 +18,8 @@ interface Message {
 }
 
 // Función para detectar el entorno de despliegue
-const getDeploymentEnvironment = () => {
-  if (typeof window === "undefined") return "server";
+const getDeploymentEnvironment = (): DeploymentEnv => {
+  if (typeof window === "undefined") return "development";
 
   // Detectar GitHub Pages de manera más robusta
   const hostname = window.location.hostname;
@@ -36,24 +38,24 @@ const getDeploymentEnvironment = () => {
     (hostname === "localhost" &&
       (window.location.port === "8080" || window.location.port === "8000"))
   ) {
-    return "github-pages";
+    return DEPLOYMENT_ENV.GITHUB_PAGES;
   }
 
   // Detectar Vercel
   if (hostname.includes("vercel.app") || hostname.includes("vercel.com")) {
-    return "vercel";
+    return DEPLOYMENT_ENV.VERCEL;
   }
 
   // Desarrollo local (puerto 3000, 3001, etc.)
   if (hostname === "localhost" || hostname === "127.0.0.1") {
     const port = window.location.port;
     if (port === "3000" || port === "3001" || port === "5000") {
-      return "development";
+      return DEPLOYMENT_ENV.DEVELOPMENT;
     }
   }
 
   // Por defecto, asumir que es GitHub Pages si no se puede determinar
-  return "github-pages";
+  return DEPLOYMENT_ENV.GITHUB_PAGES;
 };
 
 // Función para obtener respuesta de la API de IA
@@ -61,7 +63,7 @@ const getAIResponseFromAPI = async (userMessage: string): Promise<string> => {
   const environment = getDeploymentEnvironment();
 
   // Si estamos en GitHub Pages, no usar la API
-  if (environment === "github-pages") {
+  if (environment === DEPLOYMENT_ENV.GITHUB_PAGES) {
     return "Lo siento, el chat con IA no está disponible en esta versión del sitio debido a limitaciones de hosting estático. Puedes contactarme directamente a través del formulario de contacto o visitar la versión completa en Vercel.";
   }
 
@@ -82,18 +84,21 @@ const getAIResponseFromAPI = async (userMessage: string): Promise<string> => {
 
     return data.response;
   } catch (error) {
-    console.error("Error al obtener respuesta de IA:", error);
+    logger.error("Error al obtener respuesta de IA:", error);
     return "Lo siento, estoy experimentando dificultades técnicas. Por favor, intenta de nuevo en unos momentos o usa el formulario de contacto para comunicarte directamente.";
   }
 };
 
 export function AIChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [environment, setEnvironment] = useState<string>("server");
+  const [environment, setEnvironment] = useState<DeploymentEnv>("development");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [chatSize, setChatSize] = useState({ width: 384, height: 600 });
+  const [chatSize, setChatSize] = useState({
+    width: AI_CHAT.DEFAULT_WIDTH,
+    height: AI_CHAT.DEFAULT_HEIGHT,
+  });
   const [isResizing, setIsResizing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -111,7 +116,7 @@ export function AIChatAssistant() {
       sender: "ai",
       timestamp: new Date(),
       content:
-        env === "github-pages"
+        env === DEPLOYMENT_ENV.GITHUB_PAGES
           ? "¡Hola! 👋 Actualmente estás viendo la versión estática del portfolio en GitHub Pages. El chat con IA está limitado aquí debido a restricciones de hosting estático. Para una experiencia completa con IA, visita la versión en Vercel o usa el formulario de contacto."
           : "¡Hola! Soy tu asistente de IA. Puedo responder preguntas sobre el portfolio, proyectos, habilidades y experiencia. ¿En qué puedo ayudarte?",
     };
@@ -120,8 +125,8 @@ export function AIChatAssistant() {
   }, []);
 
   // Límites de redimensionamiento
-  const minSize = { width: 320, height: 400 };
-  const maxSize = { width: 600, height: 800 };
+  const minSize = { width: AI_CHAT.MIN_WIDTH, height: AI_CHAT.MIN_HEIGHT };
+  const maxSize = { width: AI_CHAT.MAX_WIDTH, height: AI_CHAT.MAX_HEIGHT };
 
   // Funciones de redimensionamiento
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -184,7 +189,7 @@ export function AIChatAssistant() {
     if (!inputValue.trim()) return;
 
     // Si estamos en GitHub Pages, mostrar mensaje de limitación
-    if (environment === "github-pages") {
+    if (environment === DEPLOYMENT_ENV.GITHUB_PAGES) {
       const userMessage: Message = {
         id: Date.now().toString(),
         content: inputValue,
@@ -229,7 +234,7 @@ export function AIChatAssistant() {
 
       setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
-      console.error("Error al obtener respuesta:", error);
+      logger.error("Error al obtener respuesta:", error);
     } finally {
       setIsTyping(false);
     }
@@ -272,7 +277,7 @@ export function AIChatAssistant() {
             style={{ zIndex: 10002 }}
           >
             <div className="relative">
-              {environment === "github-pages" ? (
+              {environment === DEPLOYMENT_ENV.GITHUB_PAGES ? (
                 // Indicador naranja para GitHub Pages (limitado)
                 <>
                   <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-white shadow-lg"></div>
@@ -293,7 +298,7 @@ export function AIChatAssistant() {
           {/* Tooltip - Cambia según el entorno */}
           <div className="absolute -top-16 right-0 bg-gray-900/95 backdrop-blur-sm text-white text-xs px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pointer-events-none border border-gray-700/50">
             <div className="flex items-center gap-2">
-              {environment === "github-pages" ? (
+              {environment === DEPLOYMENT_ENV.GITHUB_PAGES ? (
                 <>
                   <AlertCircle className="w-3 h-3 text-orange-400" />
                   <span className="font-medium">Asistente IA (Limitado)</span>
@@ -307,7 +312,7 @@ export function AIChatAssistant() {
               <span className="text-gray-400">•</span>
               <span className="text-gray-300">Ctrl+I</span>
             </div>
-            {environment === "github-pages" && (
+            {environment === DEPLOYMENT_ENV.GITHUB_PAGES && (
               <div className="text-orange-300 text-xs mt-1">
                 GitHub Pages - Funcionalidad limitada
               </div>
@@ -333,8 +338,8 @@ export function AIChatAssistant() {
         ref={chatRef}
         className="shadow-2xl transition-all duration-500 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden rounded-2xl relative"
         style={{
-          width: isMobile ? 320 : chatSize.width,
-          height: isMobile ? 500 : chatSize.height,
+          width: isMobile ? AI_CHAT.MOBILE_WIDTH : chatSize.width,
+          height: isMobile ? AI_CHAT.MOBILE_HEIGHT : chatSize.height,
           boxShadow:
             "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)",
         }}
@@ -529,17 +534,17 @@ export function AIChatAssistant() {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={
-                      environment === "github-pages"
+                      environment === DEPLOYMENT_ENV.GITHUB_PAGES
                         ? "Chat limitado en GitHub Pages..."
                         : "Escribe tu pregunta aquí..."
                     }
                     className={`text-sm border-0 backdrop-blur-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/50 rounded-2xl py-4 px-5 pr-16 transition-all duration-300 shadow-sm hover:shadow-md resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                      environment === "github-pages"
+                      environment === DEPLOYMENT_ENV.GITHUB_PAGES
                         ? "bg-orange-50/80 dark:bg-orange-900/20 focus:bg-orange-100 dark:focus:bg-orange-800/30"
                         : "bg-gray-100/80 dark:bg-gray-800/80 focus:bg-white dark:focus:bg-gray-700"
                     }`}
                     disabled={isTyping}
-                    maxLength={500}
+                    maxLength={AI_CHAT.MAX_MESSAGE_LENGTH}
                   />
 
                   {/* Contador de caracteres */}
@@ -547,12 +552,12 @@ export function AIChatAssistant() {
                     {inputValue.length > 0 && (
                       <span
                         className={`text-xs px-2 py-1 rounded-full transition-colors ${
-                          inputValue.length > 400
+                          inputValue.length > AI_CHAT.MAX_MESSAGE_LENGTH * 0.8
                             ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
                             : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
                         }`}
                       >
-                        {inputValue.length}/500
+                        {inputValue.length}/{AI_CHAT.MAX_MESSAGE_LENGTH}
                       </span>
                     )}
                   </div>
