@@ -219,6 +219,7 @@ export function HeroSection() {
                 }`;
                 window.open(githubUrl, "_blank");
               }}
+              aria-label="Visit GitHub profile"
             >
               <Github className="h-5 w-5" />
             </Button>
@@ -233,6 +234,7 @@ export function HeroSection() {
                   profile?.linkedin_url || defaultProfile.linkedin_url;
                 if (linkedinUrl) window.open(linkedinUrl, "_blank");
               }}
+              aria-label="Visit LinkedIn profile"
             >
               <Linkedin className="h-5 w-5" />
             </Button>

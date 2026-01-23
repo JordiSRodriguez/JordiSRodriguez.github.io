@@ -323,6 +323,7 @@ export function SidebarNavigation({
           variant="default"
           size="icon"
           onClick={() => setSidebarCollapsed(false)}
+          aria-label="Open navigation menu"
           className={`fixed left-2 top-2 sm:left-4 sm:top-4 z-50 rounded-full shadow-lg transition-all duration-300 ${
             focusMode ? "opacity-30 hover:opacity-100" : ""
           }`}
