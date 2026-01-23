@@ -18,6 +18,8 @@ import { ToolsDock } from "@/components/tools-dock";
 import { MobileFloatingDock } from "@/components/mobile-floating-dock";
 import { MobileModals } from "@/components/mobile-modals";
 import { LikeCard } from "@/components/like-card";
+import { InteractiveTerminal } from "@/components/interactive-terminal";
+import { VSCodeStatusBar } from "@/components/vscode-statusbar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // Lazy load section components for better performance
@@ -234,6 +236,12 @@ function HomePageContent() {
           onAiChatClose={() => setShowMobileAiChat(false)}
         />
       )}
+
+      {/* Interactive Terminal - Always available */}
+      <InteractiveTerminal />
+
+      {/* VSCode-style Status Bar - Desktop only */}
+      {!isMobile && <VSCodeStatusBar />}
     </div>
   );
 }

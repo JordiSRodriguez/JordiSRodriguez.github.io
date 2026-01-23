@@ -40,6 +40,7 @@ import {
   X,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 interface SidebarNavigationProps {
   currentSection: string;
@@ -52,23 +53,55 @@ interface SidebarNavigationProps {
 }
 
 const baseNavigationItems = [
-  { id: "home", label: "Inicio", icon: Home, color: "bg-blue-500" },
-  { id: "about", label: "Acerca de Mí", icon: User, color: "bg-green-500" },
+  {
+    id: "home",
+    label: "Inicio",
+    icon: Home,
+    branchColor: "text-git-branch",
+    status: "main",
+  },
+  {
+    id: "about",
+    label: "Acerca de Mí",
+    icon: User,
+    branchColor: "text-git-clean",
+    status: "feat/readme",
+  },
   {
     id: "experience",
     label: "Experiencia",
     icon: Briefcase,
-    color: "bg-purple-500",
+    branchColor: "text-git-clean",
+    status: "feat/work-history",
   },
   {
     id: "education",
     label: "Educación",
     icon: GraduationCap,
-    color: "bg-orange-500",
+    branchColor: "text-git-clean",
+    status: "docs/education",
   },
-  { id: "projects", label: "Proyectos", icon: FolderOpen, color: "bg-red-500" },
-  { id: "blog", label: "Blog", icon: BookOpen, color: "bg-indigo-500" },
-  { id: "contact", label: "Contacto", icon: Mail, color: "bg-pink-500" },
+  {
+    id: "projects",
+    label: "Proyectos",
+    icon: FolderOpen,
+    branchColor: "text-git-modified",
+    status: "feat/projects",
+  },
+  {
+    id: "blog",
+    label: "Blog",
+    icon: BookOpen,
+    branchColor: "text-git-clean",
+    status: "posts/blog",
+  },
+  {
+    id: "contact",
+    label: "Contacto",
+    icon: Mail,
+    branchColor: "text-git-clean",
+    status: "fix/contact",
+  },
 ];
 
 const devNavigationItems = [
@@ -76,13 +109,15 @@ const devNavigationItems = [
     id: "analytics",
     label: "Analíticas",
     icon: BarChart3,
-    color: "bg-teal-500",
+    branchColor: "text-git-modified",
+    status: "chore/analytics",
   },
   {
     id: "dev",
     label: "Herramientas Dev",
     icon: Settings,
-    color: "bg-slate-500",
+    branchColor: "text-git-conflict",
+    status: "dev/tools",
   },
 ];
 
@@ -343,17 +378,25 @@ export function SidebarNavigation({
       >
         <div className="p-3 sm:p-4 border-b flex-shrink-0">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-base sm:text-lg">Jordi Sumba</h2>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                Full Stack Developer
+            <div className="flex-1 min-w-0">
+              {/* File path aesthetic */}
+              <div className="flex items-center gap-1.5 text-[10px] font-mono-display text-muted-foreground mb-1">
+                <span className="opacity-50">~</span>
+                <span className="opacity-50">/</span>
+                <span className="opacity-70">portfolio</span>
+                <span className="opacity-50">/</span>
+                <span className="text-git-branch font-semibold">src</span>
+              </div>
+              <h2 className="font-bold text-sm sm:text-base">jordi-sumba.ts</h2>
+              <p className="text-xs text-muted-foreground font-mono-display mt-0.5">
+                <span className="text-git-clean">●</span> Full Stack Developer
               </p>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarCollapsed(true)}
-              className="ml-auto"
+              className="ml-auto flex-shrink-0"
             >
               {isMobile ? (
                 <X className="h-4 w-4" />
@@ -364,7 +407,7 @@ export function SidebarNavigation({
           </div>
         </div>
 
-        <nav className="p-1 sm:p-2 space-y-1 flex-1 overflow-y-auto">
+        <nav className="p-1 sm:p-2 space-y-1 flex-1 overflow-y-auto font-mono-display text-xs">
           {navigationItems.map((item, index) => {
             const Icon = item.icon;
             const isActive = currentSection === item.id;
@@ -373,23 +416,28 @@ export function SidebarNavigation({
               <Button
                 key={item.id}
                 variant={isActive ? "secondary" : "ghost"}
-                className="w-full justify-start relative group px-2 sm:px-3 text-sm"
+                className="w-full justify-start relative group px-2 sm:px-3 h-auto py-2 text-sm"
                 onClick={() => handleSectionChange(item.id)}
                 onMouseEnter={() => prefetchSection(item.id)}
               >
-                <div
-                  className={`w-2 h-2 rounded-full ${item.color} mr-2 sm:mr-3 ${
-                    isActive ? "animate-pulse" : ""
-                  }`}
-                />
-                <Icon className="h-4 w-4 mr-1 sm:mr-2" />
-                <span className="truncate">{item.label}</span>
-                <Badge
-                  variant="outline"
-                  className="ml-auto text-xs hidden sm:inline-flex"
-                >
-                  {index + 1}
-                </Badge>
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  {/* Git branch indicator */}
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full flex-shrink-0",
+                    item.branchColor,
+                    isActive && "animate-pulse"
+                  )} />
+                  <Icon className="h-3.5 w-3.5 flex-shrink-0 opacity-70" />
+                  <span className="truncate">{item.label}</span>
+                </div>
+                {/* Git branch name */}
+                <span className={cn(
+                  "text-[10px] px-1.5 py-0.5 rounded font-mono-display hidden sm:inline-flex",
+                  isActive ? "bg-primary/10" : "bg-muted",
+                  item.branchColor
+                )}>
+                  {item.status}
+                </span>
               </Button>
             );
           })}

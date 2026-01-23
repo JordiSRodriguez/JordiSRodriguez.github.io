@@ -4,74 +4,97 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* Editor Theme - Light (GitHub Light Dim inspired) */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.25 0 0);
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.25 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.25 0 0);
+  --primary: oklch(0.45 0.12 250); /* Syntax keyword blue */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.94 0.01 250); /* Diff background */
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.50 0 0);
+  --accent: oklch(0.92 0.05 140); /* Git add green tint */
+  --accent-foreground: oklch(0.25 0 0);
+  --destructive: oklch(0.55 0.22 25); /* Git delete red */
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.90 0 0); /* Editor border */
+  --input: oklch(0.90 0 0);
+  --ring: oklch(0.45 0.12 250);
+
+  /* Syntax-inspired chart colors */
+  --chart-1: oklch(0.55 0.18 250); /* JavaScript yellow */
+  --chart-2: oklch(0.45 0.12 250); /* Keyword blue */
+  --chart-3: oklch(0.65 0.20 150); /* String green */
+  --chart-4: oklch(0.65 0.18 340); /* Regex purple */
+  --chart-5: oklch(0.55 0.20 25); /* Error red */
+
+  --radius: 0.5rem; /* Slightly sharper for technical feel */
+
+  /* Git status colors */
+  --git-clean: oklch(0.65 0.15 150);
+  --git-modified: oklch(0.70 0.15 85);
+  --git-conflict: oklch(0.55 0.20 25);
+  --git-branch: oklch(0.50 0.18 250);
+
+  /* Sidebar as file explorer */
+  --sidebar: oklch(0.96 0 0);
+  --sidebar-foreground: oklch(0.30 0 0);
+  --sidebar-primary: oklch(0.45 0.12 250);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.92 0.05 140);
+  --sidebar-accent-foreground: oklch(0.25 0 0);
+  --sidebar-border: oklch(0.88 0 0);
+  --sidebar-ring: oklch(0.45 0.12 250);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  /* Editor Theme - Dark (One Dark Pro inspired) */
+  --background: oklch(0.16 0.01 250); /* Editor bg */
+  --foreground: oklch(0.78 0.01 250); /* Default text */
+  --card: oklch(0.18 0.01 250);
+  --card-foreground: oklch(0.78 0.01 250);
+  --popover: oklch(0.20 0.01 250);
+  --popover-foreground: oklch(0.78 0.01 250);
+  --primary: oklch(0.65 0.20 250); /* Syntax keyword blue */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.24 0.02 250); /* Diff background */
+  --secondary-foreground: oklch(0.78 0.01 250);
+  --muted: oklch(0.22 0.01 250);
+  --muted-foreground: oklch(0.48 0.01 250);
+  --accent: oklch(0.30 0.12 150); /* Git add green tint */
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.60 0.20 25); /* Git delete red */
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.28 0.02 250); /* Editor border */
+  --input: oklch(0.28 0.02 250);
+  --ring: oklch(0.65 0.20 250);
+
+  /* Syntax-inspired chart colors - Dark */
+  --chart-1: oklch(0.70 0.18 60); /* JavaScript yellow */
+  --chart-2: oklch(0.65 0.20 250); /* Keyword blue */
+  --chart-3: oklch(0.70 0.18 150); /* String green */
+  --chart-4: oklch(0.75 0.20 290); /* Regex purple */
+  --chart-5: oklch(0.65 0.20 25); /* Error red */
+
+  /* Git status colors - Dark */
+  --git-clean: oklch(0.70 0.15 150);
+  --git-modified: oklch(0.75 0.15 85);
+  --git-conflict: oklch(0.65 0.20 25);
+  --git-branch: oklch(0.65 0.18 250);
+
+  /* Sidebar as file explorer - Dark */
+  --sidebar: oklch(0.14 0.01 250);
+  --sidebar-foreground: oklch(0.75 0.01 250);
+  --sidebar-primary: oklch(0.65 0.20 250);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.28 0.08 150);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.24 0.02 250);
+  --sidebar-ring: oklch(0.65 0.20 250);
 }
 
 @theme inline {
@@ -113,6 +136,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-git-clean: var(--git-clean);
+  --color-git-modified: var(--git-modified);
+  --color-git-conflict: var(--git-conflict);
+  --color-git-branch: var(--git-branch);
 }
 
 @layer base {
@@ -151,6 +178,469 @@
   .content-visibility-auto {
     content-visibility: auto;
     contain-intrinsic-size: 0 500px;
+  }
+
+  /* Code-inspired utilities */
+  .font-mono-display {
+    font-family: var(--font-mono), 'SF Mono', 'Fira Code', 'Fira Code', monospace;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
+  .git-branch-indicator {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .git-branch-indicator::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  .git-branch-indicator::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .file-tab {
+    position: relative;
+    padding: 0.5rem 1rem;
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    margin-right: -1px;
+  }
+
+  .file-tab-active {
+    background: var(--background);
+    border-bottom: 1px solid var(--background);
+    margin-bottom: -1px;
+    z-index: 1;
+  }
+
+  .syntax-highlight {
+    position: relative;
+  }
+
+  .syntax-highlight::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--git-clean), var(--git-branch));
+    opacity: 0.5;
+  }
+
+  .commit-hash {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--git-branch);
+    opacity: 0.8;
+    letter-spacing: -0.02em;
+  }
+
+  .diff-add {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--git-clean) 10%, transparent));
+  }
+
+  .diff-remove {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--git-conflict) 10%, transparent));
+  }
+
+  /* Code-inspired micro-interactions */
+  .typing-cursor::after {
+    content: '|';
+    animation: blink-cursor 1s step-end infinite;
+    color: var(--git-branch);
+  }
+
+  @keyframes blink-cursor {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  .git-status-dot {
+    position: relative;
+  }
+
+  .git-status-dot::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    animation: status-ping 1.5s ease-out infinite;
+  }
+
+  @keyframes status-ping {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  .terminal-glow {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--git-branch) 10%, transparent),
+                0 0 40px color-mix(in srgb, var(--git-branch) 5%, transparent);
+  }
+
+  .syntax-selection {
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
+    border-radius: 2px;
+  }
+
+  .line-number {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    opacity: 0.4;
+    user-select: none;
+    padding-right: 1rem;
+    text-align: right;
+    min-width: 2rem;
+  }
+
+  .code-block-wrapper {
+    position: relative;
+    padding-left: 3rem;
+  }
+
+  .code-block-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 2.5rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+    opacity: 0.3;
+  }
+
+  .branch-line {
+    position: relative;
+  }
+
+  .branch-line::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--git-branch), var(--git-clean));
+    opacity: 0.3;
+  }
+
+  .hover-diff-add:hover {
+    background: color-mix(in srgb, var(--git-clean) 15%, transparent);
+  }
+
+  .hover-diff-remove:hover {
+    background: color-mix(in srgb, var(--git-conflict) 15%, transparent);
+  }
+
+  /* Slide in animation for commit graph */
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.5s ease-out;
+  }
+
+  /* Glitch text effect */
+  @keyframes glitch {
+    0% {
+      text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                  -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                  0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    14% {
+      text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                  0.025em 0.05em 0 rgba(0, 255, 0, 0.75),
+                  -0.05em -0.025em 0 rgba(0, 0, 255, 0.75);
+    }
+    15% {
+      text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                  0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                  -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    49% {
+      text-shadow: -0.05em 0 0 rgba(255, 0, 0, 0.75),
+                  -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+                  -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    50% {
+      text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                  0.05em 0 0 rgba(0, 255, 0, 0.75),
+                  0 -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    99% {
+      text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                  0.025em 0.05em 0 rgba(0, 255, 0, 0.75),
+                  -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    100% {
+      text-shadow: -0.025em 0 0 rgba(255, 0, 0, 0.75),
+                  -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+                  -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+  }
+
+  .glitch-text {
+    animation: glitch 1s linear infinite;
+  }
+
+  .glitch-text:hover {
+    animation: glitch 0.3s linear infinite;
+  }
+
+  /* Holographic shimmer effect */
+  @keyframes holographic-shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .holographic {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(99, 102, 241, 0.1) 20%,
+      rgba(34, 197, 94, 0.1) 40%,
+      rgba(234, 179, 8, 0.1) 60%,
+      rgba(99, 102, 241, 0.1) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: holographic-shimmer 3s ease-in-out infinite;
+  }
+
+  /* Scanline effect */
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  .scanlines::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+    pointer-events: none;
+  }
+
+  .scanline-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(99, 102, 241, 0.2),
+      transparent
+    );
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Float animation with rotation */
+  @keyframes float-rotate {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+    75% {
+      transform: translateY(-10px) rotate(-2deg);
+    }
+  }
+
+  .float-rotate {
+    animation: float-rotate 6s ease-in-out infinite;
+  }
+
+  /* Pulse ring effect */
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.8);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  .pulse-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
+  /* Cyberpunk border glow */
+  @keyframes border-glow {
+    0%, 100% {
+      box-shadow: 0 0 5px currentColor,
+                  0 0 10px currentColor,
+                  inset 0 0 5px currentColor;
+    }
+    50% {
+      box-shadow: 0 0 10px currentColor,
+                  0 0 20px currentColor,
+                  0 0 30px currentColor,
+                  inset 0 0 10px currentColor;
+    }
+  }
+
+  .border-glow {
+    animation: border-glow 2s ease-in-out infinite;
+  }
+
+  /* Data stream effect */
+  @keyframes data-stream {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .data-stream::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--git-branch),
+      transparent
+    );
+    animation: data-stream 2s linear infinite;
+  }
+
+  /* Typing effect for code blocks */
+  @keyframes typing {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  .typing-effect {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--git-branch);
+    animation: typing 3s steps(40, end);
+  }
+
+  /* Fade in up with stagger */
+  @keyframes fadeInUpStagger {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-up-stagger {
+    animation: fadeInUpStagger 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* RGB split effect */
+  @keyframes rgb-split {
+    0%, 100% {
+      text-shadow: -0.05em 0 0 red, 0.05em 0 0 cyan;
+    }
+    25% {
+      text-shadow: -0.05em 0 0 cyan, 0.05em 0 0 red;
+    }
+    50% {
+      text-shadow: -0.05em 0 0 blue, 0.05em 0 0 yellow;
+    }
+    75% {
+      text-shadow: -0.05em 0 0 yellow, 0.05em 0 0 blue;
+    }
+  }
+
+  .rgb-split {
+    animation: rgb-split 5s ease-in-out infinite;
+  }
+
+  /* Neon flicker effect */
+  @keyframes neon-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      text-shadow:
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 40px currentColor;
+    }
+    20%, 24%, 55% {
+      text-shadow: none;
+    }
+  }
+
+  .neon-flicker {
+    animation: neon-flicker 3s linear infinite;
   }
 }
 

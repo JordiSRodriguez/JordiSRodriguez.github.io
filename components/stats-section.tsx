@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { FileCard } from "@/components/ui/file-card";
+import { ContributionGraph } from "@/components/contribution-graph";
 import { createBrowserClient } from "@supabase/ssr";
 import {
   Code,
@@ -17,8 +19,11 @@ import {
   GraduationCap,
   Briefcase,
   Loader,
+  Terminal,
+  GitCommit,
 } from "lucide-react";
 import logger from "@/lib/logger";
+import { cn } from "@/lib/utils";
 
 // Database table types
 interface VisitStat {
@@ -83,7 +88,6 @@ export function StatsSection() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Helper function para formatear números
   const formatStatValue = (value: number): string => {
     if (value === 0) return "0";
     if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
@@ -95,27 +99,22 @@ export function StatsSection() {
     trackVisit();
     fetchGitHubStats();
 
-    // Configurar suscripción en tiempo real para likes
     const likesChannel = supabase
       .channel("portfolio_likes_changes")
       .on(
         "postgres_changes",
         {
-          event: "*", // Escuchar todos los eventos (INSERT, UPDATE, DELETE)
+          event: "*",
           schema: "public",
           table: "portfolio_likes",
         },
         (payload) => {
-          logger.log("Cambio en likes detectado:", payload);
-
           if (payload.eventType === "INSERT") {
-            // Nuevo like agregado
             setStatsData((prev) => ({
               ...prev,
               totalLikes: prev.totalLikes + 1,
             }));
           } else if (payload.eventType === "DELETE") {
-            // Like eliminado
             setStatsData((prev) => ({
               ...prev,
               totalLikes: Math.max(0, prev.totalLikes - 1),
@@ -125,7 +124,6 @@ export function StatsSection() {
       )
       .subscribe();
 
-    // Cleanup: cancel subscription when component unmounts
     return () => {
       supabase.removeChannel(likesChannel);
     };
@@ -133,7 +131,6 @@ export function StatsSection() {
 
   const fetchGitHubStats = async () => {
     try {
-      // Get GitHub username from profiles table
       const { data: profileData } = await supabase
         .from("profiles")
         .select("github_username")
@@ -153,7 +150,6 @@ export function StatsSection() {
       }
     } catch (error) {
       logger.error("Error fetching GitHub stats:", error);
-      // Mantener el valor por defecto si falla
     }
   };
 
@@ -161,38 +157,20 @@ export function StatsSection() {
     try {
       setError(null);
 
-      // Define table queries with safe fallbacks
       const tableQueries = [
-        {
-          name: "visit_stats",
-          query: supabase.from("visit_stats").select("id"),
-        },
-        {
-          name: "projects",
-          query: supabase.from("projects").select("id, status"),
-        },
-        {
-          name: "work_experiences",
-          query: supabase.from("work_experiences").select("id"),
-        },
+        { name: "visit_stats", query: supabase.from("visit_stats").select("id") },
+        { name: "projects", query: supabase.from("projects").select("id, status") },
+        { name: "work_experiences", query: supabase.from("work_experiences").select("id") },
         { name: "contacts", query: supabase.from("contacts").select("id") },
-        {
-          name: "portfolio_likes",
-          query: supabase.from("portfolio_likes").select("id"),
-        },
+        { name: "portfolio_likes", query: supabase.from("portfolio_likes").select("id") },
         { name: "skills", query: supabase.from("skills").select("id") },
-        {
-          name: "experiences",
-          query: supabase.from("experiences").select("id"),
-        },
+        { name: "experiences", query: supabase.from("experiences").select("id") },
       ];
 
-      // Execute queries with individual error handling
       const results = await Promise.allSettled(
         tableQueries.map(({ query }) => query)
       );
 
-      // Process results with graceful degradation
       const statsResults: {
         visitsData: VisitStat[] | null;
         projectsData: Project[] | null;
@@ -211,15 +189,10 @@ export function StatsSection() {
         experiencesData: null,
       };
 
-      const availableTables: string[] = [];
-      const failedTables: string[] = [];
-
       results.forEach((result, index) => {
         const tableName = tableQueries[index].name;
 
         if (result.status === "fulfilled" && !result.value.error) {
-          availableTables.push(tableName);
-
           switch (tableName) {
             case "visit_stats":
               statsResults.visitsData = result.value.data;
@@ -243,18 +216,9 @@ export function StatsSection() {
               statsResults.experiencesData = result.value.data;
               break;
           }
-        } else {
-          failedTables.push(tableName);
-          if (process.env.NODE_ENV === "development") {
-            logger.warn(
-              `Table '${tableName}' not available:`,
-              result.status === "fulfilled" ? result.value.error : result.reason
-            );
-          }
         }
       });
 
-      // Calculate stats from available data
       const completedProjects =
         statsResults.projectsData?.filter((p: Project) => p.status === "completed")
           .length || 0;
@@ -269,10 +233,7 @@ export function StatsSection() {
       const skillsCount = statsResults.skillsData?.length || 0;
       const experiencesCount = statsResults.experiencesData?.length || 0;
 
-      // Update state with real data
       setVisitCount(totalVisits);
-
-      // Store stats for use in the stats array
       setStatsData({
         completedProjects,
         inProgressProjects,
@@ -283,36 +244,18 @@ export function StatsSection() {
         skillsCount,
         experiencesCount,
       });
-
-      // Only show warning in development if some tables failed
-      if (process.env.NODE_ENV === "development" && failedTables.length > 0) {
-        logger.info(
-          `Portfolio stats loaded successfully. Available tables: ${availableTables.join(
-            ", "
-          )}. Unavailable: ${failedTables.join(", ")}`
-        );
-      }
     } catch (error) {
       logger.error("Error fetching stats:", error);
-
-      // Set fallback data - production should be silent
       setStatsData({
         completedProjects: 0,
         inProgressProjects: 0,
-        totalVisits: 1, // At least one visit (current)
+        totalVisits: 1,
         workExperiences: 0,
         totalContacts: 0,
         totalLikes: 0,
         skillsCount: 0,
         experiencesCount: 0,
       });
-
-      // Only show error in development
-      if (process.env.NODE_ENV === "development") {
-        setError(
-          "Algunas estadísticas no se pudieron cargar. Mostrando datos parciales."
-        );
-      }
     } finally {
       setLoading(false);
     }
@@ -324,11 +267,7 @@ export function StatsSection() {
         localStorage.getItem("visitor_id") || crypto.randomUUID();
       localStorage.setItem("visitor_id", visitorId);
 
-      if (process.env.NODE_ENV === "development") {
-        logger.log("Attempting to track visit for visitor:", visitorId);
-      }
-
-      const { data, error } = await supabase.from("visit_stats").insert([
+      await supabase.from("visit_stats").insert([
         {
           visitor_id: visitorId,
           page_path: window.location.pathname,
@@ -336,169 +275,150 @@ export function StatsSection() {
           referrer: document.referrer || null,
         },
       ]);
-
-      if (error && process.env.NODE_ENV === "development") {
-        logger.warn("Visit tracking unavailable:", error.message);
-      }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        logger.warn("Visit tracking failed:", error);
-      }
-      // Silently fail in production - analytics shouldn't break the user experience
+      // Silently fail
     }
   };
 
-  const stats = [
+  // Code-themed stat items
+  const codeStats = [
     {
       icon: Code,
-      label: "Proyectos Completados",
+      label: "completed_projects",
+      displayLabel: "Proyectos Completados",
       value: formatStatValue(statsData.completedProjects),
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10",
-      available: true, // Always show, even if 0
+      type: "const" as const,
+      color: "text-git-branch",
     },
     {
       icon: Loader,
-      label: "Proyectos en Curso",
+      label: "in_progress_projects",
+      displayLabel: "En Desarrollo",
       value: formatStatValue(statsData.inProgressProjects),
-      color: "text-amber-500",
-      bgColor: "bg-amber-500/10",
-      available: true, // Always show, even if 0
-    },
-    {
-      icon: GraduationCap,
-      label: "Formación Académica",
-      value: formatStatValue(statsData.experiencesCount),
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
-      available: true, // Always show, even if 0
+      type: "let" as const,
+      color: "text-git-modified",
     },
     {
       icon: Briefcase,
-      label: "Experiencias Laborales",
+      label: "work_experience",
+      displayLabel: "Experiencia",
       value: formatStatValue(statsData.workExperiences),
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-      available: true, // Always show, even if 0
+      type: "const" as const,
+      color: "text-git-clean",
     },
     {
-      icon: MessageSquare,
-      label: "Mensajes Recibidos",
-      value: formatStatValue(statsData.totalContacts),
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
-      available: true, // Always show, even if 0
+      icon: GraduationCap,
+      label: "education",
+      displayLabel: "Formación",
+      value: formatStatValue(statsData.experiencesCount),
+      type: "const" as const,
+      color: "text-git-branch",
     },
     {
       icon: GitBranch,
-      label: "Repositorios GitHub",
+      label: "github_repos",
+      displayLabel: "Repositorios",
       value: formatStatValue(statsData.githubRepos || 0),
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
-      available: true, // GitHub stats are fetched separately
+      type: "async" as const,
+      color: "text-git-clean",
     },
     {
       icon: Heart,
-      label: "Total de Likes",
+      label: "portfolio_likes",
+      displayLabel: "Likes",
       value: formatStatValue(statsData.totalLikes),
-      color: "text-pink-500",
-      bgColor: "bg-pink-500/10",
-      available: true, // Always show, even if 0
+      type: "let" as const,
+      color: "text-git-conflict",
     },
-    {
-      icon: Star,
-      label: "Habilidades Técnicas",
-      value: formatStatValue(statsData.skillsCount),
-      color: "text-cyan-500",
-      bgColor: "bg-cyan-500/10",
-      available: true, // Always show, even if 0
-    },
-  ].filter((stat) => stat.available);
+  ];
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 justify-items-center max-w-6xl mx-auto">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="relative overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm rounded-lg w-full border-0" style={{ height: 'auto', minHeight: 'fit-content' }}>
-            {/* Match exact CardContent padding: p-3 sm:p-4 */}
-            <div className="p-3 sm:p-4">
-              <div className="flex flex-col items-center text-center space-y-2">
-                {/* Icon container: p-2 sm:p-3 */}
-                <div className="p-2 sm:p-3 rounded-lg bg-muted/50">
-                  {/* Icon: h-5 w-5 sm:h-6 sm:w-6 */}
-                  <div className="h-5 w-5 sm:h-6 sm:w-6 bg-muted/60 rounded" />
-                </div>
-                {/* Value text placeholder: text-lg sm:text-xl */}
-                <div className="h-5 sm:h-6 w-12 bg-muted/60 rounded" />
-                {/* Label text placeholder: text-xs sm:text-sm */}
-                <div className="h-3 sm:h-3.5 w-20 bg-muted/60 rounded" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  // Only show error UI in development mode
-  if (error && process.env.NODE_ENV === "development") {
-    return (
-      <div className="text-center p-8">
-        <div className="text-yellow-500 mb-4">{error}</div>
-        <div className="text-sm text-muted-foreground mb-4">
-          Algunas tablas de la base de datos no están disponibles. Mostrando
-          estadísticas con datos parciales.
+      <div className="space-y-6">
+        <div className="w-full h-32 rounded-lg bg-muted/10 animate-pulse" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-24 rounded-lg bg-muted/10 animate-pulse" />
+          ))}
         </div>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Recargar
-        </button>
       </div>
     );
   }
 
   return (
-    <div data-testid="stats-section" className="w-full">
-      {/* Development Notice */}
-      {process.env.NODE_ENV === "development" && error && (
-        <div className="mb-4 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-center">
-          <p className="text-xs text-yellow-600 dark:text-yellow-400">
-            ⚠️ Desarrollo: Algunas tablas no disponibles, mostrando datos
-            parciales
-          </p>
+    <div data-testid="stats-section" className="w-full space-y-6">
+      {/* Contribution Graph */}
+      <FileCard filename="contributions.tsx" language="typescript" icon={TrendingUp}>
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <GitCommit className="w-4 h-4 text-git-branch" />
+              <span className="text-xs font-mono-display text-muted-foreground">
+                365 days of activity
+              </span>
+            </div>
+            <span className="text-[10px] font-mono-display text-git-clean bg-git-clean/10 px-2 py-1 rounded">
+              public
+            </span>
+          </div>
+          <ContributionGraph />
         </div>
-      )}
+      </FileCard>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 justify-items-center max-w-6xl mx-auto">
-        {stats.map((stat, index) => (
-          <Card
-            key={index}
-            className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm w-full"
-          >
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className={`p-2 sm:p-3 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon
-                    className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.color}`}
-                  />
+      {/* Stats as code */}
+      <FileCard filename="stats.ts" language="typescript" icon={Terminal}>
+        <div className="p-6">
+          <div className="space-y-3 font-mono-display text-sm">
+            <div className="text-muted-foreground text-xs mb-4">
+              // Portfolio metrics dashboard
+            </div>
+
+            {codeStats.map((stat, index) => (
+              <div
+                key={index}
+                className="group flex items-center gap-3 p-3 rounded-lg bg-muted/20 border border-border/50 hover:border-git-branch/50 transition-all duration-200 hover:shadow-md"
+              >
+                {/* Type declaration */}
+                <span className="text-muted-foreground text-xs shrink-0 w-12">
+                  {stat.type}
+                </span>
+
+                {/* Property name */}
+                <span className="text-foreground font-medium shrink-0">
+                  {stat.label}
+                </span>
+
+                {/* Assignment */}
+                <span className="text-git-branch text-xs">=</span>
+
+                {/* Icon */}
+                <div className={cn("p-1.5 rounded bg-background border", stat.color)}>
+                  <stat.icon className="w-3.5 h-3.5" />
                 </div>
-                <div>
-                  <div className="text-lg sm:text-xl font-bold text-foreground">
-                    {stat.value}
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-                    {stat.label}
-                  </p>
-                </div>
+
+                {/* Value */}
+                <span className={cn("font-bold text-lg", stat.color)}>
+                  {stat.value}
+                </span>
+
+                {/* Comment */}
+                <span className="text-muted-foreground/60 text-xs flex-1 text-right">
+                  // {stat.displayLabel}
+                </span>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            ))}
+
+            {/* Export statement */}
+            <div className="mt-4 pt-4 border-t border-border/50">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                <span>export default</span>
+                <span className="text-git-clean">metrics</span>
+                <span>;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </FileCard>
     </div>
   );
 }

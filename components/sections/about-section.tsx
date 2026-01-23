@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { FileCard } from "@/components/ui/file-card";
 import { useProfile, useSkills, useInterests, useFunFacts } from "@/hooks/use-supabase-data";
 import { AboutSectionSkeleton } from "@/components/loading-skeletons";
 import {
@@ -29,6 +30,8 @@ import {
   Globe,
   Layers,
   Settings,
+  FileText,
+  FolderTree,
 } from "lucide-react";
 
 interface Profile {
@@ -132,59 +135,65 @@ export const AboutSection = memo(function AboutSection() {
 
   return (
     <div data-testid="about-section" className="space-y-6 sm:space-y-8 px-4 sm:px-0">
-      {/* Header */}
+      {/* Header with commit-style info */}
       <div className="text-center space-y-3 sm:space-y-4">
         <div className="relative inline-block">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 p-1">
-            <div className="w-full h-full rounded-full bg-background flex items-center justify-center text-2xl sm:text-4xl font-bold">
-              {profile?.full_name?.charAt(0) || "D"}
+          <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-lg bg-gradient-to-br from-git-branch/20 to-git-clean/10 border-2 border-git-branch/30 p-1">
+            <div className="w-full h-full rounded bg-background flex items-center justify-center text-xl sm:text-3xl font-bold font-mono-display text-git-branch">
+              {profile?.full_name?.charAt(0) || "J"}
             </div>
           </div>
-          <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-full border-2 sm:border-4 border-background animate-pulse" />
+          <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 px-1.5 py-0.5 bg-muted border border-git-clean rounded text-[10px] font-mono-display text-git-clean">
+            main
+          </div>
         </div>
         <div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+          <div className="text-[10px] font-mono-display text-muted-foreground mb-1">
+            <span className="text-git-branch">commit</span> <span className="opacity-70">a3f8d2c</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground font-mono-display">
             {profile?.full_name || "Full Stack Developer"}
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-muted-foreground mt-2 text-sm sm:text-base">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
-              <span>{profile?.location || "Spain"}</span>
+              <span className="font-mono-display text-xs">{profile?.location || "Spain"}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span>Disponible para proyectos</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-git-clean"></span>
+              <span className="font-mono-display text-xs">Available for projects</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bio */}
-      <Card>
-        <CardContent className="p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
-            Acerca de Mí
-          </h2>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            {profile?.bio ||
-              `I'm a passionate full stack developer focused on creating exceptional digital 
-            experiences. With over 5 years of experience in web development, I specialize in 
-            modern technologies like React, Next.js, Node.js and Python. I love solving complex 
-            problems and transforming innovative ideas into functional and attractive digital products.
-            
-            When I'm not coding, I enjoy exploring new technologies, contributing to 
-            open source projects, and sharing knowledge with the developer community.`}
-          </p>
-        </CardContent>
-      </Card>
+      {/* Bio - README style */}
+      <FileCard filename="README.md" language="markdown" icon={FileText}>
+        <div className="p-4 sm:p-6 space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b border-border/50">
+            <span className="text-xs font-mono-display text-muted-foreground">
+              # About Me
+            </span>
+          </div>
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            <p className="text-sm sm:text-base text-foreground leading-relaxed whitespace-pre-line">
+              {profile?.bio ||
+                `I'm a passionate full stack developer focused on creating exceptional digital
+              experiences. With over 5 years of experience in web development, I specialize in
+              modern technologies like React, Next.js, Node.js and Python. I love solving complex
+              problems and transforming innovative ideas into functional and attractive digital products.
 
-      {/* Skills */}
-      <Card>
-        <CardContent className="p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">
-            Habilidades Técnicas
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              When I'm not coding, I enjoy exploring new technologies, contributing to
+              open source projects, and sharing knowledge with the developer community.`}
+            </p>
+          </div>
+        </div>
+      </FileCard>
+
+      {/* Skills - package.json style */}
+      <FileCard filename="skills.json" language="json" icon={Code}>
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {skills?.map((skill) => {
               const skillLevel = getSkillLevel(skill.level);
               const IconComponent =
@@ -192,70 +201,48 @@ export const AboutSection = memo(function AboutSection() {
               return (
                 <div
                   key={skill.name}
-                  className="flex items-center gap-3 p-3 rounded-lg border hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                  className="flex items-center gap-3 p-3 rounded-md bg-muted/30 border border-border/50 hover:border-git-branch/50 transition-all duration-200 group"
                 >
-                  <IconComponent className="h-6 w-6 text-blue-600 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <span className="font-medium text-sm">{skill.name}</span>
+                  <IconComponent className="h-5 w-5 text-git-branch flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <div className="flex-1 min-w-0 font-mono-display">
+                    <span className="text-sm text-foreground">"{skill.name}"</span>
                   </div>
                   <span
-                    className={`text-xs font-semibold px-2 py-1 rounded-full bg-muted ${skillLevel.color} flex-shrink-0`}
+                    className={`text-[10px] font-mono-display px-1.5 py-0.5 rounded ${skillLevel.color} bg-background border border-border flex-shrink-0`}
                   >
-                    {skillLevel.text}
+                    {skill.level}%
                   </span>
                 </div>
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </FileCard>
 
-      {/* Interests */}
-      <Card>
-        <CardContent className="p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">
-            Intereses y Pasiones
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+      {/* Interests - directory style */}
+      <FileCard filename="interests/" icon={FolderTree}>
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {interests?.map((interest) => {
               const IconComponent =
                 iconMap[interest.icon as keyof typeof iconMap] || Code;
               return (
                 <div
                   key={interest.id}
-                  className="flex flex-col items-center p-3 sm:p-4 rounded-lg border hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer group"
+                  className="flex flex-col items-center p-3 sm:p-4 rounded-md bg-muted/30 border border-border/50 hover:border-git-clean/50 transition-all duration-200 hover:scale-105 cursor-pointer group"
                 >
                   <IconComponent
                     className={`h-6 w-6 sm:h-8 sm:w-8 ${interest.color} mb-2 group-hover:scale-110 transition-transform`}
                   />
-                  <span className="text-xs sm:text-sm text-center font-medium">
+                  <span className="text-xs sm:text-sm text-center font-mono-display font-medium">
                     {interest.name}
                   </span>
                 </div>
               );
             })}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Fun Facts */}
-      {/* <Card>
-        <CardContent className="p-6">
-          <h2 className="text-2xl font-semibold mb-6">Fun Facts</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {funFacts?.map((fact) => {
-              const IconComponent =
-                iconMap[fact.icon as keyof typeof iconMap] || Code;
-              return (
-                <div key={fact.id} className="flex items-center gap-3">
-                  <IconComponent className={`h-5 w-5 ${fact.color}`} />
-                  <span>{fact.description}</span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card> */}
+        </div>
+      </FileCard>
     </div>
   );
 });

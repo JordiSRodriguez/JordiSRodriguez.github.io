@@ -170,73 +170,77 @@ export function ToolsDock({ className }: ToolsDockProps) {
           isExpanded
             ? "transition-shadow duration-300"
             : "transition-all duration-300 ease-out transform-gpu",
-          "rounded-2xl overflow-hidden border-border/50",
+          "rounded-lg overflow-hidden border-border",
           isExpanded
-            ? "w-96 h-[500px] shadow-2xl border-primary/20"
-            : "w-20 h-16 hover:shadow-xl hover:scale-105 cursor-pointer",
+            ? "w-96 h-[520px] shadow-2xl border-border"
+            : "w-auto h-auto hover:shadow-xl hover:scale-105 cursor-pointer",
           "max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)]"
         )}
       >
-        {/* Header compacto / Dock icons */}
+        {/* Header with IDE tab styling */}
         <div
           className={cn(
-            "flex items-center justify-center p-3",
-            isExpanded ? "border-b border-border/50 bg-muted/30" : ""
+            "flex items-center",
+            isExpanded ? "border-b border-border bg-muted/30 px-2 pt-2" : "p-3"
           )}
         >
           {!isExpanded ? (
-            // Modo compacto - mostrar iconos superpuestos
-            <div className="relative flex items-center justify-center w-full h-full tools-dock-icon-stack">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex -space-x-2">
-                  <div
-                    className={cn(
-                      "w-8 h-8 rounded-full border-2 border-background flex items-center justify-center dock-icon",
-                      "bg-gradient-to-br from-blue-500 to-blue-600 text-white",
-                      "transition-all duration-300 hover:scale-110",
-                      activeTab === "weather"
-                        ? "z-10 scale-110"
-                        : "scale-90 opacity-70"
-                    )}
-                  >
-                    <Cloud className="w-4 h-4" />
-                  </div>
-                  <div
-                    className={cn(
-                      "w-8 h-8 rounded-full border-2 border-background flex items-center justify-center dock-icon",
-                      "bg-gradient-to-br from-gray-800 to-gray-900 text-white dark:from-gray-700 dark:to-gray-800",
-                      "transition-all duration-300 hover:scale-110",
-                      activeTab === "github"
-                        ? "z-10 scale-110"
-                        : "scale-90 opacity-70"
-                    )}
-                  >
-                    <Github className="w-4 h-4" />
-                  </div>
-                </div>
+            // Compact mode - git status style badges
+            <div className="relative flex items-center justify-center gap-2">
+              <div
+                className={cn(
+                  "w-8 h-8 rounded-md border border-border flex items-center justify-center dock-icon transition-all duration-300",
+                  activeTab === "weather"
+                    ? "bg-git-clean/10 border-git-clean text-git-clean scale-105"
+                    : "bg-muted border-border text-muted-foreground opacity-70"
+                )}
+              >
+                <Cloud className="w-4 h-4" />
+              </div>
+              <div
+                className={cn(
+                  "w-8 h-8 rounded-md border border-border flex items-center justify-center dock-icon transition-all duration-300",
+                  activeTab === "github"
+                    ? "bg-git-branch/10 border-git-branch text-git-branch scale-105"
+                    : "bg-muted border-border text-muted-foreground opacity-70"
+                )}
+              >
+                <Github className="w-4 h-4" />
               </div>
             </div>
           ) : (
-            // Modo expandido - mostrar tabs
-            <div className="flex space-x-1">
-              <Button
-                variant={activeTab === "weather" ? "default" : "ghost"}
-                size="sm"
+            // Expanded mode - file tab styling
+            <div className="flex gap-1 w-full">
+              <button
                 onClick={() => switchTab("weather")}
-                className="h-8 px-3"
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 text-xs font-mono-display rounded-t-md transition-colors",
+                  activeTab === "weather"
+                    ? "bg-background text-foreground border border-border border-b-0"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                )}
               >
-                <Cloud className="w-4 h-4 mr-2" />
-                Clima
-              </Button>
-              <Button
-                variant={activeTab === "github" ? "default" : "ghost"}
-                size="sm"
+                <Cloud className="w-3.5 h-3.5" />
+                <span>weather.ts</span>
+                {activeTab !== "weather" && (
+                  <span className="ml-auto text-git-clean text-[10px]">M</span>
+                )}
+              </button>
+              <button
                 onClick={() => switchTab("github")}
-                className="h-8 px-3"
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 text-xs font-mono-display rounded-t-md transition-colors",
+                  activeTab === "github"
+                    ? "bg-background text-foreground border border-border border-b-0"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                )}
               >
-                <Github className="w-4 h-4 mr-2" />
-                GitHub
-              </Button>
+                <Github className="w-3.5 h-3.5" />
+                <span>github.ts</span>
+                {activeTab !== "github" && (
+                  <span className="ml-auto text-git-clean text-[10px]">M</span>
+                )}
+              </button>
             </div>
           )}
         </div>
