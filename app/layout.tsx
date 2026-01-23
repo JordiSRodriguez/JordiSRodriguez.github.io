@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description:
     "Personal portfolio of Jordi Sumba - Full Stack Developer specializing in React, Next.js, and modern web technologies",
   generator: "Next.js",
+  other: {
+    "x-dns-prefetch-control": "on",
+  },
 };
 
 export default function RootLayout({
@@ -21,6 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL || "https://your-project.supabase.co"} />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL || "https://your-project.supabase.co"} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <QueryProvider>
           <ThemeProvider

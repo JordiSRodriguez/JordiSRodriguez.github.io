@@ -87,9 +87,9 @@ export const ProjectsSection = memo(function ProjectsSection() {
             <FolderOpen className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
               Proyectos Destacados
-            </h1>
+            </h2>
             <p className="text-muted-foreground mt-2">
               Una colección de proyectos que demuestran mis habilidades en
               desarrollo full-stack, diseño UI/UX, y tecnologías web modernas.

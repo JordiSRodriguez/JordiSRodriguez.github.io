@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useNavigateToSection } from "@/contexts/navigation-context";
+import logger from "@/lib/logger";
 
 interface Profile {
   id: string;
@@ -59,7 +60,7 @@ export function HeroSection() {
         if (error) throw error;
         setProfile(data && data.length > 0 ? data[0] : null);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        logger.error("Error fetching profile:", error);
         setProfile(null);
       } finally {
         setLoading(false);
@@ -149,6 +150,8 @@ export function HeroSection() {
               <img
                 src={profile.avatar_url}
                 alt={displayName}
+                width={128}
+                height={128}
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (

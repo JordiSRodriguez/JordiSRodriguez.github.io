@@ -183,9 +183,9 @@ export const ContactSection = memo(function ContactSection() {
           <MessageSquare className="h-8 w-8" />
         </div>
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
             Contacto
-          </h1>
+          </h2>
           <p className="text-muted-foreground mt-2">
             ¿Tienes un proyecto en mente? ¡Hablemos y hagámoslo realidad!
           </p>

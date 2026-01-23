@@ -419,7 +419,13 @@ export function StatsSection() {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 animate-pulse justify-items-center max-w-6xl mx-auto">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="h-20 sm:h-24 bg-muted rounded-lg w-full" />
+          <div key={i} className="h-28 sm:h-32 bg-muted/50 rounded-lg w-full flex items-center justify-center">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-lg" />
+              <div className="h-5 w-12 bg-muted rounded" />
+              <div className="h-3 w-16 bg-muted rounded" />
+            </div>
+          </div>
         ))}
       </div>
     );

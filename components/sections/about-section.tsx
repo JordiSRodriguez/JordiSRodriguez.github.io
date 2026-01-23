@@ -143,9 +143,9 @@ export const AboutSection = memo(function AboutSection() {
           <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-full border-2 sm:border-4 border-background animate-pulse" />
         </div>
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             {profile?.full_name || "Full Stack Developer"}
-          </h1>
+          </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-muted-foreground mt-2 text-sm sm:text-base">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />

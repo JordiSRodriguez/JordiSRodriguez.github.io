@@ -6,9 +6,9 @@ export function AnalyticsSection() {
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           Portfolio Analytics
-        </h1>
+        </h2>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Real-time insights into portfolio performance, visitor engagement, and content popularity.
         </p>

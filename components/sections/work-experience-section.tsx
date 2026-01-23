@@ -104,9 +104,9 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
           <Briefcase className="h-8 w-8" />
         </div>
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
             Professional Experience
-          </h1>
+          </h2>
           <p className="text-muted-foreground mt-2">
             Mi trayectoria profesional y desarrollo de carrera
           </p>

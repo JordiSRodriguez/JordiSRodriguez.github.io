@@ -109,7 +109,7 @@ export function VisitorFeedback() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Comentarios de Visitantes</h1>
+        <h2 className="text-4xl font-bold mb-4">Comentarios de Visitantes</h2>
         <p className="text-muted-foreground">
           Comparte tus pensamientos y ve lo que otros están diciendo
         </p>
