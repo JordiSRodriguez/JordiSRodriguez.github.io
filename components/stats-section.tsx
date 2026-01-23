@@ -27,7 +27,7 @@ interface VisitStat {
 
 interface Project {
   id: string;
-  status: "completed" | "in-progress" | "planned";
+  status?: "completed" | "in-progress" | "planned";
 }
 
 interface WorkExperience {

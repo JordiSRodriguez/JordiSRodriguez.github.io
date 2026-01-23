@@ -95,7 +95,7 @@ export function AIChatAssistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [chatSize, setChatSize] = useState({
+  const [chatSize, setChatSize] = useState<{ width: number; height: number }>({
     width: AI_CHAT.DEFAULT_WIDTH,
     height: AI_CHAT.DEFAULT_HEIGHT,
   });

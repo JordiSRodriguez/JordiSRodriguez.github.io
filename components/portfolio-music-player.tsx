@@ -32,7 +32,7 @@ export function PortfolioMusicPlayer({ isActive, onToggle }: PortfolioMusicPlaye
   const [currentTrack, setCurrentTrack] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [volume, setVolume] = useState([70])
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   useEffect(() => {
     if (isPlaying) {
