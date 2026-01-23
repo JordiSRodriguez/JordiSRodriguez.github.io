@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { FileCard } from "@/components/ui/file-card";
+import { GlassCard } from "@/components/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CardSpotlight } from "@/components/spotlight-effect";
 import {
   Github,
   GitCommit,
@@ -12,49 +15,60 @@ import {
   Activity,
   AlertCircle,
   X,
+  Eye,
+  Code,
+  Terminal,
+  Zap,
+  TrendingUp,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFloatingComponents } from "@/contexts/floating-components-context";
 import { useGitHubData } from "@/hooks/use-github-data";
+import { cn } from "@/lib/utils";
 
 export function FloatingGitHub() {
   const [isLive, setIsLive] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [pulse, setPulse] = useState(0);
 
   const { activities, stats, loading, error, githubUsername } = useGitHubData();
 
   const isMobile = useIsMobile();
   const { shouldHideComponent, setGithubExpanded } = useFloatingComponents();
 
-  // Sincronizar el estado de expansión con el contexto solo cuando cambie
   useEffect(() => {
     setGithubExpanded(isHovered);
   }, [isHovered, setGithubExpanded]);
 
-  // Ocultar el componente en desktop si otro flotante está activo
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsLive((prev) => !prev);
+      setPulse((prev) => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const shouldHide = shouldHideComponent("githubExpanded");
 
-  // Función para determinar el color basado en el tipo de actividad
   const getActivityColor = (type: string): string => {
     switch (type) {
       case "PushEvent":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+        return "text-git-clean bg-git-clean/10 border-git-clean/30";
       case "CreateEvent":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+        return "text-git-branch bg-git-branch/10 border-git-branch/30";
       case "DeleteEvent":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+        return "text-git-conflict bg-git-conflict/10 border-git-conflict/30";
       case "IssuesEvent":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400";
+        return "text-git-modified bg-git-modified/10 border-git-modified/30";
       case "PullRequestEvent":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+        return "text-purple-400 bg-purple-400/10 border-purple-400/30";
       case "WatchEvent":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+        return "text-yellow-400 bg-yellow-400/10 border-yellow-400/30";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+        return "text-muted-foreground bg-muted/10 border-border/50";
     }
   };
 
-  // Función para determinar el icono basado en el tipo de actividad
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "PushEvent":
@@ -68,56 +82,29 @@ export function FloatingGitHub() {
       case "WatchEvent":
         return <Star className="h-3 w-3" />;
       default:
-        return <Github className="h-3 w-3" />;
+        return <Code className="h-3 w-3" />;
     }
   };
 
-  // Función para formatear el tiempo relativo
   const formatTimeAgo = (date: Date): string => {
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) {
-      return "hace unos segundos";
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `hace ${minutes} min`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `hace ${hours}h`;
-    } else {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `hace ${days}d`;
-    }
+    if (diffInSeconds < 60) return "just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+    return `${Math.floor(diffInSeconds / 86400)}d`;
   };
 
-  // Función para formatear números grandes
   const formatNumber = (num: number): string => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + "M";
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "K";
-    }
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
     return num.toString();
   };
 
-  // Efectos de vida (simulación de actividad en tiempo real)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsLive((prev) => !prev);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // No renderizar si debe estar oculto en desktop
-  // Use visibility instead of null to prevent CLS
   if (shouldHide) {
     return (
-      <div
-        className="fixed z-50 top-20 right-4 w-16 h-16 opacity-0 pointer-events-none"
-        aria-hidden="true"
-      />
+      <div className="fixed z-50 top-20 right-4 w-16 h-16 opacity-0 pointer-events-none" aria-hidden="true" />
     );
   }
 
@@ -127,181 +114,239 @@ export function FloatingGitHub() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Card
-        className={`
-          bg-background/95 backdrop-blur-md border shadow-lg cursor-pointer
-          transition-all duration-500 ease-out transform-gpu
-          ${
-            isHovered
-              ? "w-96 h-80 shadow-2xl scale-105 border-primary/20"
-              : "w-16 h-16 hover:shadow-xl hover:scale-110"
-          }
-          rounded-2xl overflow-hidden
-          ${
-            isHovered ? "max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)]" : ""
-          }
-        `}
-      >
-        {!isHovered ? (
-          // Vista compacta (icono)
-          <div className="h-full w-full flex items-center justify-center group relative">
-            <div className="relative">
-              <Github
-                className={`h-6 w-6 text-muted-foreground transition-all duration-300 ${
-                  isLive ? "text-green-500 animate-pulse" : ""
-                }`}
-              />
-              <div
-                className={`absolute -top-1 -right-1 w-3 h-3 rounded-full transition-all duration-300 ${
-                  isLive
-                    ? "bg-green-500 opacity-100 animate-ping"
-                    : "bg-primary opacity-0 group-hover:opacity-100"
-                }`}
-              />
-            </div>
-
-            {/* Indicador de toque para móvil */}
-            {isMobile && (
-              <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+      <CardSpotlight>
+        <GlassCard intensity="high" hover={false}>
+          <Card
+            className={cn(
+              "transition-all duration-500 ease-out transform-gpu cursor-pointer overflow-hidden",
+              "bg-background/80 backdrop-blur-xl border border-git-branch/30",
+              isHovered ? "w-[420px] h-auto shadow-2xl shadow-git-branch/20 scale-105" : "w-16 h-16 hover:scale-110",
+              "rounded-xl"
             )}
+          >
+            {!isHovered ? (
+              // Compact View - GitHub Icon Terminal Style
+              <div className="h-full w-full flex items-center justify-center group relative">
+                <div className="relative">
+                  {/* Pulsing glow effect */}
+                  <div className={cn(
+                    "absolute inset-0 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-git-branch/30",
+                    pulse === 0 && "opacity-50 animate-pulse"
+                  )} />
 
-            {/* Tooltip */}
-            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-background/95 backdrop-blur-sm border rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              {stats.totalStars > 0
-                ? `${formatNumber(stats.totalStars)} ⭐`
-                : isMobile
-                ? "Toca para ver"
-                : "GitHub"}
-            </div>
-          </div>
-        ) : (
-          // Vista expandida
-          <div className="h-full overflow-hidden">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Github className="h-5 w-5 text-muted-foreground" />
-                  <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                    GitHub Activity
-                  </span>
-                  {isLive && (
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  )}
-                </CardTitle>
-                {isMobile && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsHovered(false)}
-                    className="text-xs h-8 w-8 p-0"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+                  {/* Terminal window frame */}
+                  <div className="relative w-10 h-10 rounded-lg bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 flex items-center justify-center shadow-lg">
+                    {/* Window controls */}
+                    <div className="absolute top-1 left-1.5 flex gap-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500/80" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/80" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500/80" />
+                    </div>
+
+                    {/* GitHub icon with glow */}
+                    <Github
+                      className={cn(
+                        "h-5 w-5 relative z-10 transition-transform duration-300",
+                        isLive && "text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.8)]"
+                      )}
+                    />
+
+                    {/* Active indicator */}
+                    {isLive && (
+                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-ping border border-green-400" />
+                    )}
+                  </div>
+
+                  {/* Activity rings */}
+                  <svg className="absolute inset-0 -rotate-45 scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    <circle cx="50%" cy="50%" r="24" fill="none" stroke="currentColor" strokeWidth="1" className="text-git-branch/20" stroke-dasharray="1 150" />
+                    <circle cx="50%" cy="50%" r="28" fill="none" stroke="currentColor" strokeWidth="1" className="text-git-clean/10" stroke-dasharray="1 100" />
+                  </svg>
+
+                  {/* Stats preview on hover */}
+                  <div className="absolute top-full mt-3 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <div className="bg-background/95 backdrop-blur-sm border border-git-branch/30 rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-lg">
+                      <div className="flex items-center gap-2 font-mono-display">
+                        <Zap className="w-3 h-3 text-yellow-400" />
+                        <span className="text-git-branch">{formatNumber(stats.totalStars)}</span>
+                        <span className="text-muted-foreground">stars</span>
+                        <Eye className="w-3 h-3 text-git-clean" />
+                        <span className="text-git-clean">{formatNumber(stats.totalRepos)}</span>
+                        <span className="text-muted-foreground">repos</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4 animate-in fade-in-50 duration-300">
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Activity className="h-8 w-8 animate-spin text-muted-foreground" />
-                  <span className="ml-2 text-muted-foreground">
-                    Cargando actividad...
-                  </span>
-                </div>
-              ) : error ? (
-                <div className="flex items-center justify-center py-4 text-center">
-                  <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                  <div>
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      Error de conexión
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Mostrando datos demo
-                    </p>
+            ) : (
+              // Expanded View - Terminal/File Style
+              <div className="overflow-hidden">
+                {/* Terminal-style header */}
+                <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700 px-3 py-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors" />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Terminal className="w-4 h-4 text-git-branch" />
+                        <span className="text-[10px] font-mono-display text-gray-300">
+                          github
+                        </span>
+                        <span className="text-[10px] font-mono-display text-gray-500">
+                          — bash
+                        </span>
+                      </div>
+                    </div>
+                    {isMobile && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsHovered(false)}
+                        className="h-6 w-6 p-0 hover:bg-red-500/20 hover:text-red-400 text-gray-400"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
                 </div>
-              ) : (
-                <>
-                  {/* Stats rápidas */}
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="space-y-1">
-                      <p className="text-xl font-bold text-primary">
-                        {formatNumber(stats.totalStars)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Stars</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xl font-bold text-primary">
-                        {formatNumber(stats.totalRepos)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Repos</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xl font-bold text-primary">
-                        {formatNumber(stats.followers)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Followers</p>
-                    </div>
-                  </div>
 
-                  {/* Actividad reciente */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-muted-foreground">
-                      Actividad Reciente
-                    </h4>
-                    <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
-                      {activities.slice(0, 4).map((activity) => (
-                        <div
-                          key={activity.id}
-                          className="flex items-start gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-                        >
-                          <Badge
-                            variant="secondary"
-                            className={`flex items-center gap-1 text-xs px-2 py-0.5 ${getActivityColor(
-                              activity.type
-                            )}`}
-                          >
-                            {getActivityIcon(activity.type)}
-                          </Badge>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">
-                              {activity.message}
-                            </p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {activity.repo}
-                            </p>
+                {/* Content */}
+                <div className="p-4 space-y-4 bg-gray-900/50">
+                  {loading ? (
+                    <div className="flex items-center justify-center py-8 space-y-3">
+                      <div className="relative">
+                        <div className="w-8 h-8 rounded border-2 border-git-branch/50 border-t-git-branch animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Terminal className="w-4 h-4 text-git-branch animate-pulse" />
+                        </div>
+                      </div>
+                      <p className="text-xs font-mono-display text-git-branch">
+                        Loading activity...
+                      </p>
+                    </div>
+                  ) : error ? (
+                    <div className="flex items-center justify-center py-4 text-center space-y-2">
+                      <AlertCircle className="h-6 w-6 text-git-conflict mx-auto" />
+                      <div className="font-mono-display text-xs">
+                        <p className="text-git-conflict">Error: connection failed</p>
+                        <p className="text-muted-foreground">Showing demo data</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Stats as code */}
+                      <div className="bg-black/40 rounded-lg p-3 font-mono-display text-xs border border-gray-700">
+                        <div className="flex items-center gap-2 text-muted-foreground mb-3">
+                          <TrendingUp className="w-3 h-3 text-green-400" />
+                          <span>// repository metrics</span>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">const</span>
+                            <span className="text-git-clean">stats</span>
+                            <span className="text-git-branch">=</span>
+                            <span className="text-purple-400">{`{`}</span>
                           </div>
-                          <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {formatTimeAgo(activity.timestamp)}
+
+                          <div className="ml-4 grid grid-cols-3 gap-3">
+                            <div>
+                              <div className="text-lg font-bold text-git-branch">
+                                {formatNumber(stats.totalStars)}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground">stars</div>
+                            </div>
+                            <div>
+                              <div className="text-lg font-bold text-git-clean">
+                                {formatNumber(stats.totalRepos)}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground">repos</div>
+                            </div>
+                            <div>
+                              <div className="text-lg font-bold text-yellow-400">
+                                {formatNumber(stats.followers)}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground">followers</div>
+                            </div>
+                          </div>
+
+                          <div className="ml-4 text-purple-400">{`{}};`}</div>
+                        </div>
+                      </div>
+
+                      {/* Activity feed as terminal output */}
+                      <div className="bg-black/40 rounded-lg p-3 border border-gray-700">
+                        <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                          <Terminal className="w-3 h-3 text-git-branch" />
+                          <span className="text-[10px] font-mono-display">
+                            git log --oneline -5
                           </span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {githubUsername && (
-                    <div className="text-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs"
-                        onClick={() =>
-                          window.open(
-                            `https://github.com/${githubUsername}`,
-                            "_blank"
-                          )
-                        }
-                      >
-                        Ver perfil completo
-                      </Button>
-                    </div>
+                        <div className="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
+                          {activities.slice(0, 5).map((activity, index) => (
+                            <div
+                              key={activity.id}
+                              className={cn(
+                                "flex items-start gap-2 py-1.5 px-2 rounded transition-colors",
+                                index === 0 && "bg-git-branch/5 border border-git-branch/20"
+                              )}
+                            >
+                              <div className="flex-shrink-0 mt-0.5">
+                                <div className={cn(
+                                  "w-5 h-5 rounded flex items-center justify-center",
+                                  getActivityColor(activity.type)
+                                )}>
+                                  {getActivityIcon(activity.type)}
+                                </div>
+                              </div>
+
+                              <div className="flex-1 min-w-0 font-mono-display text-xs">
+                                <div className="text-muted-foreground">
+                                  <span className="text-gray-500">{activity.type}:</span>
+                                  <span className="ml-2 text-foreground">{activity.message}</span>
+                                </div>
+                                {activity.repo && (
+                                  <div className="ml-4 text-gray-400 truncate">
+                                    @ {activity.repo}
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex-shrink-0 text-[10px] text-gray-500">
+                                {formatTimeAgo(activity.timestamp)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      {githubUsername && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full group font-mono-display text-xs bg-git-branch hover:bg-git-branch/90 text-white border-0 shadow-lg hover:shadow-git-branch/20 transition-all"
+                          onClick={() =>
+                            window.open(`https://github.com/${githubUsername}`, "_blank")
+                          }
+                        >
+                          <Github className="mr-2 h-3 w-3 group-hover:rotate-12 transition-transform" />
+                          $ cd ~/{githubUsername}
+                          <div className="absolute inset-0 bg-gradient-to-r from-git-clean to-git-branch opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </Button>
+                      )}
+                    </>
                   )}
-                </>
-              )}
-            </CardContent>
-          </div>
-        )}
-      </Card>
+                </div>
+              </div>
+            )}
+          </Card>
+        </GlassCard>
+      </CardSpotlight>
     </div>
   );
 }
