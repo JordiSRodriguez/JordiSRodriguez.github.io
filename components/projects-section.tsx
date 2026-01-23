@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import logger from "@/lib/logger";
 import {
   Card,
   CardContent,
@@ -42,7 +43,7 @@ const techColors = [
   "bg-chart-5/10 text-chart-5 border-chart-5/20",
 ];
 
-export function ProjectsSection() {
+export const ProjectsSection = memo(function ProjectsSection() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
@@ -69,7 +70,7 @@ export function ProjectsSection() {
       if (error) throw error;
       setProjects(data || []);
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      logger.error("Error fetching projects:", error);
     } finally {
       setLoading(false);
     }
@@ -183,6 +184,7 @@ export function ProjectsSection() {
                     src={project.image_url || "/placeholder.svg"}
                     alt={project.title}
                     fill
+                    loading="lazy"
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (

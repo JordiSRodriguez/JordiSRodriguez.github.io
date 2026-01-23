@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { createBrowserClient } from "@supabase/ssr";
+import logger from "@/lib/logger";
 import {
   GraduationCap,
   Award,
@@ -73,7 +74,7 @@ const iconMap = {
   Trophy,
 };
 
-export function EducationSection() {
+export const EducationSection = memo(function EducationSection() {
   const [education, setEducation] = useState<Education[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -103,7 +104,7 @@ export function EducationSection() {
         fetchLearningGoals(),
       ]);
     } catch (error) {
-      console.error("Error fetching education data:", error);
+      logger.error("Error fetching education data:", error);
     } finally {
       setLoading(false);
     }

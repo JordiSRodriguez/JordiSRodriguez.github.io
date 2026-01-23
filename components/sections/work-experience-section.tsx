@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { createBrowserClient } from "@supabase/ssr";
+import logger from "@/lib/logger";
 import {
   Calendar,
   MapPin,
@@ -37,7 +38,7 @@ interface WorkExperience {
   testimonial_author?: string;
 }
 
-export function WorkExperienceSection() {
+export const WorkExperienceSection = memo(function WorkExperienceSection() {
   const [experiences, setExperiences] = useState<WorkExperience[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedExperience, setSelectedExperience] = useState<string | null>(
@@ -61,7 +62,7 @@ export function WorkExperienceSection() {
         .order("start_date", { ascending: false });
 
       if (error) {
-        console.error("Error fetching work experiences:", error);
+        logger.error("Error fetching work experiences:", error);
       } else {
         setExperiences(data || []);
       }

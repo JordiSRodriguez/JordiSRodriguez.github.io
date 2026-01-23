@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createBrowserClient } from "@supabase/ssr";
+import logger from "@/lib/logger";
 import {
   Calendar,
   Clock,
@@ -31,7 +32,7 @@ interface BlogPost {
   published_at: string;
 }
 
-export function BlogSection() {
+export const BlogSection = memo(function BlogSection() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +58,7 @@ export function BlogSection() {
       if (error) throw error;
       setPosts(data || []);
     } catch (error) {
-      console.error("Error fetching blog posts:", error);
+      logger.error("Error fetching blog posts:", error);
     } finally {
       setLoading(false);
     }

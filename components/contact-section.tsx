@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { EmbeddedMeetingScheduler } from "@/components/embedded-meeting-scheduler";
+import logger from "@/lib/logger";
 import {
   Mail,
   Phone,
@@ -38,7 +39,7 @@ interface Profile {
   initials?: string;
 }
 
-export function ContactSection() {
+export const ContactSection = memo(function ContactSection() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -66,7 +67,7 @@ export function ContactSection() {
         if (error) throw error;
         setProfile(data && data.length > 0 ? data[0] : null);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        logger.error("Error fetching profile:", error);
         setProfile(null);
       } finally {
         setProfileLoading(false);
@@ -97,7 +98,7 @@ export function ContactSection() {
       setSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
-      console.error("Error sending message:", error);
+      logger.error("Error sending message:", error);
       setError("Error sending message. Please try again.");
     } finally {
       setLoading(false);

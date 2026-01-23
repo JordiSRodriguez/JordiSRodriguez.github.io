@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import {
   NavigationProvider,
   useNavigation,
@@ -10,25 +10,57 @@ import { FloatingComponentsProvider } from "@/contexts/floating-components-conte
 import { SidebarNavigation } from "@/components/sidebar-navigation";
 import { MobileBreadcrumbs } from "@/components/mobile-breadcrumbs";
 import { HeroSection } from "@/components/hero-section";
-import { AboutSection } from "@/components/sections/about-section";
-import { WorkExperienceSection } from "@/components/sections/work-experience-section";
-import { EducationSection } from "@/components/sections/education-section";
-import { ProjectsSection } from "@/components/projects-section";
-import { BlogSection } from "@/components/blog-section";
-import { ContactSection } from "@/components/contact-section";
 import { StatsSection } from "@/components/stats-section";
 import { CommandPalette } from "@/components/command-palette";
 import { AIChatAssistant } from "@/components/ai-chat-assistant";
 import { VisitorFeedback } from "@/components/visitor-feedback";
-import { VoiceNavigation } from "@/components/voice-navigation";
 import { ToolsDock } from "@/components/tools-dock";
 import { MobileFloatingDock } from "@/components/mobile-floating-dock";
 import { MobileModals } from "@/components/mobile-modals";
-import { PortfolioMusicPlayer } from "@/components/portfolio-music-player";
-import { AnalyticsSection } from "@/components/sections/analytics-section";
-import { DevSection } from "@/components/sections/dev-section";
 import { LikeCard } from "@/components/like-card";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+// Lazy load section components for better performance
+const AboutSection = lazy(
+  () => import("@/components/sections/about-section").then((m) => ({
+    default: m.AboutSection,
+  }))
+);
+const WorkExperienceSection = lazy(
+  () => import("@/components/sections/work-experience-section").then((m) => ({
+    default: m.WorkExperienceSection,
+  }))
+);
+const EducationSection = lazy(
+  () => import("@/components/sections/education-section").then((m) => ({
+    default: m.EducationSection,
+  }))
+);
+const ProjectsSection = lazy(
+  () => import("@/components/projects-section").then((m) => ({
+    default: m.ProjectsSection,
+  }))
+);
+const BlogSection = lazy(
+  () => import("@/components/blog-section").then((m) => ({
+    default: m.BlogSection,
+  }))
+);
+const ContactSection = lazy(
+  () => import("@/components/contact-section").then((m) => ({
+    default: m.ContactSection,
+  }))
+);
+const AnalyticsSection = lazy(
+  () => import("@/components/sections/analytics-section").then((m) => ({
+    default: m.AnalyticsSection,
+  }))
+);
+const DevSection = lazy(
+  () => import("@/components/sections/dev-section").then((m) => ({
+    default: m.DevSection,
+  }))
+);
 
 function HomePageContent() {
   const { currentSection, navigateToSection } = useNavigation();
@@ -67,47 +99,78 @@ function HomePageContent() {
   };
 
   const renderSection = () => {
-    switch (currentSection) {
-      case "home":
-        return (
-          <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+    const content = (() => {
+      switch (currentSection) {
+        case "home":
+          return (
+            <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+              <HeroSection />
+              <StatsSection />
+              <div className="flex justify-center px-4">
+                <VisitorFeedback />
+              </div>
+              <div className="flex justify-center">
+                <LikeCard />
+              </div>
+            </div>
+          );
+        case "about":
+          return <AboutSection />;
+        case "experience":
+          return <WorkExperienceSection />;
+        case "education":
+          return <EducationSection />;
+        case "projects":
+          return <ProjectsSection />;
+        case "blog":
+          return <BlogSection />;
+        case "contact":
+          return <ContactSection />;
+        case "analytics":
+          return process.env.NODE_ENV === "development" ? (
+            <AnalyticsSection />
+          ) : (
             <HeroSection />
-            <StatsSection />
-            <div className="flex justify-center px-4">
-              <VisitorFeedback />
+          );
+        case "dev":
+          return process.env.NODE_ENV === "development" ? (
+            <DevSection />
+          ) : (
+            <HeroSection />
+          );
+        default:
+          return <HeroSection />;
+      }
+    })();
+
+    // Wrap lazy-loaded components in Suspense with a loading fallback
+    if (
+      currentSection === "about" ||
+      currentSection === "experience" ||
+      currentSection === "education" ||
+      currentSection === "projects" ||
+      currentSection === "blog" ||
+      currentSection === "contact" ||
+      currentSection === "analytics" ||
+      currentSection === "dev"
+    ) {
+      return (
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-pulse flex flex-col items-center gap-4">
+                <div className="h-12 w-12 bg-muted rounded-full"></div>
+                <div className="h-4 w-32 bg-muted rounded"></div>
+              </div>
             </div>
-            <div className="flex justify-center">
-              <LikeCard />
-            </div>
-          </div>
-        );
-      case "about":
-        return <AboutSection />;
-      case "experience":
-        return <WorkExperienceSection />;
-      case "education":
-        return <EducationSection />;
-      case "projects":
-        return <ProjectsSection />;
-      case "blog":
-        return <BlogSection />;
-      case "contact":
-        return <ContactSection />;
-      case "analytics":
-        return process.env.NODE_ENV === "development" ? (
-          <AnalyticsSection />
-        ) : (
-          <HeroSection />
-        );
-      case "dev":
-        return process.env.NODE_ENV === "development" ? (
-          <DevSection />
-        ) : (
-          <HeroSection />
-        );
-      default:
-        return <HeroSection />;
+          }
+        >
+          {content}
+        </Suspense>
+      );
     }
+
+    return content;
   };
 
   const handleThemeChange = (theme: string) => {

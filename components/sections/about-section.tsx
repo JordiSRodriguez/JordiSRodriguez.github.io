@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { createBrowserClient } from "@supabase/ssr";
+import logger from "@/lib/logger";
 import {
   MapPin,
   Calendar,
@@ -108,7 +109,7 @@ const iconMap = {
   Angular: Code2,
 };
 
-export function AboutSection() {
+export const AboutSection = memo(function AboutSection() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [interests, setInterests] = useState<Interest[]>([]);
@@ -142,7 +143,7 @@ export function AboutSection() {
         fetchFunFacts(),
       ]);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      logger.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -159,7 +160,7 @@ export function AboutSection() {
 
       setProfile(data && data.length > 0 ? data[0] : null);
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      logger.error("Error fetching profile:", error);
       setProfile(null);
     }
   };
@@ -175,7 +176,7 @@ export function AboutSection() {
 
       setSkills(data || []);
     } catch (error) {
-      console.error("Error fetching skills:", error);
+      logger.error("Error fetching skills:", error);
       setSkills([]);
     }
   };
@@ -191,7 +192,7 @@ export function AboutSection() {
 
       setInterests(data || []);
     } catch (error) {
-      console.error("Error fetching interests:", error);
+      logger.error("Error fetching interests:", error);
       setInterests([]);
     }
   };
@@ -207,7 +208,7 @@ export function AboutSection() {
 
       setFunFacts(data || []);
     } catch (error) {
-      console.error("Error fetching fun facts:", error);
+      logger.error("Error fetching fun facts:", error);
       setFunFacts([]);
     }
   };
