@@ -71,7 +71,13 @@ interface WorkExperience {
   start_date: string;
   end_date: string | null;
   description: string;
+  achievements: string[];
   technologies: string[];
+  team_size?: number;
+  salary_growth?: number;
+  url?: string;
+  testimonial?: string;
+  testimonial_author?: string;
   current_job: boolean;
   display_order: number;
 }

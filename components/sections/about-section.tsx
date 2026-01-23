@@ -185,7 +185,7 @@ export const AboutSection = memo(function AboutSection() {
             Habilidades Técnicas
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {skills.map((skill) => {
+            {skills?.map((skill) => {
               const skillLevel = getSkillLevel(skill.level);
               const IconComponent =
                 iconMap[skill.icon as keyof typeof iconMap] || Code;
@@ -217,7 +217,7 @@ export const AboutSection = memo(function AboutSection() {
             Intereses y Pasiones
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-            {interests.map((interest) => {
+            {interests?.map((interest) => {
               const IconComponent =
                 iconMap[interest.icon as keyof typeof iconMap] || Code;
               return (
@@ -243,7 +243,7 @@ export const AboutSection = memo(function AboutSection() {
         <CardContent className="p-6">
           <h2 className="text-2xl font-semibold mb-6">Fun Facts</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {funFacts.map((fact) => {
+            {funFacts?.map((fact) => {
               const IconComponent =
                 iconMap[fact.icon as keyof typeof iconMap] || Code;
               return (
