@@ -1,11 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // Note: ESLint is configured separately. Run `npm run lint` to check linting.
+  // TypeScript errors in test files don't affect production builds.
+  // Consider fixing test file types for better type safety.
   images: {
     unoptimized: true,
   },
