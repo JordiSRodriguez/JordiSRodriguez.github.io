@@ -14,8 +14,7 @@ import { StatsSection } from "@/components/stats-section";
 import { CommandPalette } from "@/components/command-palette";
 import { AIChatAssistant } from "@/components/ai-chat-assistant";
 import { VisitorFeedback } from "@/components/visitor-feedback";
-import { FloatingGitHub } from "@/components/floating-github";
-import { FloatingWeather } from "@/components/floating-weather";
+import { UnifiedDock } from "@/components/unified-dock";
 import { MobileFloatingDock } from "@/components/mobile-floating-dock";
 import { MobileModals } from "@/components/mobile-modals";
 import { LikeCard } from "@/components/like-card";
@@ -253,13 +252,8 @@ function HomePageContent() {
       {/* AI Chat Assistant */}
       <AIChatAssistant />
 
-      {/* Floating Widgets - Desktop only */}
-      {!isMobile && (
-        <>
-          <FloatingWeather />
-          <FloatingGitHub />
-        </>
-      )}
+      {/* Unified Dock - Desktop only */}
+      {!isMobile && <UnifiedDock />}
 
       {/* Mobile Dock - Solo en móvil */}
       {isMobile && (
