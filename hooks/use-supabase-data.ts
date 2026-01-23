@@ -3,7 +3,7 @@
  * Provides caching and automatic refetching for Supabase data
  */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import logger from "@/lib/logger";
 

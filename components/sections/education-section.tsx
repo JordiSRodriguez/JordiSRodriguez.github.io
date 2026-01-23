@@ -20,6 +20,7 @@ import {
   useCourses,
   useLearningGoals,
 } from "@/hooks/use-supabase-data";
+import { EducationSectionSkeleton } from "@/components/loading-skeletons";
 
 
 // Icon mapping for certifications
@@ -46,13 +47,7 @@ export const EducationSection = memo(function EducationSection() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-32 bg-muted rounded-lg" />
-        <div className="h-48 bg-muted rounded-lg" />
-        <div className="h-64 bg-muted rounded-lg" />
-      </div>
-    );
+    return <EducationSectionSkeleton />;
   }
 
   return (

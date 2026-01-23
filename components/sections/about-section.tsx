@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProfile, useSkills, useInterests, useFunFacts } from "@/hooks/use-supabase-data";
+import { AboutSectionSkeleton } from "@/components/loading-skeletons";
 import {
   MapPin,
   Calendar,
@@ -126,13 +127,7 @@ export const AboutSection = memo(function AboutSection() {
   };
 
   if (loading) {
-    return (
-      <div className="space-y-4 sm:space-y-6 animate-pulse px-4 sm:px-0">
-        <div className="h-24 sm:h-32 bg-muted rounded-lg" />
-        <div className="h-48 sm:h-64 bg-muted rounded-lg" />
-        <div className="h-32 sm:h-48 bg-muted rounded-lg" />
-      </div>
-    );
+    return <AboutSectionSkeleton />;
   }
 
   return (

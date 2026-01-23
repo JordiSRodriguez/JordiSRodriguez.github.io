@@ -4,6 +4,7 @@ import { useState, memo } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { useWorkExperiences } from "@/hooks/use-supabase-data";
 import logger from "@/lib/logger";
+import { WorkExperienceSectionSkeleton } from "@/components/loading-skeletons";
 import {
   Calendar,
   MapPin,
@@ -92,15 +93,7 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-8">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="h-48 bg-muted rounded-lg"></div>
-          </div>
-        ))}
-      </div>
-    );
+    return <WorkExperienceSectionSkeleton />;
   }
 
   return (

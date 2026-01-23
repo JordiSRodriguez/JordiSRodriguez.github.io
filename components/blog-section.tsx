@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useBlogPosts } from "@/hooks/use-supabase-data";
+import { BlogSectionSkeleton } from "@/components/loading-skeletons";
 
 export const BlogSection = memo(function BlogSection() {
   const { data: posts = [], isLoading } = useBlogPosts();
@@ -40,15 +41,7 @@ export const BlogSection = memo(function BlogSection() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-32 bg-muted rounded-lg" />
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="h-64 bg-muted rounded-lg" />
-          <div className="h-64 bg-muted rounded-lg" />
-        </div>
-      </div>
-    );
+    return <BlogSectionSkeleton />;
   }
 
   return (

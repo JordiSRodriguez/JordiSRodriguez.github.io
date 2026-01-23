@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Github, Eye, Filter, FolderOpen } from "lucide-react";
 import Image from "next/image";
+import { ProjectsSectionSkeleton } from "@/components/loading-skeletons";
 
 interface Project {
   id: string;
@@ -74,27 +75,7 @@ export const ProjectsSection = memo(function ProjectsSection() {
   };
 
   if (isLoading) {
-    return (
-      <section className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="h-8 bg-muted animate-pulse rounded mb-4 max-w-md mx-auto" />
-            <div className="h-4 bg-muted animate-pulse rounded max-w-2xl mx-auto" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i} className="overflow-hidden">
-                <div className="aspect-video bg-muted animate-pulse" />
-                <CardHeader>
-                  <div className="h-6 bg-muted animate-pulse rounded mb-2" />
-                  <div className="h-4 bg-muted animate-pulse rounded" />
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+    return <ProjectsSectionSkeleton />;
   }
 
   return (
