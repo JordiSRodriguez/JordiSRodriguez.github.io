@@ -124,17 +124,20 @@ export function UnifiedDock() {
         className={cn(
           "transition-all duration-300 ease-out overflow-hidden border-2 shadow-xl",
           "bg-gray-950 border-git-branch/30",
-          isHovered ? "w-[400px] h-auto" : "w-20 h-16",
+          isHovered ? "w-[400px] h-auto" : "w-28 h-14",
           "rounded-lg"
         )}
       >
         {/* Compact view - icons only */}
         {!isHovered ? (
-          <div className="h-full w-full flex items-center justify-center gap-3">
+          <div className="h-full w-full flex items-center justify-center gap-2 px-2">
             <button
-              onClick={() => setActiveTab("weather")}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab("weather");
+              }}
               className={cn(
-                "p-2 rounded-lg transition-all duration-200",
+                "p-1.5 rounded transition-all duration-200",
                 activeTab === "weather"
                   ? "bg-git-clean/20 text-git-clean scale-110"
                   : "bg-muted/20 text-muted-foreground hover:scale-105"
@@ -143,9 +146,12 @@ export function UnifiedDock() {
               <Cloud className="w-5 h-5" />
             </button>
             <button
-              onClick={() => setActiveTab("github")}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab("github");
+              }}
               className={cn(
-                "p-2 rounded-lg transition-all duration-200",
+                "p-1.5 rounded transition-all duration-200",
                 activeTab === "github"
                   ? "bg-git-branch/20 text-git-branch scale-110"
                   : "bg-muted/20 text-muted-foreground hover:scale-105"
@@ -157,7 +163,7 @@ export function UnifiedDock() {
         ) : (
           // Expanded view - content
           <div className="p-4 space-y-4">
-            {/* Tab indicator */}
+            {/* Tab indicator with switching buttons */}
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-git-branch" />
@@ -167,6 +173,38 @@ export function UnifiedDock() {
                 <Badge variant="outline" className="text-[10px] font-mono-display">
                   {activeTab}
                 </Badge>
+              </div>
+
+              {/* Tab switching buttons in expanded view */}
+              <div className="flex gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTab("weather");
+                  }}
+                  className={cn(
+                    "p-1.5 rounded transition-all duration-200",
+                    activeTab === "weather"
+                      ? "bg-git-clean/20 text-git-clean"
+                      : "bg-muted/20 text-muted-foreground hover:bg-muted/30"
+                  )}
+                >
+                  <Cloud className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTab("github");
+                  }}
+                  className={cn(
+                    "p-1.5 rounded transition-all duration-200",
+                    activeTab === "github"
+                      ? "bg-git-branch/20 text-git-branch"
+                      : "bg-muted/20 text-muted-foreground hover:bg-muted/30"
+                  )}
+                >
+                  <Github className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
