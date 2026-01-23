@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Terminal, X, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSidebarState } from "@/contexts/navigation-context";
 
 interface TerminalCommand {
   command: string;
@@ -11,6 +12,7 @@ interface TerminalCommand {
 }
 
 export function InteractiveTerminal() {
+  const { isSidebarCollapsed } = useSidebarState();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<TerminalCommand[]>([
@@ -168,7 +170,11 @@ Categories:
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 left-4 z-40 p-3 bg-git-branch hover:bg-git-branch/90 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300 group"
+        className={cn(
+          "fixed z-40 p-3 bg-git-branch hover:bg-git-branch/90 text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-git-branch/30 transition-all duration-300 group",
+          // Position: left-4 when sidebar is collapsed, left-68 (4 + 64 sidebar width) when open
+          isSidebarCollapsed ? "bottom-8 left-4" : "bottom-8 left-[17rem]"
+        )}
         title="Open Terminal (Ctrl+`)"
       >
         <Terminal className="w-5 h-5 group-hover:rotate-12 transition-transform" />

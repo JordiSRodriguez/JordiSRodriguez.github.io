@@ -368,7 +368,7 @@ export function SidebarNavigation({
       )}
 
       <aside
-        className={`fixed left-0 top-0 h-full bg-background/95 backdrop-blur-sm border-r z-40 flex flex-col ${
+        className={`fixed left-0 top-0 h-[calc(100vh-1.75rem)] sm:h-[calc(100vh-1.75rem)] bg-background/95 backdrop-blur-sm border-r z-40 flex flex-col ${
           isMobile ? "w-72 sm:w-64" : "w-64"
         } ${
           isSidebarCollapsed
