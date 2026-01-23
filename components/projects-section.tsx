@@ -281,4 +281,4 @@ export const ProjectsSection = memo(function ProjectsSection() {
       </div>
     </section>
   );
-}
+});

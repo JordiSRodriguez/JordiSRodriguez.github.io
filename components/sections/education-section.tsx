@@ -317,4 +317,4 @@ export const EducationSection = memo(function EducationSection() {
       </Card>
     </div>
   );
-}
+});

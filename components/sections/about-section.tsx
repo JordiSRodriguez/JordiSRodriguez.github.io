@@ -263,4 +263,4 @@ export const AboutSection = memo(function AboutSection() {
       </Card> */}
     </div>
   );
-}
+});

@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="9.959315">
+<testsuite name="flows\user-journey.spec.ts" timestamp="2026-01-22T22:48:27.040Z" hostname="chromium" tests="1" failures="0" skipped="0" time="4.683" errors="0">
+<testcase name="User Journey Tests › visitor explores portfolio" classname="flows\user-journey.spec.ts" time="4.683">
+</testcase>
+</testsuite>
+</testsuites>

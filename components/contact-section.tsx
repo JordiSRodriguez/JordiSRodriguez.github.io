@@ -394,4 +394,4 @@ export const ContactSection = memo(function ContactSection() {
       )}
     </div>
   );
-}
+});

@@ -4,7 +4,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { createClient } from "@supabase/ssr";
+import { createBrowserClient } from "@supabase/ssr";
 import logger from "@/lib/logger";
 
 // Types for database tables
@@ -147,7 +147,7 @@ export function useProfile() {
   return useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -170,7 +170,7 @@ export function useSkills() {
   return useQuery({
     queryKey: ["skills"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -193,7 +193,7 @@ export function useInterests() {
   return useQuery({
     queryKey: ["interests"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -216,7 +216,7 @@ export function useFunFacts() {
   return useQuery({
     queryKey: ["funFacts"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -239,7 +239,7 @@ export function useProjects() {
   return useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -263,7 +263,7 @@ export function useWorkExperiences() {
   return useQuery({
     queryKey: ["work-experiences"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -286,7 +286,7 @@ export function useEducation() {
   return useQuery({
     queryKey: ["education"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -310,7 +310,7 @@ export function useCertifications() {
   return useQuery({
     queryKey: ["certifications"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -333,7 +333,7 @@ export function useCourses() {
   return useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -356,7 +356,7 @@ export function useLearningGoals() {
   return useQuery({
     queryKey: ["learning-goals"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -380,7 +380,7 @@ export function useBlogPosts() {
   return useQuery({
     queryKey: ["blog-posts"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -404,7 +404,7 @@ export function useVisitorStats() {
   return useQuery({
     queryKey: ["visitor-stats"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -433,7 +433,7 @@ export function usePortfolioLikes() {
   return useQuery({
     queryKey: ["portfolio-likes"],
     queryFn: async () => {
-      const supabase = createClient(
+      const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );

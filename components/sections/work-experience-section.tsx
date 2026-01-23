@@ -490,4 +490,4 @@ export const WorkExperienceSection = memo(function WorkExperienceSection() {
       )} */}
     </div>
   );
-}
+});

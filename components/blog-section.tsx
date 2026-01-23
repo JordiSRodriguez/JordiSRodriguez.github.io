@@ -195,4 +195,4 @@ export const BlogSection = memo(function BlogSection() {
       </Card>
     </div>
   );
-}
+});
