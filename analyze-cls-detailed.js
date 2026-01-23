@@ -1,5 +1,5 @@
 const fs = require('fs');
-const report = JSON.parse(fs.readFileSync('./lh-detailed', 'utf8'));
+const report = JSON.parse(fs.readFileSync('./lh-detailed-cls', 'utf8'));
 
 console.log('\n=== DETAILED CLS ANALYSIS ===\n');
 

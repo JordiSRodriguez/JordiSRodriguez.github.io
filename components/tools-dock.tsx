@@ -166,12 +166,14 @@ export function ToolsDock({ className }: ToolsDockProps) {
       <Card
         className={cn(
           "bg-background/95 backdrop-blur-md border shadow-lg",
-          "transition-all duration-500 ease-out transform-gpu",
-          "rounded-2xl overflow-hidden border-border/50",
-          "tools-dock-expand",
+          // Disable expansion transition to prevent CLS - only animate hover effects
           isExpanded
-            ? "w-96 h-[500px] shadow-2xl scale-100 border-primary/20"
-            : "w-20 h-16 hover:shadow-xl hover:scale-105 cursor-pointer dock-hover-effect",
+            ? "transition-shadow duration-300"
+            : "transition-all duration-300 ease-out transform-gpu",
+          "rounded-2xl overflow-hidden border-border/50",
+          isExpanded
+            ? "w-96 h-[500px] shadow-2xl border-primary/20"
+            : "w-20 h-16 hover:shadow-xl hover:scale-105 cursor-pointer",
           "max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)]"
         )}
       >
@@ -242,7 +244,8 @@ export function ToolsDock({ className }: ToolsDockProps) {
         {/* Contenido expandido - Always rendered to prevent CLS */}
         <CardContent
           className={cn(
-            "overflow-hidden transition-all duration-300",
+            "overflow-hidden",
+            // Remove transition to prevent CLS during expansion
             isExpanded ? "p-4 h-[calc(100%-4rem)] opacity-100" : "h-0 p-0 opacity-0"
           )}
         >

@@ -198,7 +198,9 @@ function HomePageContent() {
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-6 md:py-8 lg:py-12 pb-20 sm:pb-6 max-w-none xl:max-w-[1400px] 2xl:max-w-[1600px]">
-          {renderSection()}
+          <div className="contain-layout">
+            {renderSection()}
+          </div>
         </div>
       </main>
 

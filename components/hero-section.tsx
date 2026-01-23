@@ -128,14 +128,14 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-      {/* 3D Background Elements */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 contain-layout">
+      {/* 3D Background Elements - Animations disabled to prevent CLS */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Floating geometric shapes */}
-        <div className="absolute top-20 left-4 sm:left-10 w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full animate-float-slow" />
-        <div className="absolute top-40 right-4 sm:right-20 w-12 h-12 sm:w-16 sm:h-16 bg-chart-1/20 rotate-45 animate-float-medium" />
-        <div className="absolute bottom-40 left-4 sm:left-20 w-8 h-8 sm:w-12 sm:h-12 bg-chart-2/15 rounded-full animate-float-fast" />
-        <div className="absolute bottom-20 right-4 sm:right-10 w-20 h-20 sm:w-24 sm:h-24 bg-chart-3/10 rotate-12 animate-float-slow" />
+        {/* Floating geometric shapes - static to prevent CLS */}
+        <div className="absolute top-20 left-4 sm:left-10 w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full" style={{ contain: 'strict' }} />
+        <div className="absolute top-40 right-4 sm:right-20 w-12 h-12 sm:w-16 sm:h-16 bg-chart-1/20 rotate-45" style={{ contain: 'strict' }} />
+        <div className="absolute bottom-40 left-4 sm:left-20 w-8 h-8 sm:w-12 sm:h-12 bg-chart-2/15 rounded-full" style={{ contain: 'strict' }} />
+        <div className="absolute bottom-20 right-4 sm:right-10 w-20 h-20 sm:w-24 sm:h-24 bg-chart-3/10 rotate-12" style={{ contain: 'strict' }} />
 
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px] sm:bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
@@ -143,9 +143,9 @@ export function HeroSection() {
 
       {/* Main content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Profile image with 3D effect */}
+        {/* Profile image with 3D effect - animations disabled to prevent CLS */}
         <div className="mb-6 sm:mb-8 relative">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gradient-to-br from-primary to-chart-1 p-1 animate-pulse-slow">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gradient-to-br from-primary to-chart-1 p-1">
             {profile?.avatar_url ? (
               <img
                 src={profile.avatar_url}
@@ -162,18 +162,18 @@ export function HeroSection() {
               </div>
             )}
           </div>
-          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-chart-1/20 rounded-full blur-xl animate-pulse-slow" />
+          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-chart-1/20 rounded-full blur-xl" />
         </div>
 
-        {/* Animated greeting */}
+        {/* Greeting - animation disabled */}
         <div className="mb-3 sm:mb-4">
-          <span className="text-base sm:text-lg text-muted-foreground animate-fade-in">
+          <span className="text-base sm:text-lg text-muted-foreground">
             Hola, soy
           </span>
         </div>
 
-        {/* Main name */}
-        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground via-primary to-chart-1 bg-clip-text text-transparent animate-fade-in-up">
+        {/* Main name - animation disabled */}
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground via-primary to-chart-1 bg-clip-text text-transparent">
           {displayName}
         </h1>
 
@@ -185,13 +185,13 @@ export function HeroSection() {
           </h2>
         </div>
 
-        {/* Description */}
-        <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed animate-fade-in-up-delay px-4 sm:px-0">
+        {/* Description - animation disabled */}
+        <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4 sm:px-0">
           {displayBio}
         </p>
 
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 animate-fade-in-up-delay-2 px-4 sm:px-0">
+        {/* CTA buttons - animation disabled */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4 sm:px-0">
           <Button
             size="lg"
             className="group relative overflow-hidden w-full sm:w-auto"
@@ -211,8 +211,8 @@ export function HeroSection() {
           </Button>
         </div>
 
-        {/* Social links */}
-        <div className="flex justify-center gap-4 sm:gap-6 mb-12 sm:mb-16 animate-fade-in-up-delay-3">
+        {/* Social links - animation disabled */}
+        <div className="flex justify-center gap-4 sm:gap-6 mb-12 sm:mb-16">
           {(profile?.github_username || defaultProfile.github_username) && (
             <Button
               variant="ghost"

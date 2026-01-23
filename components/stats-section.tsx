@@ -417,13 +417,22 @@ export function StatsSection() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 animate-pulse justify-items-center max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 justify-items-center max-w-6xl mx-auto">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="h-28 sm:h-32 bg-muted/50 rounded-lg w-full flex items-center justify-center">
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-lg" />
-              <div className="h-5 w-12 bg-muted rounded" />
-              <div className="h-3 w-16 bg-muted rounded" />
+          <div key={i} className="relative overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm rounded-lg w-full border-0" style={{ height: 'auto', minHeight: 'fit-content' }}>
+            {/* Match exact CardContent padding: p-3 sm:p-4 */}
+            <div className="p-3 sm:p-4">
+              <div className="flex flex-col items-center text-center space-y-2">
+                {/* Icon container: p-2 sm:p-3 */}
+                <div className="p-2 sm:p-3 rounded-lg bg-muted/50">
+                  {/* Icon: h-5 w-5 sm:h-6 sm:w-6 */}
+                  <div className="h-5 w-5 sm:h-6 sm:w-6 bg-muted/60 rounded" />
+                </div>
+                {/* Value text placeholder: text-lg sm:text-xl */}
+                <div className="h-5 sm:h-6 w-12 bg-muted/60 rounded" />
+                {/* Label text placeholder: text-xs sm:text-sm */}
+                <div className="h-3 sm:h-3.5 w-20 bg-muted/60 rounded" />
+              </div>
             </div>
           </div>
         ))}
