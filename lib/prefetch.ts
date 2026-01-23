@@ -6,7 +6,8 @@
 import { QueryClient } from "@tanstack/react-query";
 
 /**
- * Map sections to their query keys
+ * Map sections to their React Query keys
+ * Each section maps to an array of query keys that should be prefetched
  */
 const SECTION_QUERY_KEYS: Record<string, string[][]> = {
   about: [["profile"]],
@@ -27,7 +28,14 @@ const SECTION_QUERY_KEYS: Record<string, string[][]> = {
 };
 
 /**
- * Prefetch data for a specific section
+ * Prefetch data for a specific section using React Query
+ * @param queryClient - The React Query client instance
+ * @param section - The section identifier to prefetch
+ * @returns Promise that resolves when prefetching is complete
+ *
+ * Prefetches all queries associated with a section to improve
+ * perceived performance when navigating to that section.
+ * Uses a 5-minute stale time for prefetched data.
  */
 export async function prefetchSectionData(
   queryClient: QueryClient,
@@ -51,7 +59,13 @@ export async function prefetchSectionData(
 }
 
 /**
- * Prefetch multiple sections
+ * Prefetch data for multiple sections in parallel
+ * @param queryClient - The React Query client instance
+ * @param sections - Array of section identifiers to prefetch
+ * @returns Promise that resolves when all sections are prefetched
+ *
+ * Useful for prefetching multiple sections at once, such as
+ * during app initialization.
  */
 export async function prefetchMultipleSections(
   queryClient: QueryClient,
@@ -63,8 +77,13 @@ export async function prefetchMultipleSections(
 }
 
 /**
- * Get adjacent sections for prefetching
- * Returns the previous and next sections based on section order
+ * Get adjacent sections (previous and next) for a given section
+ * @param currentSection - The current section identifier
+ * @param allSections - Array of all section identifiers in order
+ * @returns Object containing previous and next section identifiers
+ *
+ * Used for intelligent prefetching of neighboring sections.
+ * Returns empty object if section is not found in the array.
  */
 export function getAdjacentSections(
   currentSection: string,
