@@ -39,7 +39,13 @@ export function NavigationProvider({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Iniciamos colapsada por defecto
   const queryClient = useQueryClient();
 
-  // Función auxiliar para obtener las secciones válidas
+  /**
+   * Gets the list of valid sections based on the current environment
+   * @returns Array of valid section identifiers
+   *
+   * In development mode, includes dev-only sections.
+   * In production, only includes production sections.
+   */
   const getValidSections = (): Section[] => {
     const baseSections: Section[] = Object.values(VALID_SECTIONS).filter(
       (section) => !DEV_ONLY_SECTIONS.includes(section as any)
@@ -53,7 +59,13 @@ export function NavigationProvider({
     return baseSections;
   };
 
-  // Prefetch data for a specific section
+  /**
+   * Prefetches data for a specific section to improve navigation performance
+   * @param section - The section identifier to prefetch data for
+   *
+   * Uses React Query's prefetchQuery to load data in the background.
+   * Logs success or error messages.
+   */
   const prefetchSection = async (section: string) => {
     try {
       await prefetchSectionData(queryClient, section);
@@ -75,12 +87,13 @@ export function NavigationProvider({
   // Sincronizar con el hash de la URL al cargar la página
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const hash = window.location.hash.replace("#", "");
+      const rawHash = window.location.hash.replace("#", "");
+      const hash = rawHash as Section;
       const validSections = getValidSections();
 
-      if (hash && validSections.includes(hash)) {
+      if (rawHash && validSections.includes(hash)) {
         setCurrentSection(hash);
-      } else if (hash === "" && currentSection !== "home") {
+      } else if (rawHash === "" && currentSection !== "home") {
         // Si no hay hash, asegurar que estamos en home
         setCurrentSection("home");
       }
@@ -91,12 +104,13 @@ export function NavigationProvider({
   useEffect(() => {
     const handleHashChange = () => {
       if (typeof window !== "undefined") {
-        const hash = window.location.hash.replace("#", "");
+        const rawHash = window.location.hash.replace("#", "");
+        const hash = rawHash as Section;
         const validSections = getValidSections();
 
-        if (hash && validSections.includes(hash)) {
+        if (rawHash && validSections.includes(hash)) {
           setCurrentSection(hash);
-        } else if (hash === "") {
+        } else if (rawHash === "") {
           setCurrentSection("home");
         }
       }
@@ -123,6 +137,16 @@ export function NavigationProvider({
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
+  /**
+   * Navigates to a specific section with smart prefetching
+   * @param section - The section identifier to navigate to
+   *
+   * Side effects:
+   * - Updates current section state
+   * - Prefetches adjacent sections for faster navigation
+   * - Updates URL hash for deep linking
+   * - Logs navigation event
+   */
   const navigateToSection = (section: string) => {
     setCurrentSection(section);
 
@@ -153,6 +177,10 @@ export function NavigationProvider({
     }
   };
 
+  /**
+   * Sets the sidebar collapsed state
+   * @param collapsed - Whether the sidebar should be collapsed
+   */
   const setSidebarCollapsed = (collapsed: boolean) => {
     setIsSidebarCollapsed(collapsed);
   };
