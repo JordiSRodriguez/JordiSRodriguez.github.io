@@ -79,19 +79,24 @@ export function ToolsDock({ className }: ToolsDockProps) {
     }
   }, [isHovered, isMobile]);
 
-  // Efecto de montaje suave
+  // Remove mount animation to prevent CLS
+  // The component should be immediately visible to avoid layout shift
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsMounted(true);
-    }, 100);
-    return () => clearTimeout(timer);
+    setIsMounted(true);
   }, []);
 
   // Solo ocultar si el AI chat está abierto
   const shouldHide = shouldHideComponent("aiChatOpen");
 
+  // Never return null - use visibility to prevent CLS
   if (shouldHide && !isMobile) {
-    return null;
+    return (
+      <div
+        ref={dockRef}
+        className="fixed z-50 top-5 right-4 w-20 h-16 opacity-0 pointer-events-none"
+        aria-hidden="true"
+      />
+    );
   }
 
   const handleMouseEnter = () => {
@@ -234,9 +239,14 @@ export function ToolsDock({ className }: ToolsDockProps) {
           )}
         </div>
 
-        {/* Contenido expandido */}
-        {isExpanded && (
-          <CardContent className="p-4 h-[calc(100%-4rem)] overflow-hidden">
+        {/* Contenido expandido - Always rendered to prevent CLS */}
+        <CardContent
+          className={cn(
+            "overflow-hidden transition-all duration-300",
+            isExpanded ? "p-4 h-[calc(100%-4rem)] opacity-100" : "h-0 p-0 opacity-0"
+          )}
+        >
+          <div className={isExpanded ? "block" : "hidden"}>
             {activeTab === "weather" ? (
               // Contenido de Weather
               <div className="space-y-4 h-full overflow-y-auto">
@@ -473,8 +483,8 @@ export function ToolsDock({ className }: ToolsDockProps) {
                 )}
               </div>
             )}
+          </div>
           </CardContent>
-        )}
       </Card>
     </div>
   );

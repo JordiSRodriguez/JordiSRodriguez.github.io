@@ -111,8 +111,14 @@ export function FloatingGitHub() {
   }, []);
 
   // No renderizar si debe estar oculto en desktop
+  // Use visibility instead of null to prevent CLS
   if (shouldHide) {
-    return null;
+    return (
+      <div
+        className="fixed z-50 top-20 right-4 w-16 h-16 opacity-0 pointer-events-none"
+        aria-hidden="true"
+      />
+    );
   }
 
   return (
