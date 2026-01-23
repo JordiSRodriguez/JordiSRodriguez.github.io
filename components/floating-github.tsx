@@ -2,11 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { FileCard } from "@/components/ui/file-card";
-import { GlassCard } from "@/components/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CardSpotlight } from "@/components/spotlight-effect";
 import {
   Github,
   GitCommit,
@@ -114,16 +111,14 @@ export function FloatingGitHub() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <CardSpotlight>
-        <GlassCard intensity="high" hover={false}>
-          <Card
-            className={cn(
-              "transition-all duration-500 ease-out transform-gpu cursor-pointer overflow-hidden",
-              "bg-gray-950/95 backdrop-blur-xl border border-git-branch/30",
-              isHovered ? "w-[420px] h-auto shadow-2xl shadow-git-branch/20 scale-105" : "w-16 h-16 hover:scale-110",
-              "rounded-xl"
-            )}
-          >
+      <Card
+        className={cn(
+          "transition-all duration-500 ease-out transform-gpu cursor-pointer overflow-hidden",
+          "bg-gray-950 border border-git-branch/30",
+          isHovered ? "w-[420px] h-auto shadow-2xl shadow-git-branch/20 scale-105" : "w-16 h-16 hover:scale-110",
+          "rounded-xl"
+        )}
+      >
             {!isHovered ? (
               // Compact View - GitHub Icon Terminal Style
               <div className="h-full w-full flex items-center justify-center group relative">
@@ -344,9 +339,7 @@ export function FloatingGitHub() {
                 </div>
               </div>
             )}
-          </Card>
-        </GlassCard>
-      </CardSpotlight>
+        </Card>
     </div>
   );
 }
